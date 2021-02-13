@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ApiResource()
  * @ORM\Entity(repositoryClass=RiderCheckinRepository::class)
  */
-class RiderCheckin
+class RiderCheckin implements CreateDateEntityInterface
 {
     /**
      * @ORM\Id
@@ -66,7 +66,7 @@ class RiderCheckin
         return $this->createDate;
     }
 
-    public function setCreateDate(\DateTimeInterface $createDate): self
+    public function setCreateDate(\DateTimeInterface $createDate): CreateDateEntityInterface
     {
         $this->createDate = $createDate;
 
