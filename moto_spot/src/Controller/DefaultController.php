@@ -20,7 +20,7 @@ class DefaultController extends AbstractController
      * @Route("/api/users", name="users")
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getUsers()
+    public function getUsers(): Response
     {
         $users = [
             [
