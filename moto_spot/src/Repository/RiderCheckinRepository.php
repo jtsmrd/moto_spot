@@ -19,6 +19,34 @@ class RiderCheckinRepository extends ServiceEntityRepository
         parent::__construct($registry, RiderCheckin::class);
     }
 
+    public function getRiderCheckinsAroundLocation(float $lat, float $lon, float $distance)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT *, (
+            3959 * acos(
+                cos(radians(:lon))
+                * cos(radians(lat))
+                * cos(radians(lon) - radians(:lat))
+                + sin(radians(:lon))
+                * sin(radians(lat))
+            )
+        ) as distance FROM rider_checkin
+            HAVING distance < :distance
+            ORDER BY distance
+            ';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            'lon' => $lon,
+            'lat' => $lat,
+            'distance' => $distance
+        ]);
+
+        // returns an array of arrays (i.e. a raw data set)
+        return $stmt->fetchAllAssociative();
+    }
+
     // /**
     //  * @return RiderCheckin[] Returns an array of RiderCheckin objects
     //  */

@@ -5,10 +5,22 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\RiderCheckinRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     itemOperations={"get"},
+ *     collectionOperations={
+ *          "post"
+ *      },
+ *     normalizationContext={
+ *          "groups"={"read"}
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=RiderCheckinRepository::class)
+ * @UniqueEntity("userUUID")
  */
 class RiderCheckin implements CreateDateEntityInterface
 {
@@ -16,11 +28,15 @@ class RiderCheckin implements CreateDateEntityInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read"})
+     * @Assert\NotBlank()
+     * @Assert\Uuid()
      */
     private $userUUID;
 
@@ -31,16 +47,21 @@ class RiderCheckin implements CreateDateEntityInterface
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"read"})
+     * @Assert\NotBlank()
      */
     private $lon;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"read"})
+     * @Assert\NotBlank()
      */
     private $lat;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\DateTime()
      */
     private $expireDate;
 

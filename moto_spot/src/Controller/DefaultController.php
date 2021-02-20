@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\RiderCheckin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -14,6 +16,25 @@ class DefaultController extends AbstractController
     public function index()
     {
         return $this->render('default/index.html.twig');
+    }
+
+    /**
+     * @Route("/api/get-rider-checkins", name="get-rider-checkins")
+     */
+    public function getRiderCheckins(Request $request): Response
+    {
+        $lat = floatval($request->query->get('lat'));
+        $lon = floatval($request->query->get('lon'));
+        $distance = floatval($request->query->get('distance'));
+
+        $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
+        $checkins = $repository->getRiderCheckinsAroundLocation($lat, $lon, $distance);
+        return $this->json(
+            $checkins,
+            Response::HTTP_OK,
+            [],
+            ['groups' => ['read']]
+        );
     }
 
     /**
