@@ -561,10 +561,10 @@
             "ref": "34a82422147bc632dec0db2676bf27aaaa582ba0"
         },
         "files": [
-            "assets/app.js",
+            "assets/app.tsx",
             "assets/bootstrap.js",
             "assets/controllers.json",
-            "assets/controllers/hello_controller.js",
+            "assets/controllers/hello_controller.tsx",
             "assets/styles/app.css",
             "config/packages/assets.yaml",
             "config/packages/prod/webpack_encore.yaml",
