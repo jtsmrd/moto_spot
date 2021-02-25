@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\RiderCheckin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,30 +22,31 @@ class RiderCheckinRepository extends ServiceEntityRepository
 
     public function getRiderCheckinsAroundLocation(float $lat, float $lon, float $distance)
     {
-        $conn = $this->getEntityManager()->getConnection();
+        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+        $rsm->addRootEntityFromClassMetadata('App\Entity\RiderCheckin', 'rc');
 
         $sql = '
-            SELECT *, (
+            SELECT id, lon, lat 
+            FROM rider_checkin rc
+            WHERE (
             3959 * acos(
-                cos(radians(:lon))
+                cos(radians(?))
                 * cos(radians(lat))
-                * cos(radians(lon) - radians(:lat))
-                + sin(radians(:lon))
+                * cos(radians(lon) - radians(?))
+                + sin(radians(?))
                 * sin(radians(lat))
             )
-        ) as distance FROM rider_checkin
-            HAVING distance < :distance
-            ORDER BY distance
+            ) < ?
             ';
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([
-            'lon' => $lon,
-            'lat' => $lat,
-            'distance' => $distance
-        ]);
 
-        // returns an array of arrays (i.e. a raw data set)
-        return $stmt->fetchAllAssociative();
+        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+        $query->setParameter(1, $lon);
+        $query->setParameter(2, $lat);
+        $query->setParameter(3, $lon);
+        $query->setParameter(4, $distance);
+
+        return $query->getArrayResult();
+
     }
 
     // /**

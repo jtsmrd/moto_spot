@@ -6,10 +6,19 @@ import Home from "./components/Home";
 import MapContainer from "./components/Map";
 // start the Stimulus application
 // import './bootstrap';
+import Header from "./components/Header";
 
 ReactDOM.render(
   <Router>
-    <MapContainer />
+    <div>
+      {/*<Header />*/}
+      <div
+        style={{ height: "50px", width: "100%", backgroundColor: "lightblue" }}
+      >
+        <h1>MotoSpot</h1>
+      </div>
+      <MapContainer />
+    </div>
   </Router>,
   document.getElementById("root")
 );

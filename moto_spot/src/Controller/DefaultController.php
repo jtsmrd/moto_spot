@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\RiderCheckin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,12 +30,8 @@ class DefaultController extends AbstractController
 
         $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
         $checkins = $repository->getRiderCheckinsAroundLocation($lat, $lon, $distance);
-        return $this->json(
-            $checkins,
-            Response::HTTP_OK,
-            [],
-            ['groups' => ['read']]
-        );
+
+        return new JsonResponse($checkins, Response::HTTP_OK);
     }
 
     /**
