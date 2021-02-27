@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Map, Marker, GoogleApiWrapper } from "google-maps-react";
+import axios from "axios";
 
 const MapContainer = (props) => {
-  const coords = [
-    { id: 1, lat: 40.4406, lng: -79.9859 },
-    { id: 2, lat: 40.4506, lng: -79.9759 },
-    { id: 3, lat: 40.4506, lng: -79.9659 },
-  ];
+  const [checkins, setCheckins] = useState([]);
+
+  useEffect(() => {
+    getRiderCheckins();
+  }, []);
+
+  function getRiderCheckins() {
+    axios
+      .get("/api/get-rider-checkins", {
+        params: {
+          lat: 40.4406,
+          lon: -79.9959,
+          distance: 200,
+        },
+      })
+      .then(function (response) {
+        setCheckins(response.data);
+      });
+  }
 
   function onDragEnd(mapProps, map, e) {
     let ne = map.getBounds().getNorthEast();
@@ -17,12 +32,12 @@ const MapContainer = (props) => {
 
   function displayMarkers() {
     let markers = [];
-    coords.forEach((coord) => {
+    checkins.forEach((checkin) => {
       markers.push(
         <Marker
-          key={coord.id}
+          key={checkin.id}
           // @ts-ignore
-          position={{ lat: coord.lat, lng: coord.lng }}
+          position={{ lat: checkin.lat, lng: checkin.lon }}
         />
       );
     });
@@ -50,7 +65,7 @@ const MapContainer = (props) => {
           // @ts-ignore
           google={props.google}
           // @ts-ignore
-          zoom={14}
+          zoom={12}
           initialCenter={{
             lat: 40.4406,
             lng: -79.9959,

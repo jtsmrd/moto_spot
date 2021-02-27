@@ -20,7 +20,7 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        $this->loadRiderCheckins($manager, 5000);
+        $this->loadRiderCheckins($manager, 100);
     }
 
     public function loadRiderCheckins(ObjectManager $manager, int $numRiderCheckins)
@@ -28,8 +28,12 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < $numRiderCheckins; $i++) {
             $riderCheckin = new RiderCheckin();
             $riderCheckin->setUserUUID($this->faker->uuid);
-            $riderCheckin->setLat($this->faker->latitude);
-            $riderCheckin->setLon($this->faker->longitude);
+
+            $lat = $this->faker->randomFloat(12, 40.38362639665043, 40.497339166747636);
+            $lon = $this->faker->randomFloat(12, -80.20980444333259, -79.77145102402869);
+
+            $riderCheckin->setLat($lat);
+            $riderCheckin->setLon($lon);
             $riderCheckin->setCreateDate(new \DateTime());
 
             $manager->persist($riderCheckin);

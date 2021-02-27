@@ -40,9 +40,9 @@ class RiderCheckinRepository extends ServiceEntityRepository
             ';
 
         $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-        $query->setParameter(1, $lon);
-        $query->setParameter(2, $lat);
-        $query->setParameter(3, $lon);
+        $query->setParameter(1, $lat);
+        $query->setParameter(2, $lon);
+        $query->setParameter(3, $lat);
         $query->setParameter(4, $distance);
 
         return $query->getArrayResult();
