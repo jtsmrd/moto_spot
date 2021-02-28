@@ -1,17 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
 import axios from 'axios';
-import haversineDistance from 'haversine-distance';
+import MarkerCluster from './MarkerCluster';
 
 const MapContainer = (props) => {
+    const mapRef = useRef();
     const [checkins, setCheckins] = useState([]);
+    const [mapArea, setMapArea] = useState({ NELat: null, NELon: null, SWLat: null, SWLon: null });
 
     useEffect(() => {
         getRiderCheckins();
+        // getInitialMapVisibleArea();
     }, []);
 
-    const havDist = haversineDistance({ lat: 40.4406, lon: -79.9959 }, { lat: 40.433016585791, lon: -80.000364937839 });
-    console.log(havDist);
+    function getInitialMapVisibleArea() {
+        setTimeout(() => {
+            // @ts-ignore
+            let ne = mapRef.current.map.getBounds().getNorthEast();
+            // @ts-ignore
+            let sw = mapRef.current.map.getBounds().getSouthWest();
+            setMapArea({ NELat: ne.lat(), NELon: ne.lng(), SWLat: sw.lat(), SWLon: sw.lng() });
+        }, 100);
+    }
 
     function getRiderCheckins() {
         axios
@@ -27,25 +37,12 @@ const MapContainer = (props) => {
             });
     }
 
-    function onDragEnd(mapProps, map, e) {
-        let ne = map.getBounds().getNorthEast();
-        let sw = map.getBounds().getSouthWest();
-        console.log(ne.lat() + ';' + ne.lng());
-        console.log(sw.lat() + ';' + sw.lng());
-    }
+    function onDragEnd() {}
 
-    function displayMarkers() {
-        let markers = [];
-        checkins.forEach((checkin) => {
-            markers.push(
-                <Marker
-                    key={checkin.id}
-                    // @ts-ignore
-                    position={{ lat: checkin.lat, lng: checkin.lon }}
-                />,
-            );
-        });
-        return markers;
+    function onZoomChanged() {}
+
+    function onMarkerClicked({ event, location, marker }) {
+        console.log(location);
     }
 
     return (
@@ -66,6 +63,7 @@ const MapContainer = (props) => {
                 }}
             >
                 <Map
+                    ref={mapRef}
                     // @ts-ignore
                     google={props.google}
                     // @ts-ignore
@@ -75,8 +73,9 @@ const MapContainer = (props) => {
                         lng: -79.9959,
                     }}
                     onDragend={onDragEnd}
+                    onZoomChanged={onZoomChanged}
                 >
-                    {displayMarkers()}
+                    <MarkerCluster locations={checkins} click={onMarkerClicked} />
                 </Map>
             </div>
         </div>

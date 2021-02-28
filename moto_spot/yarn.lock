@@ -913,6 +913,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@googlemaps/markerclustererplus@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@googlemaps/markerclustererplus/-/markerclustererplus-1.0.3.tgz#a773cd69c8d73c9f6aa3864dcdc224a47e76bcb3"
+  integrity sha512-k2TIVZptaigMtgOEb7SY1DlKHgdiHC9n4Dym5/uRWWouyZNup+DvUqEt//ZZPPeFhNp6JOmAOfgMvjpESfwerw==
+
 "@jest/types@^26.6.2":
   version "26.6.2"
   resolved "https://registry.yarnpkg.com/@jest/types/-/types-26.6.2.tgz#bef5a532030e1d88a2f5a6d933f84e97226ed48e"

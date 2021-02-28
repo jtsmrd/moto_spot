@@ -35,6 +35,7 @@
     "dependencies": {
         "@babel/plugin-proposal-class-properties": "^7.12.13",
         "@babel/plugin-transform-runtime": "^7.12.15",
+        "@googlemaps/markerclustererplus": "^1.0.3",
         "@material-ui/core": "^4.11.3",
         "google-maps-react": "^2.0.6",
         "haversine-distance": "^1.2.1",
