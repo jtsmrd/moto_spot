@@ -1,15 +1,24 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
-import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { Map, GoogleApiWrapper } from 'google-maps-react';
 import MarkerCluster from './MarkerCluster';
+import { getRiderCheckins } from '../redux/Selectors';
+import { getRiderCheckinsRequestAction } from '../redux/Actions';
 
 const MapContainer = (props) => {
+    const dispatch = useDispatch();
     const mapRef = useRef();
-    const [checkins, setCheckins] = useState([]);
+    const riderCheckins = useSelector(getRiderCheckins);
     const [mapArea, setMapArea] = useState({ NELat: null, NELon: null, SWLat: null, SWLon: null });
 
     useEffect(() => {
-        getRiderCheckins();
+        dispatch(
+            getRiderCheckinsRequestAction({
+                lat: 40.4406,
+                lng: -79.9959,
+                distance: 200,
+            }),
+        );
         // getInitialMapVisibleArea();
     }, []);
 
@@ -21,20 +30,6 @@ const MapContainer = (props) => {
             let sw = mapRef.current.map.getBounds().getSouthWest();
             setMapArea({ NELat: ne.lat(), NELon: ne.lng(), SWLat: sw.lat(), SWLon: sw.lng() });
         }, 100);
-    }
-
-    function getRiderCheckins() {
-        axios
-            .get('/api/get-rider-checkins', {
-                params: {
-                    lat: 40.4406,
-                    lon: -79.9959,
-                    distance: 200,
-                },
-            })
-            .then(function (response) {
-                setCheckins(response.data);
-            });
     }
 
     function onDragEnd() {}
@@ -75,7 +70,7 @@ const MapContainer = (props) => {
                     onDragend={onDragEnd}
                     onZoomChanged={onZoomChanged}
                 >
-                    <MarkerCluster locations={checkins} click={onMarkerClicked} />
+                    <MarkerCluster locations={riderCheckins} click={onMarkerClicked} />
                 </Map>
             </div>
         </div>
