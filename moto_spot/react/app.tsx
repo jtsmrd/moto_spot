@@ -6,19 +6,16 @@ import Home from './components/Home';
 import Map from './components/Map';
 // start the Stimulus application
 // import './bootstrap';
-import Header from './components/Header';
 import MapContainer from './components/MapContainer';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
+import MainAppBar from './components/MainAppBar';
 
 ReactDOM.render(
     <Provider store={store}>
         <Router>
             <div>
-                {/*<Header />*/}
-                <div style={{ height: '50px', width: '100%', backgroundColor: 'lightblue' }}>
-                    <h1>MotoSpot</h1>
-                </div>
+                <MainAppBar />
                 <MapContainer />
             </div>
         </Router>
