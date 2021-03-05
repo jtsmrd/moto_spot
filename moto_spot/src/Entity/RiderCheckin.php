@@ -50,7 +50,7 @@ class RiderCheckin implements CreateDateEntityInterface
      * @Groups({"read"})
      * @Assert\NotBlank()
      */
-    private $lon;
+    private $lng;
 
     /**
      * @ORM\Column(type="float")
@@ -94,14 +94,14 @@ class RiderCheckin implements CreateDateEntityInterface
         return $this;
     }
 
-    public function getLon(): ?float
+    public function getLng(): ?float
     {
-        return $this->lon;
+        return $this->lng;
     }
 
-    public function setLon(float $lon): self
+    public function setLng(float $lng): self
     {
-        $this->lon = $lon;
+        $this->lng = $lng;
 
         return $this;
     }

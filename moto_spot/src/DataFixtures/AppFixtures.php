@@ -33,7 +33,7 @@ class AppFixtures extends Fixture
             $lon = $this->faker->randomFloat(12, -80.20980444333259, -79.77145102402869);
 
             $riderCheckin->setLat($lat);
-            $riderCheckin->setLon($lon);
+            $riderCheckin->setLng($lon);
             $riderCheckin->setCreateDate(new \DateTime());
 
             $manager->persist($riderCheckin);
