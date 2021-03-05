@@ -1,45 +1,23 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Map, GoogleApiWrapper } from 'google-maps-react';
+import React from 'react';
+import { Map as GoogleMap, GoogleApiWrapper } from 'google-maps-react';
 import MarkerCluster from './MarkerCluster';
-import { getRiderCheckins } from '../redux/Selectors';
-import { getRiderCheckinsRequestAction } from '../redux/Actions';
+import * as Types from '../redux/Types';
 
-const MapContainer = (props) => {
-    const dispatch = useDispatch();
-    const mapRef = useRef();
-    const riderCheckins = useSelector(getRiderCheckins);
-    const [mapArea, setMapArea] = useState({ NELat: null, NELon: null, SWLat: null, SWLon: null });
+export interface MapProps {
+    mapRef: object;
+    defaultZoomLevel: number;
+    initialCenter: {
+        lat: number;
+        lng: number;
+    };
+    riderCheckins: Types.RiderCheckin[];
+    onDragEnd: any;
+    onZoomChanged: any;
+    onMarkerClicked: any;
+}
 
-    useEffect(() => {
-        dispatch(
-            getRiderCheckinsRequestAction({
-                lat: 40.4406,
-                lng: -79.9959,
-                distance: 200,
-            }),
-        );
-        // getInitialMapVisibleArea();
-    }, []);
-
-    function getInitialMapVisibleArea() {
-        setTimeout(() => {
-            // @ts-ignore
-            let ne = mapRef.current.map.getBounds().getNorthEast();
-            // @ts-ignore
-            let sw = mapRef.current.map.getBounds().getSouthWest();
-            setMapArea({ NELat: ne.lat(), NELon: ne.lng(), SWLat: sw.lat(), SWLon: sw.lng() });
-        }, 100);
-    }
-
-    function onDragEnd() {}
-
-    function onZoomChanged() {}
-
-    function onMarkerClicked({ event, location, marker }) {
-        console.log(location);
-    }
-
+const Map: React.FC<MapProps> = (props) => {
+    const { mapRef, defaultZoomLevel, initialCenter, onDragEnd, onZoomChanged, riderCheckins, onMarkerClicked } = props;
     return (
         <div
             style={{
@@ -57,21 +35,19 @@ const MapContainer = (props) => {
                     width: '80vw',
                 }}
             >
-                <Map
+                <GoogleMap
+                    // @ts-ignore
                     ref={mapRef}
                     // @ts-ignore
                     google={props.google}
                     // @ts-ignore
-                    zoom={12}
-                    initialCenter={{
-                        lat: 40.4406,
-                        lng: -79.9959,
-                    }}
+                    zoom={defaultZoomLevel}
+                    initialCenter={initialCenter}
                     onDragend={onDragEnd}
                     onZoomChanged={onZoomChanged}
                 >
                     <MarkerCluster locations={riderCheckins} click={onMarkerClicked} />
-                </Map>
+                </GoogleMap>
             </div>
         </div>
     );
@@ -80,4 +56,4 @@ const MapContainer = (props) => {
 export default GoogleApiWrapper(
     { apiKey: 'AIzaSyADuYgHAFiqldTqvg_iT48-JDLCTWnCvwA' },
     // @ts-ignore
-)(MapContainer);
+)(Map);

@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import './styles/app.css';
 import Home from './components/Home';
-import MapContainer from './components/Map';
+import Map from './components/Map';
 // start the Stimulus application
 // import './bootstrap';
 import Header from './components/Header';
+import MapContainer from './components/MapContainer';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 
