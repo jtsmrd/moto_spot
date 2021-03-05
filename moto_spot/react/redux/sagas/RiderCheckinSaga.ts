@@ -11,7 +11,7 @@ function* getRiderCheckins(action: Action<ActionTypes.IGetRiderCheckinsRequestPa
             method: 'GET',
             params: {
                 lat: action.payload.lat,
-                lon: action.payload.lng,
+                lng: action.payload.lng,
                 distance: action.payload.distance,
             },
         });

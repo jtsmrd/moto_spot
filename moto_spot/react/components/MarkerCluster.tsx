@@ -24,7 +24,7 @@ const MarkerCluster = (props) => {
                 const marker = new google.maps.Marker({
                     position: {
                         lat: location.lat,
-                        lng: location.lon,
+                        lng: location.lng,
                     },
                     map: map,
                     name: 'Marker name',
@@ -71,7 +71,7 @@ MarkerCluster.propTypes = {
     locations: PropTypes.arrayOf(
         PropTypes.shape({
             lat: PropTypes.number.isRequired,
-            lon: PropTypes.number.isRequired,
+            lng: PropTypes.number.isRequired,
         }),
     ),
     click: PropTypes.func,

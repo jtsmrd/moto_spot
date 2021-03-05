@@ -20,19 +20,19 @@ class RiderCheckinRepository extends ServiceEntityRepository
         parent::__construct($registry, RiderCheckin::class);
     }
 
-    public function getRiderCheckinsAroundLocation(float $lat, float $lon, float $distance)
+    public function getRiderCheckinsAroundLocation(float $lat, float $lng, float $distance)
     {
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
         $rsm->addRootEntityFromClassMetadata('App\Entity\RiderCheckin', 'rc');
 
         $sql = '
-            SELECT id, lon, lat 
+            SELECT id, lng, lat 
             FROM rider_checkin rc
             WHERE (
             3959 * acos(
                 cos(radians(?))
                 * cos(radians(lat))
-                * cos(radians(lon) - radians(?))
+                * cos(radians(lng) - radians(?))
                 + sin(radians(?))
                 * sin(radians(lat))
             )
@@ -41,7 +41,7 @@ class RiderCheckinRepository extends ServiceEntityRepository
 
         $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
         $query->setParameter(1, $lat);
-        $query->setParameter(2, $lon);
+        $query->setParameter(2, $lng);
         $query->setParameter(3, $lat);
         $query->setParameter(4, $distance);
 

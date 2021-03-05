@@ -25,11 +25,11 @@ class DefaultController extends AbstractController
     public function getRiderCheckins(Request $request): Response
     {
         $lat = floatval($request->query->get('lat'));
-        $lon = floatval($request->query->get('lon'));
+        $lng = floatval($request->query->get('lng'));
         $distance = floatval($request->query->get('distance'));
 
         $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
-        $checkins = $repository->getRiderCheckinsAroundLocation($lat, $lon, $distance);
+        $checkins = $repository->getRiderCheckinsAroundLocation($lat, $lng, $distance);
 
         return new JsonResponse($checkins, Response::HTTP_OK);
     }

@@ -26,7 +26,7 @@ class GetRiderCheckinsAction extends AbstractController
     public function __invoke(Request $request)
     {
         $lat = floatval($request->query->get('lat'));
-        $lon = floatval($request->query->get('lon'));
+        $lon = floatval($request->query->get('lng'));
         $distance = floatval($request->query->get('distance'));
 
         $checkins = $this->riderCheckinRepository->getRiderCheckinsAroundLocation($lat, $lon, $distance);
