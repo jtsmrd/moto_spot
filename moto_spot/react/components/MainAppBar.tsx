@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
             marginRight: theme.spacing(2),
         },
         title: {
-            flexGrow: 1,
+            color: '#FFFFFF',
         },
     }),
 );
@@ -31,10 +32,16 @@ const MainAppBar: React.FC<{}> = (props) => {
                     <IconButton edge={'start'} className={classes.menuButton} color={'inherit'} aria-label={'menu'}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant={'h6'} className={classes.title}>
-                        MotoSpot
-                    </Typography>
-                    <Button color={'inherit'}>Login</Button>
+                    <NavLink to={'/'} style={{ flexGrow: 1 }}>
+                        <Typography variant={'h6'} className={classes.title}>
+                            MotoSpot
+                        </Typography>
+                    </NavLink>
+                    <NavLink to={'/profile'}>
+                        <Typography variant={'h6'} className={classes.title}>
+                            Profile
+                        </Typography>
+                    </NavLink>
                 </Toolbar>
             </AppBar>
         </div>
