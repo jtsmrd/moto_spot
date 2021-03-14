@@ -14,4 +14,14 @@ export interface IGetRiderCheckinsResponsePayload {
     riderCheckins: Types.RiderCheckin[];
 }
 
+export const SET_MAP_BOUNDS = 'SET_MAP_BOUNDS';
+export type SET_MAP_BOUNDS = typeof SET_MAP_BOUNDS;
+export interface ISetMapBoundsPayload {
+    neLat: number;
+    neLng: number;
+    swLat: number;
+    swLng: number;
+}
+
 export type IRiderCheckinActionsPayload = IGetRiderCheckinsRequestPayload | IGetRiderCheckinsResponsePayload;
+export type IMapActionsPayload = ISetMapBoundsPayload;

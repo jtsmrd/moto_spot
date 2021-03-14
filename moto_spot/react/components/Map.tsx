@@ -19,37 +19,19 @@ export interface MapProps {
 const Map: React.FC<MapProps> = (props) => {
     const { mapRef, defaultZoomLevel, initialCenter, onDragEnd, onZoomChanged, riderCheckins, onMarkerClicked } = props;
     return (
-        <div
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                width: '100vw',
-            }}
+        <GoogleMap
+            // @ts-ignore
+            ref={mapRef}
+            // @ts-ignore
+            google={props.google}
+            // @ts-ignore
+            zoom={defaultZoomLevel}
+            initialCenter={initialCenter}
+            onDragend={onDragEnd}
+            onZoomChanged={onZoomChanged}
         >
-            <div
-                style={{
-                    position: 'relative',
-                    height: '80vh',
-                    width: '80vw',
-                }}
-            >
-                <GoogleMap
-                    // @ts-ignore
-                    ref={mapRef}
-                    // @ts-ignore
-                    google={props.google}
-                    // @ts-ignore
-                    zoom={defaultZoomLevel}
-                    initialCenter={initialCenter}
-                    onDragend={onDragEnd}
-                    onZoomChanged={onZoomChanged}
-                >
-                    <MarkerCluster locations={riderCheckins} click={onMarkerClicked} />
-                </GoogleMap>
-            </div>
-        </div>
+            <MarkerCluster locations={riderCheckins} click={onMarkerClicked} />
+        </GoogleMap>
     );
 };
 
