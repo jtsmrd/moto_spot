@@ -21,13 +21,17 @@ const MarkerCluster = (props) => {
     useEffect(() => {
         if (map && locations) {
             const mapMarkers = locations.map((location) => {
+                const markerImage = new google.maps.MarkerImage('/images/m0.png');
+
                 const marker = new google.maps.Marker({
                     position: {
                         lat: location.lat,
                         lng: location.lng,
                     },
                     map: map,
-                    name: 'Marker name',
+                    name: 'M',
+                    icon: markerImage,
+                    label: '1',
                 });
 
                 eventNames.forEach((e) => {
@@ -44,16 +48,6 @@ const MarkerCluster = (props) => {
             });
 
             const clusterer = new MarkerClusterer(map, mapMarkers, { imagePath: '/images/m' });
-            // clusterer.setZoomOnClick(false);
-            // const clusterer = new MarkerClusterer(map, mapMarkers, {
-            //     styles: [
-            //         {
-            //             width: 40,
-            //             height: 40,
-            //             url: '/images/m2.png',
-            //         },
-            //     ],
-            // });
 
             // Cleanup function. Note, this is only returned if we create the markers
             return () => {
