@@ -11,13 +11,23 @@ export interface MapProps {
         lng: number;
     };
     riderCheckins: Types.RiderCheckin[];
+    onReady: any;
     onDragEnd: any;
     onZoomChanged: any;
     onMarkerClicked: any;
 }
 
 const Map: React.FC<MapProps> = (props) => {
-    const { mapRef, defaultZoomLevel, initialCenter, onDragEnd, onZoomChanged, riderCheckins, onMarkerClicked } = props;
+    const {
+        mapRef,
+        defaultZoomLevel,
+        initialCenter,
+        onDragEnd,
+        onZoomChanged,
+        riderCheckins,
+        onReady,
+        onMarkerClicked,
+    } = props;
     return (
         <GoogleMap
             // @ts-ignore
@@ -27,6 +37,10 @@ const Map: React.FC<MapProps> = (props) => {
             // @ts-ignore
             zoom={defaultZoomLevel}
             initialCenter={initialCenter}
+            mapTypeControl={false}
+            streetViewControl={false}
+            fullscreenControl={false}
+            onReady={onReady}
             onDragend={onDragEnd}
             onZoomChanged={onZoomChanged}
         >

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef, PropsWithChildren } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getRiderCheckins } from '../redux/Selectors';
+import { getRiderCheckins, getVisibleRiderCheckins } from '../redux/Selectors';
 import { getRiderCheckinsRequestAction, setMapBoundsAction } from '../redux/Actions';
 import Map from './Map';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -29,6 +30,7 @@ const MapContainer = (props) => {
     const DEFAULT_ZOOM_LEVEL = 12;
     const DEFAULT_DISTANCE_FILTER = 200;
     const riderCheckins = useSelector(getRiderCheckins);
+    const visibleRiderCheckins = useSelector(getVisibleRiderCheckins);
 
     useEffect(() => {
         dispatch(
@@ -55,7 +57,7 @@ const MapContainer = (props) => {
                     swLng: sw.lng(),
                 }),
             );
-        }, 100);
+        }, 200);
     }
 
     const onDragEnd = (e) => {
@@ -72,6 +74,23 @@ const MapContainer = (props) => {
 
     return (
         <div className={classes.root}>
+            <div
+                style={{
+                    zIndex: 1,
+                    width: '100%',
+                    textAlign: 'center',
+                    position: 'absolute',
+                }}
+            >
+                <p
+                    style={{
+                        display: 'inline-flex',
+                        backgroundColor: 'rgba(200, 200, 200, 0.5)',
+                    }}
+                >
+                    Number of riders: {visibleRiderCheckins.length}
+                </p>
+            </div>
             <Map
                 // @ts-ignore
                 mapRef={mapRef}
@@ -82,6 +101,17 @@ const MapContainer = (props) => {
                 riderCheckins={riderCheckins}
                 onMarkerClicked={onMarkerClicked}
             />
+            <div
+                style={{
+                    zIndex: 1,
+                    width: '100%',
+                    textAlign: 'center',
+                    position: 'absolute',
+                    bottom: 0,
+                }}
+            >
+                <Button style={{ backgroundColor: 'rgba(200, 200, 200, 0.5)' }}>Check in</Button>
+            </div>
         </div>
     );
 };
