@@ -14,3 +14,7 @@ export const getRiderCheckinsResponseAction: ActionCreator<ActionTypes.IGetRider
 export const setMapBoundsAction: ActionCreator<ActionTypes.ISetMapBoundsPayload> = actionCreator<ActionTypes.ISetMapBoundsPayload>(
     ActionTypes.SET_MAP_BOUNDS,
 );
+
+export const updateVisibleRiderCheckinsAction: ActionCreator<ActionTypes.IUpdateVisibleRiderCheckinsPayload> = actionCreator<ActionTypes.IUpdateVisibleRiderCheckinsPayload>(
+    ActionTypes.UPDATE_VISIBLE_RIDER_CHECKINS,
+);

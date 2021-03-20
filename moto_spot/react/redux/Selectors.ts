@@ -1,14 +1,15 @@
 import { statePropName as riderCheckinStatePropName, IRiderCheckinState } from './reducers/RiderCheckinReducer';
-import { statePropName as mapStatePropName, IMapState } from './reducers/MapReducer';
+import { statePropName as mapStatePropName, IMapInfoState } from './reducers/MapInfoReducer';
 
 export interface IAppState {
     [riderCheckinStatePropName]: IRiderCheckinState;
-    [mapStatePropName]: IMapState;
+    [mapStatePropName]: IMapInfoState;
     [otherKeys: string]: any;
 }
 
 const getRiderCheckinState = (state: IAppState) => state[riderCheckinStatePropName];
-const getMapState = (state: IAppState) => state[mapStatePropName];
+const getMapInfoState = (state: IAppState) => state[mapStatePropName];
 
 export const getRiderCheckins = (state: IAppState) => getRiderCheckinState(state).riderCheckins;
-export const getMap = (state: IAppState) => getMapState(state);
+export const getMapInfo = (state: IAppState) => getMapInfoState(state);
+export const getVisibleRiderCheckins = (state: IAppState) => getMapInfoState(state).visibleRiderCheckins;

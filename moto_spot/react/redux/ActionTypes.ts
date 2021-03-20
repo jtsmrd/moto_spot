@@ -23,5 +23,11 @@ export interface ISetMapBoundsPayload {
     swLng: number;
 }
 
+export const UPDATE_VISIBLE_RIDER_CHECKINS = 'UPDATE_VISIBLE_RIDER_CHECKINS';
+export type UPDATE_VISIBLE_RIDER_CHECKINS = typeof UPDATE_VISIBLE_RIDER_CHECKINS;
+export interface IUpdateVisibleRiderCheckinsPayload {
+    visibleRiderCheckins: Types.RiderCheckin[];
+}
+
 export type IRiderCheckinActionsPayload = IGetRiderCheckinsRequestPayload | IGetRiderCheckinsResponsePayload;
-export type IMapActionsPayload = ISetMapBoundsPayload;
+export type IMapActionsPayload = ISetMapBoundsPayload | IUpdateVisibleRiderCheckinsPayload;

@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-import { getMap } from '../redux/Selectors';
+import { getVisibleRiderCheckins } from '../redux/Selectors';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -22,12 +22,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const MapInfo: React.FC<{}> = (props) => {
     const classes = useStyles();
-    const mapInfo = useSelector(getMap);
-    console.log('mapInfo: ', mapInfo);
+    const visibleRiderCheckins = useSelector(getVisibleRiderCheckins);
+
     return (
         <div className={classes.root}>
             <h1>MotoSpot</h1>
-            <p>Number of riders:</p>
+            <p>Number of riders: {visibleRiderCheckins.length}</p>
             <Button>Check in</Button>
         </div>
     );

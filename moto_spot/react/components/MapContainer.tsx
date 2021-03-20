@@ -22,7 +22,6 @@ const MapContainer = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
     const mapRef = useRef();
-    // const [mapArea, setMapArea] = useState({ NELat: null, NELon: null, SWLat: null, SWLon: null });
     const [initialCenter, setInitialCenter] = useState({
         lat: 40.4406,
         lng: -79.9959,
@@ -39,15 +38,15 @@ const MapContainer = (props) => {
                 distance: DEFAULT_DISTANCE_FILTER,
             }),
         );
+        getMapVisibleArea();
     }, []);
 
-    function getInitialMapVisibleArea() {
+    function getMapVisibleArea() {
         setTimeout(() => {
             // @ts-ignore
             let ne = mapRef.current.map.getBounds().getNorthEast();
             // @ts-ignore
             let sw = mapRef.current.map.getBounds().getSouthWest();
-            // setMapArea({ NELat: ne.lat(), NELon: ne.lng(), SWLat: sw.lat(), SWLon: sw.lng() });
             dispatch(
                 setMapBoundsAction({
                     neLat: ne.lat(),
@@ -60,20 +59,11 @@ const MapContainer = (props) => {
     }
 
     const onDragEnd = (e) => {
-        // console.log('onDragEnd);
-
-        // @ts-ignore
-        // let ne = mapRef.current.map.getBounds().getNorthEast();
-        // @ts-ignore
-        // let sw = mapRef.current.map.getBounds().getSouthWest();
-        // console.log('lat: ', ne.lat());
-        // console.log('lng: ', ne.lng());
-
-        getInitialMapVisibleArea();
+        getMapVisibleArea();
     };
 
     const onZoomChanged = () => {
-        console.log('onZoomChanged');
+        getMapVisibleArea();
     };
 
     const onMarkerClicked = ({ event, location, marker }) => {

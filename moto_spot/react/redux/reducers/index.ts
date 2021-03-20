@@ -1,5 +1,8 @@
 import { combineReducers } from 'redux';
 import RiderCheckinReducer from './RiderCheckinReducer';
-import MapReducer from './MapReducer';
+import MapInfoReducer from './MapInfoReducer';
 
-export default combineReducers({ riderCheckins: RiderCheckinReducer, map: MapReducer });
+export default combineReducers({
+    riderCheckins: RiderCheckinReducer,
+    mapInfo: MapInfoReducer,
+});
