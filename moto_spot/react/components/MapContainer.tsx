@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, PropsWithChildren } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRiderCheckins, getVisibleRiderCheckins } from '../redux/Selectors';
-import { getRiderCheckinsRequestAction, setMapBoundsAction } from '../redux/Actions';
+import { createRiderCheckinRequestAction, getRiderCheckinsRequestAction, setMapBoundsAction } from '../redux/Actions';
 import Map from './Map';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -27,6 +27,7 @@ const MapContainer = (props) => {
         lat: 40.4406,
         lng: -79.9959,
     });
+    const [currentLocation, setCurrentLocation] = useState(null);
     const DEFAULT_ZOOM_LEVEL = 12;
     const DEFAULT_DISTANCE_FILTER = 200;
     const riderCheckins = useSelector(getRiderCheckins);
@@ -40,8 +41,45 @@ const MapContainer = (props) => {
                 distance: DEFAULT_DISTANCE_FILTER,
             }),
         );
-        getMapVisibleArea();
     }, []);
+
+    useEffect(() => {
+        getCurrentLocation();
+    }, []);
+
+    const locationOptions = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+    };
+
+    const locationSuccess = (position) => {
+        console.log(position);
+        setCurrentLocation(position.coords);
+    };
+
+    const locationError = (error) => {
+        console.log(error);
+    };
+
+    const getCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
+                if (result.state === 'granted') {
+                    navigator.geolocation.getCurrentPosition(locationSuccess);
+                } else if (result.state === 'prompt') {
+                    navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                } else if (result.state === 'denied') {
+                    console.log(result.state);
+                }
+                result.onchange = function () {
+                    console.log(result.state);
+                };
+            });
+        } else {
+            alert('Location unavailable');
+        }
+    };
 
     function getMapVisibleArea() {
         setTimeout(() => {
@@ -60,6 +98,10 @@ const MapContainer = (props) => {
         }, 200);
     }
 
+    const onReady = () => {
+        getMapVisibleArea();
+    };
+
     const onDragEnd = (e) => {
         getMapVisibleArea();
     };
@@ -70,6 +112,19 @@ const MapContainer = (props) => {
 
     const onMarkerClicked = ({ event, location, marker }) => {
         console.log('Marker clicked: ', location);
+    };
+
+    const handleCheckin = () => {
+        if (currentLocation) {
+            dispatch(
+                createRiderCheckinRequestAction({
+                    lat: currentLocation.latitude,
+                    lng: currentLocation.longitude,
+                }),
+            );
+        } else {
+            alert('You must enable location to checkin');
+        }
     };
 
     return (
@@ -96,10 +151,12 @@ const MapContainer = (props) => {
                 mapRef={mapRef}
                 defaultZoomLevel={DEFAULT_ZOOM_LEVEL}
                 initialCenter={initialCenter}
+                onReady={onReady}
                 onDragEnd={onDragEnd}
                 onZoomChanged={onZoomChanged}
                 riderCheckins={riderCheckins}
                 onMarkerClicked={onMarkerClicked}
+                currentLocation={currentLocation}
             />
             <div
                 style={{
@@ -110,7 +167,9 @@ const MapContainer = (props) => {
                     bottom: 0,
                 }}
             >
-                <Button style={{ backgroundColor: 'rgba(200, 200, 200, 0.5)' }}>Check in</Button>
+                <Button style={{ backgroundColor: 'rgba(200, 200, 200, 0.5)' }} onClick={handleCheckin}>
+                    Check in
+                </Button>
             </div>
         </div>
     );

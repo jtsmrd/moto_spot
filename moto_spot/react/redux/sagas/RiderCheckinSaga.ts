@@ -7,7 +7,7 @@ import { request as httpRequest } from '../../client';
 function* getRiderCheckins(action: Action<ActionTypes.IGetRiderCheckinsRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
-            url: '/api/get-rider-checkins',
+            url: '/api/get_rider_checkins',
             method: 'GET',
             params: {
                 lat: action.payload.lat,
@@ -24,6 +24,28 @@ function* getRiderCheckins(action: Action<ActionTypes.IGetRiderCheckinsRequestPa
     }
 }
 
+function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinRequestPayload>) {
+    try {
+        const res = yield call(httpRequest, {
+            url: '/api/create_rider_checkin',
+            method: 'POST',
+            data: {
+                lat: action.payload.lat,
+                lng: action.payload.lng,
+            },
+        });
+        const riderCheckinPayload: ActionTypes.ICreateRiderCheckinResponsePayload = {
+            riderCheckin: res.data,
+        };
+        yield put(Actions.createRiderCheckinResponseAction(riderCheckinPayload));
+    } catch (e) {
+        yield put(Actions.createRiderCheckinResponseAction(e));
+    }
+}
+
 export default function* watchRiderCheckinRequests() {
-    yield all([takeLatest(ActionTypes.GET_RIDER_CHECKINS_REQUEST, getRiderCheckins)]);
+    yield all([
+        takeLatest(ActionTypes.GET_RIDER_CHECKINS_REQUEST, getRiderCheckins),
+        takeLatest(ActionTypes.CREATE_RIDER_CHECKIN_REQUEST, createRiderCheckin),
+    ]);
 }

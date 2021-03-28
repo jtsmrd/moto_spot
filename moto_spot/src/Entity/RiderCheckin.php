@@ -12,9 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *     itemOperations={"get"},
- *     collectionOperations={
- *          "post"
- *      },
+ *     collectionOperations={},
  *     normalizationContext={
  *          "groups"={"read"}
  *     }

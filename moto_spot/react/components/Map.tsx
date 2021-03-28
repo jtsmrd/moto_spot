@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map as GoogleMap, GoogleApiWrapper } from 'google-maps-react';
+import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
 import MarkerCluster from './MarkerCluster';
 import * as Types from '../redux/Types';
 
@@ -15,6 +15,7 @@ export interface MapProps {
     onDragEnd: any;
     onZoomChanged: any;
     onMarkerClicked: any;
+    currentLocation: object;
 }
 
 const Map: React.FC<MapProps> = (props) => {
@@ -27,6 +28,7 @@ const Map: React.FC<MapProps> = (props) => {
         riderCheckins,
         onReady,
         onMarkerClicked,
+        currentLocation,
     } = props;
     return (
         <GoogleMap
@@ -44,6 +46,12 @@ const Map: React.FC<MapProps> = (props) => {
             onDragend={onDragEnd}
             onZoomChanged={onZoomChanged}
         >
+            {currentLocation && (
+                <Marker
+                    // @ts-ignore
+                    position={{ lat: currentLocation.latitude, lng: currentLocation.longitude }}
+                />
+            )}
             <MarkerCluster locations={riderCheckins} click={onMarkerClicked} />
         </GoogleMap>
     );

@@ -11,6 +11,14 @@ export const getRiderCheckinsResponseAction: ActionCreator<ActionTypes.IGetRider
     ActionTypes.GET_RIDER_CHECKINS_RESPONSE,
 );
 
+export const createRiderCheckinRequestAction: ActionCreator<ActionTypes.ICreateRiderCheckinRequestPayload> = actionCreator<ActionTypes.ICreateRiderCheckinRequestPayload>(
+    ActionTypes.CREATE_RIDER_CHECKIN_REQUEST,
+);
+
+export const createRiderCheckinResponseAction: ActionCreator<ActionTypes.ICreateRiderCheckinResponsePayload> = actionCreator<ActionTypes.ICreateRiderCheckinResponsePayload>(
+    ActionTypes.CREATE_RIDER_CHECKIN_RESPONSE,
+);
+
 export const setMapBoundsAction: ActionCreator<ActionTypes.ISetMapBoundsPayload> = actionCreator<ActionTypes.ISetMapBoundsPayload>(
     ActionTypes.SET_MAP_BOUNDS,
 );

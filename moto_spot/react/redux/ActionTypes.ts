@@ -14,6 +14,19 @@ export interface IGetRiderCheckinsResponsePayload {
     riderCheckins: Types.RiderCheckin[];
 }
 
+export const CREATE_RIDER_CHECKIN_REQUEST = 'CREATE_RIDER_CHECKIN_REQUEST';
+export type CREATE_RIDER_CHECKIN_REQUEST = typeof CREATE_RIDER_CHECKIN_REQUEST;
+export interface ICreateRiderCheckinRequestPayload {
+    lat: number;
+    lng: number;
+}
+
+export const CREATE_RIDER_CHECKIN_RESPONSE = 'CREATE_RIDER_CHECKIN_RESPONSE';
+export type CREATE_RIDER_CHECKIN_RESPONSE = typeof CREATE_RIDER_CHECKIN_RESPONSE;
+export interface ICreateRiderCheckinResponsePayload {
+    riderCheckin: Types.RiderCheckin;
+}
+
 export const SET_MAP_BOUNDS = 'SET_MAP_BOUNDS';
 export type SET_MAP_BOUNDS = typeof SET_MAP_BOUNDS;
 export interface ISetMapBoundsPayload {
@@ -29,5 +42,9 @@ export interface IUpdateVisibleRiderCheckinsPayload {
     visibleRiderCheckins: Types.RiderCheckin[];
 }
 
-export type IRiderCheckinActionsPayload = IGetRiderCheckinsRequestPayload | IGetRiderCheckinsResponsePayload;
+export type IRiderCheckinActionsPayload =
+    | IGetRiderCheckinsRequestPayload
+    | IGetRiderCheckinsResponsePayload
+    | ICreateRiderCheckinRequestPayload
+    | ICreateRiderCheckinResponsePayload;
 export type IMapActionsPayload = ISetMapBoundsPayload | IUpdateVisibleRiderCheckinsPayload;

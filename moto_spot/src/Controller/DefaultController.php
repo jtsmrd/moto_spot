@@ -3,14 +3,32 @@
 namespace App\Controller;
 
 use App\Entity\RiderCheckin;
+use App\Exception\InvalidDataException;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class DefaultController extends AbstractController
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * @Route("/{reactRouting}", name="index", defaults={"reactRouting": null})
      */
@@ -20,7 +38,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/api/get-rider-checkins", name="get-rider-checkins")
+     * @Route("/api/get_rider_checkins", name="get_rider_checkins", methods={"get"})
      */
     public function getRiderCheckins(Request $request): Response
     {
@@ -32,6 +50,95 @@ class DefaultController extends AbstractController
         $checkins = $repository->getRiderCheckinsAroundLocation($lat, $lng, $distance);
 
         return new JsonResponse($checkins, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/create_rider_checkin", name="create_rider_checkin", methods={"post"})
+     * @param Request $request
+     * @return Response
+     */
+    public function createRiderCheckin(Request $request): Response
+    {
+        $requestData = json_decode($request->getContent(), true);
+        if (!is_array($requestData)) {
+            return new JsonResponse([], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $this->riderCheckinIsValid($requestData);
+        } catch (InvalidDataException $e) {
+            return new JsonResponse([
+                'message' => $e->getMessage(),
+                'errors' => $e->getErrors()
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $userUUID = $request->cookies->get('user_uuid');
+        $newUserUUID = null;
+        if (!$userUUID) {
+            $newUserUUID = Uuid::v4();
+        } else {
+            // If existing rider checkin exists, mark as expired
+            $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
+            $existingCheckin = $repository->findOneBy(['userUUID' => $userUUID]);
+            if ($existingCheckin) {
+                $existingCheckin->setExpireDate(new \DateTime());
+                $this->entityManager->persist($existingCheckin);
+            }
+        }
+
+        $accessor = PropertyAccess::createPropertyAccessor();
+
+        $riderCheckin = new RiderCheckin();
+        $riderCheckin->setLat($accessor->getValue($requestData, '[lat]'));
+        $riderCheckin->setLng($accessor->getValue($requestData, '[lng]'));
+        $riderCheckin->setUserUUID($userUUID ?? $newUserUUID);
+        $riderCheckin->setCreateDate(new \DateTime());
+
+        $this->entityManager->persist($riderCheckin);
+        $this->entityManager->flush();
+
+        $response = new JsonResponse([
+            'id' => $riderCheckin->getId(),
+            'userUUID' => $riderCheckin->getUserUUID(),
+            'lat' => $riderCheckin->getLat(),
+            'lng' => $riderCheckin->getLng()
+        ], Response::HTTP_CREATED);
+        if (!$userUUID) {
+            $response->headers->setCookie(new Cookie(
+                'user_uuid',
+                $newUserUUID,
+                0,
+                '/'
+            ));
+        }
+
+        return $response;
+    }
+
+    private function riderCheckinIsValid(array $requestData): void
+    {
+        $constraints = new Assert\Collection([
+            'lat' => new Assert\Required([
+                new Assert\NotBlank()
+            ]),
+            'lng' => new Assert\Required([
+                new Assert\NotBlank()
+            ]),
+        ]);
+
+        $validator = Validation::createValidator();
+        $errors = $validator->validate($requestData, $constraints);
+
+        if (count($errors) > 0) {
+            $messages = [];
+
+            /** @var ConstraintViolation $violation */
+            foreach ($errors as $violation) {
+                $messages[$violation->getPropertyPath()][] = $violation->getMessage();
+            }
+            throw new InvalidDataException('Validation Errors', $messages);
+        }
     }
 
     /**
