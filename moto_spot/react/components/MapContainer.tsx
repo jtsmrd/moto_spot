@@ -83,18 +83,24 @@ const MapContainer = (props) => {
 
     function getMapVisibleArea() {
         setTimeout(() => {
-            // @ts-ignore
-            let ne = mapRef.current.map.getBounds().getNorthEast();
-            // @ts-ignore
-            let sw = mapRef.current.map.getBounds().getSouthWest();
-            dispatch(
-                setMapBoundsAction({
-                    neLat: ne.lat(),
-                    neLng: ne.lng(),
-                    swLat: sw.lat(),
-                    swLng: sw.lng(),
-                }),
-            );
+            try {
+                // @ts-ignore
+                let ne = mapRef.current.map.getBounds().getNorthEast();
+                // @ts-ignore
+                let sw = mapRef.current.map.getBounds().getSouthWest();
+                console.log('Successfully got map bounds');
+                dispatch(
+                    setMapBoundsAction({
+                        neLat: ne.lat(),
+                        neLng: ne.lng(),
+                        swLat: sw.lat(),
+                        swLng: sw.lng(),
+                    }),
+                );
+            } catch (e) {
+                console.log('Unable to get map bounds on load, retrying: ', e);
+                getMapVisibleArea();
+            }
         }, 200);
     }
 
