@@ -11,11 +11,11 @@ export interface MapProps {
         lng: number;
     };
     riderCheckins: Types.RiderCheckin[];
+    userCheckin: Types.RiderCheckin;
     onReady: any;
     onDragEnd: any;
     onZoomChanged: any;
     onMarkerClicked: any;
-    currentLocation: object;
 }
 
 const Map: React.FC<MapProps> = (props) => {
@@ -26,9 +26,9 @@ const Map: React.FC<MapProps> = (props) => {
         onDragEnd,
         onZoomChanged,
         riderCheckins,
+        userCheckin,
         onReady,
         onMarkerClicked,
-        currentLocation,
     } = props;
     return (
         <GoogleMap
@@ -46,10 +46,10 @@ const Map: React.FC<MapProps> = (props) => {
             onDragend={onDragEnd}
             onZoomChanged={onZoomChanged}
         >
-            {currentLocation && (
+            {userCheckin && (
                 <Marker
                     // @ts-ignore
-                    position={{ lat: currentLocation.latitude, lng: currentLocation.longitude }}
+                    position={{ lat: userCheckin.lat, lng: userCheckin.lng }}
                 />
             )}
             <MarkerCluster locations={riderCheckins} click={onMarkerClicked} />

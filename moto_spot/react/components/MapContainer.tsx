@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, PropsWithChildren } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getRiderCheckins, getVisibleRiderCheckins } from '../redux/Selectors';
+import { getRiderCheckins, getUserCheckin, getVisibleRiderCheckins } from '../redux/Selectors';
 import { createRiderCheckinRequestAction, getRiderCheckinsRequestAction, setMapBoundsAction } from '../redux/Actions';
 import Map from './Map';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -31,6 +31,7 @@ const MapContainer = (props) => {
     const DEFAULT_ZOOM_LEVEL = 12;
     const DEFAULT_DISTANCE_FILTER = 200;
     const riderCheckins = useSelector(getRiderCheckins);
+    const userCheckin = useSelector(getUserCheckin);
     const visibleRiderCheckins = useSelector(getVisibleRiderCheckins);
 
     useEffect(() => {
@@ -129,7 +130,8 @@ const MapContainer = (props) => {
                 }),
             );
         } else {
-            alert('You must enable location to checkin');
+            getCurrentLocation();
+            // alert('You must enable location to checkin');
         }
     };
 
@@ -161,8 +163,8 @@ const MapContainer = (props) => {
                 onDragEnd={onDragEnd}
                 onZoomChanged={onZoomChanged}
                 riderCheckins={riderCheckins}
+                userCheckin={userCheckin}
                 onMarkerClicked={onMarkerClicked}
-                currentLocation={currentLocation}
             />
             <div
                 style={{

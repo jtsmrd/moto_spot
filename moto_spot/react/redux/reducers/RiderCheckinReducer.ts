@@ -1,9 +1,11 @@
 import { Action } from 'typescript-fsa';
 import * as Types from '../Types';
 import * as ActionTypes from '../ActionTypes';
+import Cookie from 'js-cookie';
 
 export interface IRiderCheckinState {
     riderCheckins: Types.RiderCheckin[];
+    userCheckin: Types.RiderCheckin;
     getCheckinsLoading: boolean;
     getCheckinsError: object;
     createCheckinLoading: boolean;
@@ -12,6 +14,7 @@ export interface IRiderCheckinState {
 
 export const initialState: IRiderCheckinState = {
     riderCheckins: [],
+    userCheckin: null,
     getCheckinsLoading: false,
     getCheckinsError: null,
     createCheckinLoading: false,
@@ -43,7 +46,8 @@ export default function RiderCheckinReducer(
             const { riderCheckins } = action.payload as ActionTypes.IGetRiderCheckinsResponsePayload;
             return {
                 ...state,
-                riderCheckins,
+                riderCheckins: getActiveRiderCheckins(riderCheckins),
+                userCheckin: getUserCheckin(riderCheckins),
                 getCheckinsLoading: false,
                 getCheckinsError: null,
             };
@@ -73,4 +77,19 @@ export default function RiderCheckinReducer(
         }
     }
     return state;
+}
+
+function getActiveRiderCheckins(checkins: Types.RiderCheckin[]) {
+    const userUUID = Cookie.get('user_uuid');
+    return checkins.filter((checkin) => {
+        return checkin.userUUID !== userUUID;
+    });
+}
+
+function getUserCheckin(checkins: Types.RiderCheckin[]) {
+    const userUUID = Cookie.get('user_uuid');
+    const results = checkins.filter((checkin) => {
+        return checkin.userUUID === userUUID;
+    });
+    return (results && results[0]) || null;
 }

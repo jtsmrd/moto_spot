@@ -22,7 +22,6 @@ const MarkerCluster = (props) => {
         if (map && locations) {
             const mapMarkers = locations.map((location) => {
                 const markerImage = new google.maps.MarkerImage('/images/m0.png');
-
                 const marker = new google.maps.Marker({
                     position: {
                         lat: location.lat,

@@ -26,7 +26,7 @@ class RiderCheckinRepository extends ServiceEntityRepository
         $rsm->addRootEntityFromClassMetadata('App\Entity\RiderCheckin', 'rc');
 
         $sql = '
-            SELECT id, lng, lat 
+            SELECT id, user_uuid, lng, lat, expire_date 
             FROM rider_checkin rc
             WHERE (
             3959 * acos(
@@ -37,6 +37,7 @@ class RiderCheckinRepository extends ServiceEntityRepository
                 * sin(radians(lat))
             )
             ) < ?
+            AND expire_date IS NULL
             ';
 
         $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);

@@ -109,7 +109,10 @@ class DefaultController extends AbstractController
                 'user_uuid',
                 $newUserUUID,
                 0,
-                '/'
+                '/',
+                null,
+                null,
+                false
             ));
         }
 

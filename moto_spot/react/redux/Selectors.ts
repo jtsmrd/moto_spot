@@ -11,5 +11,6 @@ const getRiderCheckinState = (state: IAppState) => state[riderCheckinStatePropNa
 const getMapInfoState = (state: IAppState) => state[mapStatePropName];
 
 export const getRiderCheckins = (state: IAppState) => getRiderCheckinState(state).riderCheckins;
+export const getUserCheckin = (state: IAppState) => getRiderCheckinState(state).userCheckin;
 export const getMapInfo = (state: IAppState) => getMapInfoState(state);
 export const getVisibleRiderCheckins = (state: IAppState) => getMapInfoState(state).visibleRiderCheckins;
