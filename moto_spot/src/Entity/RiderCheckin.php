@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=RiderCheckinRepository::class)
  * @UniqueEntity("userUUID")
  */
-class RiderCheckin implements CreateDateEntityInterface
+class RiderCheckin
 {
     /**
      * @ORM\Id
@@ -39,7 +39,7 @@ class RiderCheckin implements CreateDateEntityInterface
     private $userUUID;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="integer")
      */
     private $createDate;
 
@@ -58,8 +58,7 @@ class RiderCheckin implements CreateDateEntityInterface
     private $lat;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Assert\DateTime()
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $expireDate;
 
@@ -80,12 +79,12 @@ class RiderCheckin implements CreateDateEntityInterface
         return $this;
     }
 
-    public function getCreateDate(): ?\DateTimeInterface
+    public function getCreateDate(): ?int
     {
         return $this->createDate;
     }
 
-    public function setCreateDate(\DateTimeInterface $createDate): CreateDateEntityInterface
+    public function setCreateDate(int $createDate): self
     {
         $this->createDate = $createDate;
 
@@ -116,12 +115,12 @@ class RiderCheckin implements CreateDateEntityInterface
         return $this;
     }
 
-    public function getExpireDate(): ?\DateTimeInterface
+    public function getExpireDate(): ?int
     {
         return $this->expireDate;
     }
 
-    public function setExpireDate(?\DateTimeInterface $expireDate): self
+    public function setExpireDate(?int $expireDate): self
     {
         $this->expireDate = $expireDate;
 

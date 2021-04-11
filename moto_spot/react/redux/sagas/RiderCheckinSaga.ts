@@ -32,6 +32,7 @@ function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinReque
             data: {
                 lat: action.payload.lat,
                 lng: action.payload.lng,
+                expire_date: action.payload.expire_date,
             },
         });
         const riderCheckinPayload: ActionTypes.ICreateRiderCheckinResponsePayload = {
@@ -40,6 +41,22 @@ function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinReque
         yield put(Actions.createRiderCheckinResponseAction(riderCheckinPayload));
     } catch (e) {
         yield put(Actions.createRiderCheckinResponseAction(e));
+    }
+}
+
+function* deleteRiderCheckin(action: Action<ActionTypes.IDeleteRiderCheckinRequestPayload>) {
+    try {
+        yield call(httpRequest, {
+            url: '/api/rider_checkin',
+            method: 'DELETE',
+            params: {
+                id: action.payload.id,
+            },
+        });
+        const deleteRiderCheckinPayload: ActionTypes.IDeleteRiderCheckinResponsePayload = {};
+        yield put(Actions.deleteRiderCheckinResponseAction(deleteRiderCheckinPayload));
+    } catch (e) {
+        yield put(Actions.deleteRiderCheckinResponseAction(e));
     }
 }
 

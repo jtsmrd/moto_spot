@@ -37,7 +37,7 @@ class RiderCheckinRepository extends ServiceEntityRepository
                 * sin(radians(lat))
             )
             ) < ?
-            AND expire_date IS NULL
+            AND expire_date > ?
             ';
 
         $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
@@ -45,6 +45,9 @@ class RiderCheckinRepository extends ServiceEntityRepository
         $query->setParameter(2, $lng);
         $query->setParameter(3, $lat);
         $query->setParameter(4, $distance);
+
+        $timestampNow = (new \DateTime('now', new \DateTimeZone('UTC')))->getTimestamp();
+        $query->setParameter(5, $timestampNow);
 
         return $query->getArrayResult();
 

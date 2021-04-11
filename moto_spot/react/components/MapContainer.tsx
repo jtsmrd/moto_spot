@@ -5,6 +5,8 @@ import { createRiderCheckinRequestAction, getRiderCheckinsRequestAction, setMapB
 import Map from './Map';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
+import RiderCheckinDialog from './RiderCheckinDialog';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -28,6 +30,7 @@ const MapContainer = (props) => {
         lng: -79.9959,
     });
     const [currentLocation, setCurrentLocation] = useState(null);
+    const [checkinDialogVisible, setCheckinDialogVisible] = useState(false);
     const DEFAULT_ZOOM_LEVEL = 12;
     const DEFAULT_DISTANCE_FILTER = 200;
     const riderCheckins = useSelector(getRiderCheckins);
@@ -47,6 +50,15 @@ const MapContainer = (props) => {
     useEffect(() => {
         getCurrentLocation();
     }, []);
+
+    const handleClickOpen = () => {
+        setCheckinDialogVisible(true);
+    };
+
+    const handleClose = (value) => {
+        setCheckinDialogVisible(false);
+        handleCheckin(value);
+    };
 
     const locationOptions = {
         enableHighAccuracy: true,
@@ -121,12 +133,17 @@ const MapContainer = (props) => {
         console.log('Marker clicked: ', location);
     };
 
-    const handleCheckin = () => {
+    const onUserMarkerClicked = (e) => {
+        console.log('Marker clicked: ', e);
+    };
+
+    const handleCheckin = (expireValue) => {
         if (currentLocation) {
             dispatch(
                 createRiderCheckinRequestAction({
                     lat: currentLocation.latitude,
                     lng: currentLocation.longitude,
+                    expire_date: expireValue ? moment.utc().add(expireValue, 'minutes').valueOf() / 1000 : null,
                 }),
             );
         } else {
@@ -165,6 +182,7 @@ const MapContainer = (props) => {
                 riderCheckins={riderCheckins}
                 userCheckin={userCheckin}
                 onMarkerClicked={onMarkerClicked}
+                onUserMarkerClicked={onUserMarkerClicked}
             />
             <div
                 style={{
@@ -175,9 +193,10 @@ const MapContainer = (props) => {
                     bottom: 0,
                 }}
             >
-                <Button style={{ backgroundColor: 'rgba(200, 200, 200, 0.5)' }} onClick={handleCheckin}>
+                <Button style={{ backgroundColor: 'rgba(200, 200, 200, 0.5)' }} onClick={handleClickOpen}>
                     Check in
                 </Button>
+                <RiderCheckinDialog open={checkinDialogVisible} onClose={handleClose} />
             </div>
         </div>
     );

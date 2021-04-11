@@ -10,6 +10,8 @@ export interface IRiderCheckinState {
     getCheckinsError: object;
     createCheckinLoading: boolean;
     createCheckinError: object;
+    deleteCheckinLoading: boolean;
+    deleteCheckinError: object;
 }
 
 export const initialState: IRiderCheckinState = {
@@ -19,6 +21,8 @@ export const initialState: IRiderCheckinState = {
     getCheckinsError: null,
     createCheckinLoading: false,
     createCheckinError: null,
+    deleteCheckinLoading: false,
+    deleteCheckinError: null,
 };
 
 export const statePropName = 'riderCheckins';
@@ -70,10 +74,19 @@ export default function RiderCheckinReducer(
             const { riderCheckin } = action.payload as ActionTypes.ICreateRiderCheckinResponsePayload;
             return {
                 ...state,
-                riderCheckins: [...state.riderCheckins, riderCheckin],
+                userCheckin: riderCheckin,
                 createCheckinLoading: false,
                 createCheckinError: null,
             };
+        }
+        case ActionTypes.DELETE_RIDER_CHECKIN_REQUEST: {
+            return { ...state, deleteCheckinLoading: true, deleteCheckinError: null };
+        }
+        case ActionTypes.DELETE_RIDER_CHECKIN_RESPONSE: {
+            if (action.error) {
+                return { ...state, deleteCheckinError: action.payload, deleteCheckinLoading: false };
+            }
+            return { ...state, userCheckin: null, deleteCheckinError: null, deleteCheckinLoading: false };
         }
     }
     return state;

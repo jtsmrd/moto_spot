@@ -19,6 +19,7 @@ export type CREATE_RIDER_CHECKIN_REQUEST = typeof CREATE_RIDER_CHECKIN_REQUEST;
 export interface ICreateRiderCheckinRequestPayload {
     lat: number;
     lng: number;
+    expire_date?: number;
 }
 
 export const CREATE_RIDER_CHECKIN_RESPONSE = 'CREATE_RIDER_CHECKIN_RESPONSE';
@@ -42,9 +43,21 @@ export interface IUpdateVisibleRiderCheckinsPayload {
     visibleRiderCheckins: Types.RiderCheckin[];
 }
 
+export const DELETE_RIDER_CHECKIN_REQUEST = 'DELETE_RIDER_CHECKIN_REQUEST';
+export type DELETE_RIDER_CHECKIN_REQUEST = typeof DELETE_RIDER_CHECKIN_REQUEST;
+export interface IDeleteRiderCheckinRequestPayload {
+    id: number;
+}
+
+export const DELETE_RIDER_CHECKIN_RESPONSE = 'DELETE_RIDER_CHECKIN_RESPONSE';
+export type DELETE_RIDER_CHECKIN_RESPONSE = typeof DELETE_RIDER_CHECKIN_RESPONSE;
+export interface IDeleteRiderCheckinResponsePayload {}
+
 export type IRiderCheckinActionsPayload =
     | IGetRiderCheckinsRequestPayload
     | IGetRiderCheckinsResponsePayload
     | ICreateRiderCheckinRequestPayload
-    | ICreateRiderCheckinResponsePayload;
+    | ICreateRiderCheckinResponsePayload
+    | IDeleteRiderCheckinRequestPayload
+    | IDeleteRiderCheckinResponsePayload;
 export type IMapActionsPayload = ISetMapBoundsPayload | IUpdateVisibleRiderCheckinsPayload;

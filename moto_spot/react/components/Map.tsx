@@ -16,6 +16,7 @@ export interface MapProps {
     onDragEnd: any;
     onZoomChanged: any;
     onMarkerClicked: any;
+    onUserMarkerClicked: any;
 }
 
 const Map: React.FC<MapProps> = (props) => {
@@ -29,6 +30,7 @@ const Map: React.FC<MapProps> = (props) => {
         userCheckin,
         onReady,
         onMarkerClicked,
+        onUserMarkerClicked,
     } = props;
     return (
         <GoogleMap
@@ -50,6 +52,7 @@ const Map: React.FC<MapProps> = (props) => {
                 <Marker
                     // @ts-ignore
                     position={{ lat: userCheckin.lat, lng: userCheckin.lng }}
+                    onClick={onUserMarkerClicked}
                 />
             )}
             <MarkerCluster locations={riderCheckins} click={onMarkerClicked} />

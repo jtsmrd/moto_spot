@@ -39,6 +39,8 @@ class DefaultController extends AbstractController
 
     /**
      * @Route("/api/get_rider_checkins", name="get_rider_checkins", methods={"get"})
+     * @param Request $request
+     * @return Response
      */
     public function getRiderCheckins(Request $request): Response
     {
@@ -50,6 +52,32 @@ class DefaultController extends AbstractController
         $checkins = $repository->getRiderCheckinsAroundLocation($lat, $lng, $distance);
 
         return new JsonResponse($checkins, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/rider_checkin", name="delete_rider_checkin", methods={"delete"})
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteRiderCheckin(Request $request): Response
+    {
+        $userUUID = $request->cookies->get('user_uuid');
+        if (!$userUUID) {
+            return new JsonResponse(null, Response::HTTP_FORBIDDEN);
+        }
+
+        $riderCheckinId = floatval($request->query->get('id'));
+        $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
+
+        $checkinToDelete = $repository->findOneBy(['userUUID' => $userUUID, 'id' => $riderCheckinId]);
+        if (!$checkinToDelete) {
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        }
+
+        $this->entityManager->remove($checkinToDelete);
+        $this->entityManager->flush();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -80,9 +108,10 @@ class DefaultController extends AbstractController
         } else {
             // If existing rider checkin exists, mark as expired
             $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
-            $existingCheckin = $repository->findOneBy(['userUUID' => $userUUID]);
+            $existingCheckin = $repository->findOneBy(['userUUID' => $userUUID], ['id' => 'DESC']);
             if ($existingCheckin) {
-                $existingCheckin->setExpireDate(new \DateTime());
+                $expireDate = (new \DateTime('now', new \DateTimeZone('UTC')))->getTimestamp();
+                $existingCheckin->setExpireDate($expireDate);
                 $this->entityManager->persist($existingCheckin);
             }
         }
@@ -93,7 +122,16 @@ class DefaultController extends AbstractController
         $riderCheckin->setLat($accessor->getValue($requestData, '[lat]'));
         $riderCheckin->setLng($accessor->getValue($requestData, '[lng]'));
         $riderCheckin->setUserUUID($userUUID ?? $newUserUUID);
-        $riderCheckin->setCreateDate(new \DateTime());
+        $createDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $riderCheckin->setCreateDate($createDate->getTimestamp());
+
+        $expireDate = $accessor->getValue($requestData, '[expire_date]');
+        if (!$expireDate) {
+            // Default expire date to + 5 hours if one isn't provided
+            $expireDate = new \DateTime('now', new \DateTimeZone('UTC'));
+            $expireDate = $expireDate->add(new \DateInterval('PT5H'))->getTimestamp();
+        }
+        $riderCheckin->setExpireDate($expireDate);
 
         $this->entityManager->persist($riderCheckin);
         $this->entityManager->flush();
@@ -102,7 +140,8 @@ class DefaultController extends AbstractController
             'id' => $riderCheckin->getId(),
             'userUUID' => $riderCheckin->getUserUUID(),
             'lat' => $riderCheckin->getLat(),
-            'lng' => $riderCheckin->getLng()
+            'lng' => $riderCheckin->getLng(),
+            'expireDate' => $riderCheckin->getExpireDate()
         ], Response::HTTP_CREATED);
         if (!$userUUID) {
             $response->headers->setCookie(new Cookie(
@@ -128,6 +167,7 @@ class DefaultController extends AbstractController
             'lng' => new Assert\Required([
                 new Assert\NotBlank()
             ]),
+            'expire_date' => new Assert\Optional()
         ]);
 
         $validator = Validation::createValidator();

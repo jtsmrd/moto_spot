@@ -34,7 +34,12 @@ class AppFixtures extends Fixture
 
             $riderCheckin->setLat($lat);
             $riderCheckin->setLng($lon);
-            $riderCheckin->setCreateDate(new \DateTime());
+            $createDate = (new \DateTime('now', new \DateTimeZone('UTC')))->getTimestamp();
+            $riderCheckin->setCreateDate($createDate);
+
+            $expireDate = new \DateTime('now', new \DateTimeZone('UTC'));
+            $expireDate = $expireDate->add(new \DateInterval('PT5H'))->getTimestamp();
+            $riderCheckin->setExpireDate($expireDate);
 
             $manager->persist($riderCheckin);
         }
