@@ -52,7 +52,9 @@ const Map: React.FC<MapProps> = (props) => {
                 <Marker
                     // @ts-ignore
                     position={{ lat: userCheckin.lat, lng: userCheckin.lng }}
-                    onClick={onUserMarkerClicked}
+                    onClick={() => {
+                        onUserMarkerClicked(userCheckin);
+                    }}
                 />
             )}
             <MarkerCluster locations={riderCheckins} click={onMarkerClicked} />

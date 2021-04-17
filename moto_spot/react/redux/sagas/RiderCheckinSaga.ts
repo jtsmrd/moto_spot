@@ -64,5 +64,6 @@ export default function* watchRiderCheckinRequests() {
     yield all([
         takeLatest(ActionTypes.GET_RIDER_CHECKINS_REQUEST, getRiderCheckins),
         takeLatest(ActionTypes.CREATE_RIDER_CHECKIN_REQUEST, createRiderCheckin),
+        takeLatest(ActionTypes.DELETE_RIDER_CHECKIN_REQUEST, deleteRiderCheckin),
     ]);
 }

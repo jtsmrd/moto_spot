@@ -3,11 +3,12 @@ import { Dialog, DialogTitle, List, ListItem, ListItemText } from '@material-ui/
 
 export interface RiderCheckinDialogProps {
     open: boolean;
+    onCheckin: any;
     onClose: any;
 }
 
 const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
-    const { open, onClose } = props;
+    const { open, onCheckin, onClose } = props;
 
     const expireOptions = [
         {
@@ -28,17 +29,12 @@ const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
         },
     ];
 
-    const handleItemSelected = (value) => {
-        console.log(value);
-        onClose();
-    };
-
     return (
         <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open}>
             <DialogTitle id="simple-dialog-title">How long do you plan to stay?</DialogTitle>
             <List>
                 {expireOptions.map((option) => (
-                    <ListItem button onClick={() => handleItemSelected(option.value)} key={option.value}>
+                    <ListItem button onClick={() => onCheckin(option.value)} key={option.value}>
                         <ListItemText primary={option.title} />
                     </ListItem>
                 ))}

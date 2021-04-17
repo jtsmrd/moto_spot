@@ -1,12 +1,19 @@
 import React, { useEffect, useState, useRef, PropsWithChildren } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRiderCheckins, getUserCheckin, getVisibleRiderCheckins } from '../redux/Selectors';
-import { createRiderCheckinRequestAction, getRiderCheckinsRequestAction, setMapBoundsAction } from '../redux/Actions';
+import {
+    createRiderCheckinRequestAction,
+    deleteRiderCheckinRequestAction,
+    getRiderCheckinsRequestAction,
+    setMapBoundsAction,
+} from '../redux/Actions';
 import Map from './Map';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import RiderCheckinDialog from './RiderCheckinDialog';
 import moment from 'moment';
+import * as Types from '../redux/Types';
+import UserCheckinDialog from './UserCheckinDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -31,6 +38,7 @@ const MapContainer = (props) => {
     });
     const [currentLocation, setCurrentLocation] = useState(null);
     const [checkinDialogVisible, setCheckinDialogVisible] = useState(false);
+    const [userCheckinDialogVisible, setUserCheckinDialogVisible] = useState(false);
     const DEFAULT_ZOOM_LEVEL = 12;
     const DEFAULT_DISTANCE_FILTER = 200;
     const riderCheckins = useSelector(getRiderCheckins);
@@ -51,13 +59,18 @@ const MapContainer = (props) => {
         getCurrentLocation();
     }, []);
 
-    const handleClickOpen = () => {
-        setCheckinDialogVisible(true);
+    const handleRiderCheckinDialogCheckin = (expireValue) => {
+        setCheckinDialogVisible(false);
+        handleCheckin(expireValue);
     };
 
-    const handleClose = (value) => {
-        setCheckinDialogVisible(false);
-        handleCheckin(value);
+    const handleUserCheckinDialogExtend = (extendValue) => {
+        setUserCheckinDialogVisible(false);
+    };
+
+    const handleUserCheckinDialogDelete = () => {
+        setUserCheckinDialogVisible(false);
+        handleRemoveCheckin();
     };
 
     const locationOptions = {
@@ -133,8 +146,8 @@ const MapContainer = (props) => {
         console.log('Marker clicked: ', location);
     };
 
-    const onUserMarkerClicked = (e) => {
-        console.log('Marker clicked: ', e);
+    const onUserMarkerClicked = (userCheckin: Types.RiderCheckin) => {
+        setUserCheckinDialogVisible(true);
     };
 
     const handleCheckin = (expireValue) => {
@@ -148,7 +161,13 @@ const MapContainer = (props) => {
             );
         } else {
             getCurrentLocation();
-            // alert('You must enable location to checkin');
+            alert('You must enable location to checkin');
+        }
+    };
+
+    const handleRemoveCheckin = () => {
+        if (userCheckin) {
+            dispatch(deleteRiderCheckinRequestAction({ id: userCheckin.id }));
         }
     };
 
@@ -193,10 +212,29 @@ const MapContainer = (props) => {
                     bottom: 0,
                 }}
             >
-                <Button style={{ backgroundColor: 'rgba(200, 200, 200, 0.5)' }} onClick={handleClickOpen}>
+                <Button
+                    style={{ backgroundColor: 'rgba(200, 200, 200, 0.5)' }}
+                    onClick={() => {
+                        setCheckinDialogVisible(true);
+                    }}
+                >
                     Check in
                 </Button>
-                <RiderCheckinDialog open={checkinDialogVisible} onClose={handleClose} />
+                <RiderCheckinDialog
+                    open={checkinDialogVisible}
+                    onCheckin={handleRiderCheckinDialogCheckin}
+                    onClose={() => {
+                        setCheckinDialogVisible(false);
+                    }}
+                />
+                <UserCheckinDialog
+                    open={userCheckinDialogVisible}
+                    onClose={() => {
+                        setUserCheckinDialogVisible(false);
+                    }}
+                    onExtend={handleUserCheckinDialogExtend}
+                    onDelete={handleUserCheckinDialogDelete}
+                />
             </div>
         </div>
     );
