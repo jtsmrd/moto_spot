@@ -23,8 +23,12 @@ export const setMapBoundsAction: ActionCreator<ActionTypes.ISetMapBoundsPayload>
     ActionTypes.SET_MAP_BOUNDS,
 );
 
-export const updateVisibleRiderCheckinsAction: ActionCreator<ActionTypes.IUpdateVisibleRiderCheckinsPayload> = actionCreator<ActionTypes.IUpdateVisibleRiderCheckinsPayload>(
+export const updateVisibleRiderCheckinsAction: ActionCreator<any> = actionCreator<any>(
     ActionTypes.UPDATE_VISIBLE_RIDER_CHECKINS,
+);
+
+export const setVisibleRiderCheckinsAction: ActionCreator<ActionTypes.ISetVisibleRiderCheckinsPayload> = actionCreator<ActionTypes.ISetVisibleRiderCheckinsPayload>(
+    ActionTypes.SET_VISIBLE_RIDER_CHECKINS,
 );
 
 export const deleteRiderCheckinRequestAction: ActionCreator<ActionTypes.IDeleteRiderCheckinRequestPayload> = actionCreator<ActionTypes.IDeleteRiderCheckinRequestPayload>(
@@ -33,4 +37,8 @@ export const deleteRiderCheckinRequestAction: ActionCreator<ActionTypes.IDeleteR
 
 export const deleteRiderCheckinResponseAction: ActionCreator<ActionTypes.IDeleteRiderCheckinResponsePayload> = actionCreator<ActionTypes.IDeleteRiderCheckinResponsePayload>(
     ActionTypes.DELETE_RIDER_CHECKIN_RESPONSE,
+);
+
+export const removeExpiredRiderCheckins: ActionCreator<ActionTypes.IRemoveExpiredRiderCheckinsPayload> = actionCreator<ActionTypes.IRemoveExpiredRiderCheckinsPayload>(
+    ActionTypes.REMOVE_EXPIRED_RIDER_CHECKINS,
 );

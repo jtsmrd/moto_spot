@@ -1,19 +1,20 @@
-import React, { useEffect, useState, useRef, PropsWithChildren } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRiderCheckins, getUserCheckin, getVisibleRiderCheckins } from '../redux/Selectors';
 import {
     createRiderCheckinRequestAction,
     deleteRiderCheckinRequestAction,
     getRiderCheckinsRequestAction,
+    removeExpiredRiderCheckins,
     setMapBoundsAction,
 } from '../redux/Actions';
 import Map from './Map';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import RiderCheckinDialog from './RiderCheckinDialog';
-import moment from 'moment';
 import * as Types from '../redux/Types';
 import UserCheckinDialog from './UserCheckinDialog';
+import { getUtcIntervalAddingMinutes } from '../utilities/dateTimeUtils';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -57,6 +58,13 @@ const MapContainer = (props) => {
 
     useEffect(() => {
         getCurrentLocation();
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            dispatch(removeExpiredRiderCheckins({}));
+        }, 300000); // 5 minutes
+        return () => clearInterval(interval);
     }, []);
 
     const handleRiderCheckinDialogCheckin = (expireValue) => {
@@ -142,8 +150,8 @@ const MapContainer = (props) => {
         getMapVisibleArea();
     };
 
-    const onMarkerClicked = ({ event, location, marker }) => {
-        console.log('Marker clicked: ', location);
+    const onMarkerClicked = ({ event, riderCheckin, marker }) => {
+        console.log('Marker clicked: ', riderCheckin);
     };
 
     const onUserMarkerClicked = (userCheckin: Types.RiderCheckin) => {
@@ -156,7 +164,7 @@ const MapContainer = (props) => {
                 createRiderCheckinRequestAction({
                     lat: currentLocation.latitude,
                     lng: currentLocation.longitude,
-                    expire_date: expireValue ? moment.utc().add(expireValue, 'minutes').valueOf() / 1000 : null,
+                    expire_date: expireValue ? getUtcIntervalAddingMinutes(expireValue) : null,
                 }),
             );
         } else {

@@ -1,10 +1,13 @@
-import { call, put, all, takeLatest } from 'redux-saga/effects';
+import { call, put, all, takeLatest, select } from 'redux-saga/effects';
 import { Action } from 'typescript-fsa';
 import * as ActionTypes from '../ActionTypes';
 import * as Actions from '../Actions';
+import * as Types from '../Types';
 import { request as httpRequest } from '../../client';
+import { getMapInfo, getRiderCheckins } from '../Selectors';
+import { isExpired } from '../../utilities/dateTimeUtils';
 
-function* getRiderCheckins(action: Action<ActionTypes.IGetRiderCheckinsRequestPayload>) {
+function* fetchRiderCheckins(action: Action<ActionTypes.IGetRiderCheckinsRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
             url: '/api/get_rider_checkins',
@@ -22,6 +25,16 @@ function* getRiderCheckins(action: Action<ActionTypes.IGetRiderCheckinsRequestPa
     } catch (e) {
         yield put(Actions.getRiderCheckinsResponseAction(e));
     }
+}
+
+function* updateVisibleRiderCheckins() {
+    const riderCheckins = yield select(getRiderCheckins);
+    const mapInfo = yield select(getMapInfo);
+    const visibleRiderCheckins = getVisibleRiderCheckins(riderCheckins, mapInfo);
+    const visibleRiderCheckinsPayload: ActionTypes.ISetVisibleRiderCheckinsPayload = {
+        visibleRiderCheckins: visibleRiderCheckins,
+    };
+    yield put(Actions.setVisibleRiderCheckinsAction(visibleRiderCheckinsPayload));
 }
 
 function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinRequestPayload>) {
@@ -60,9 +73,22 @@ function* deleteRiderCheckin(action: Action<ActionTypes.IDeleteRiderCheckinReque
     }
 }
 
+function getVisibleRiderCheckins(riderCheckins: Types.RiderCheckin[], mapInfo) {
+    return riderCheckins.filter((rc) => {
+        return (
+            rc.lat < mapInfo.neLat &&
+            rc.lat > mapInfo.swLat &&
+            rc.lng < mapInfo.neLng &&
+            rc.lng > mapInfo.swLng &&
+            !isExpired(rc.expireDate)
+        );
+    });
+}
+
 export default function* watchRiderCheckinRequests() {
     yield all([
-        takeLatest(ActionTypes.GET_RIDER_CHECKINS_REQUEST, getRiderCheckins),
+        takeLatest(ActionTypes.GET_RIDER_CHECKINS_REQUEST, fetchRiderCheckins),
+        takeLatest(ActionTypes.UPDATE_VISIBLE_RIDER_CHECKINS, updateVisibleRiderCheckins),
         takeLatest(ActionTypes.CREATE_RIDER_CHECKIN_REQUEST, createRiderCheckin),
         takeLatest(ActionTypes.DELETE_RIDER_CHECKIN_REQUEST, deleteRiderCheckin),
     ]);

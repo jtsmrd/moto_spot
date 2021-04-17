@@ -1,31 +1,40 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import MarkerClusterer from '@googlemaps/markerclustererplus';
+import { isExpired } from '../utilities/dateTimeUtils';
 
 const eventNames = ['click', 'dblclick', 'dragend', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'recenter'];
 
-const MarkerCluster = (props) => {
-    const { map, google, locations } = props;
+// ToDo: Figure out how to pass google and map child props from GoogleMap
+// export interface MarkerClusterProps {
+//     map: object;
+//     google: object;
+//     riderCheckins: Types.RiderCheckin[];
+//     click: typeof func;
+// }
 
-    const handleEvent = ({ event, location, marker }) => {
+const MarkerCluster = (props) => {
+    const { map, google, riderCheckins } = props;
+
+    const handleEvent = ({ event, riderCheckin, marker }) => {
         if (props[event]) {
             props[event]({
                 props: props,
                 event: event,
-                location: location,
+                riderCheckin: riderCheckin,
                 marker: marker,
             });
         }
     };
 
     useEffect(() => {
-        if (map && locations) {
-            const mapMarkers = locations.map((location) => {
+        if (map && riderCheckins) {
+            const mapMarkers = riderCheckins.map((riderCheckin) => {
                 const markerImage = new google.maps.MarkerImage('/images/m0.png');
                 const marker = new google.maps.Marker({
                     position: {
-                        lat: location.lat,
-                        lng: location.lng,
+                        lat: riderCheckin.lat,
+                        lng: riderCheckin.lng,
                     },
                     map: map,
                     name: 'M',
@@ -37,7 +46,7 @@ const MarkerCluster = (props) => {
                     marker.addListener(e, () =>
                         handleEvent({
                             event: e,
-                            location: location,
+                            riderCheckin: riderCheckin,
                             marker: marker,
                         }),
                     );
@@ -53,7 +62,7 @@ const MarkerCluster = (props) => {
                 clusterer.clearMarkers();
             };
         }
-    }, [map, google, locations]);
+    }, [map, google, riderCheckins]);
 
     return null;
 };
@@ -61,10 +70,11 @@ const MarkerCluster = (props) => {
 MarkerCluster.propTypes = {
     map: PropTypes.object,
     google: PropTypes.object,
-    locations: PropTypes.arrayOf(
+    riderCheckins: PropTypes.arrayOf(
         PropTypes.shape({
             lat: PropTypes.number.isRequired,
             lng: PropTypes.number.isRequired,
+            expireDate: PropTypes.number.isRequired,
         }),
     ),
     click: PropTypes.func,

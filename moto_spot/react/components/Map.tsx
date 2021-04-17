@@ -57,7 +57,7 @@ const Map: React.FC<MapProps> = (props) => {
                     }}
                 />
             )}
-            <MarkerCluster locations={riderCheckins} click={onMarkerClicked} />
+            <MarkerCluster riderCheckins={riderCheckins} click={onMarkerClicked} />
         </GoogleMap>
     );
 };

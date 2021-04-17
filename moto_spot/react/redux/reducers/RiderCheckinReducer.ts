@@ -2,9 +2,11 @@ import { Action } from 'typescript-fsa';
 import * as Types from '../Types';
 import * as ActionTypes from '../ActionTypes';
 import Cookie from 'js-cookie';
+import { isExpired } from '../../utilities/dateTimeUtils';
 
 export interface IRiderCheckinState {
     riderCheckins: Types.RiderCheckin[];
+    visibleRiderCheckins: Types.RiderCheckin[];
     userCheckin: Types.RiderCheckin;
     getCheckinsLoading: boolean;
     getCheckinsError: object;
@@ -16,6 +18,7 @@ export interface IRiderCheckinState {
 
 export const initialState: IRiderCheckinState = {
     riderCheckins: [],
+    visibleRiderCheckins: [],
     userCheckin: null,
     getCheckinsLoading: false,
     getCheckinsError: null,
@@ -56,6 +59,10 @@ export default function RiderCheckinReducer(
                 getCheckinsError: null,
             };
         }
+        case ActionTypes.SET_VISIBLE_RIDER_CHECKINS: {
+            const { visibleRiderCheckins } = action.payload as ActionTypes.ISetVisibleRiderCheckinsPayload;
+            return { ...state, visibleRiderCheckins: visibleRiderCheckins };
+        }
         case ActionTypes.CREATE_RIDER_CHECKIN_REQUEST: {
             return {
                 ...state,
@@ -88,6 +95,13 @@ export default function RiderCheckinReducer(
             }
             return { ...state, userCheckin: null, deleteCheckinError: null, deleteCheckinLoading: false };
         }
+        case ActionTypes.REMOVE_EXPIRED_RIDER_CHECKINS: {
+            return {
+                ...state,
+                riderCheckins: removeExpiredRiderCheckins(state.riderCheckins),
+                visibleRiderCheckins: removeExpiredRiderCheckins(state.visibleRiderCheckins),
+            };
+        }
     }
     return state;
 }
@@ -95,14 +109,20 @@ export default function RiderCheckinReducer(
 function getActiveRiderCheckins(checkins: Types.RiderCheckin[]) {
     const userUUID = Cookie.get('user_uuid');
     return checkins.filter((checkin) => {
-        return checkin.userUUID !== userUUID;
+        return checkin.userUUID !== userUUID && !isExpired(checkin.expireDate);
     });
 }
 
 function getUserCheckin(checkins: Types.RiderCheckin[]) {
     const userUUID = Cookie.get('user_uuid');
     const results = checkins.filter((checkin) => {
-        return checkin.userUUID === userUUID;
+        return checkin.userUUID === userUUID && !isExpired(checkin.expireDate);
     });
     return (results && results[0]) || null;
+}
+
+function removeExpiredRiderCheckins(checkins: Types.RiderCheckin[]) {
+    return checkins.filter((checkin) => {
+        return !isExpired(checkin.expireDate);
+    });
 }

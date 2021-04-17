@@ -1,13 +1,11 @@
 import { Action } from 'typescript-fsa';
 import * as ActionTypes from '../ActionTypes';
-import * as Types from '../Types';
 
 export interface IMapInfoState {
     neLat: number;
     neLng: number;
     swLat: number;
     swLng: number;
-    visibleRiderCheckins: Types.RiderCheckin[];
 }
 
 export const initialState: IMapInfoState = {
@@ -15,7 +13,6 @@ export const initialState: IMapInfoState = {
     neLng: 0,
     swLat: 0,
     swLng: 0,
-    visibleRiderCheckins: [],
 };
 
 export const statePropName = 'mapInfo';
@@ -34,10 +31,6 @@ export default function MapInfoReducer(
                 swLat,
                 swLng,
             };
-        }
-        case ActionTypes.UPDATE_VISIBLE_RIDER_CHECKINS: {
-            const { visibleRiderCheckins } = action.payload as ActionTypes.IUpdateVisibleRiderCheckinsPayload;
-            return { ...state, visibleRiderCheckins: visibleRiderCheckins };
         }
     }
     return state;

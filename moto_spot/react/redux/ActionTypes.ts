@@ -39,7 +39,10 @@ export interface ISetMapBoundsPayload {
 
 export const UPDATE_VISIBLE_RIDER_CHECKINS = 'UPDATE_VISIBLE_RIDER_CHECKINS';
 export type UPDATE_VISIBLE_RIDER_CHECKINS = typeof UPDATE_VISIBLE_RIDER_CHECKINS;
-export interface IUpdateVisibleRiderCheckinsPayload {
+
+export const SET_VISIBLE_RIDER_CHECKINS = 'SET_VISIBLE_RIDER_CHECKINS';
+export type SET_VISIBLE_RIDER_CHECKINS = typeof SET_VISIBLE_RIDER_CHECKINS;
+export interface ISetVisibleRiderCheckinsPayload {
     visibleRiderCheckins: Types.RiderCheckin[];
 }
 
@@ -53,11 +56,17 @@ export const DELETE_RIDER_CHECKIN_RESPONSE = 'DELETE_RIDER_CHECKIN_RESPONSE';
 export type DELETE_RIDER_CHECKIN_RESPONSE = typeof DELETE_RIDER_CHECKIN_RESPONSE;
 export interface IDeleteRiderCheckinResponsePayload {}
 
+export const REMOVE_EXPIRED_RIDER_CHECKINS = 'REMOVE_EXPIRED_RIDER_CHECKINS';
+export type REMOVE_EXPIRED_RIDER_CHECKINS = typeof REMOVE_EXPIRED_RIDER_CHECKINS;
+export interface IRemoveExpiredRiderCheckinsPayload {}
+
 export type IRiderCheckinActionsPayload =
     | IGetRiderCheckinsRequestPayload
     | IGetRiderCheckinsResponsePayload
+    | ISetVisibleRiderCheckinsPayload
     | ICreateRiderCheckinRequestPayload
     | ICreateRiderCheckinResponsePayload
     | IDeleteRiderCheckinRequestPayload
-    | IDeleteRiderCheckinResponsePayload;
-export type IMapActionsPayload = ISetMapBoundsPayload | IUpdateVisibleRiderCheckinsPayload;
+    | IDeleteRiderCheckinResponsePayload
+    | IRemoveExpiredRiderCheckinsPayload;
+export type IMapActionsPayload = ISetMapBoundsPayload;
