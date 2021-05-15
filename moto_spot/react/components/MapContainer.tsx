@@ -48,8 +48,6 @@ const MapContainer = (props) => {
     const userCheckin = useSelector(getUserCheckin);
     const visibleRiderCheckins = useSelector(getVisibleRiderCheckins);
     const mapCenterLoaded = useSelector(getMapCenterLoaded);
-    console.log('rider checkins: ', riderCheckins.length);
-    console.log('visible checkins: ', visibleRiderCheckins.length);
 
     useEffect(() => {
         if (mapCenterLoaded) {
