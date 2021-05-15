@@ -13,4 +13,7 @@ const getMapInfoState = (state: IAppState) => state[mapStatePropName];
 export const getRiderCheckins = (state: IAppState) => getRiderCheckinState(state).riderCheckins;
 export const getUserCheckin = (state: IAppState) => getRiderCheckinState(state).userCheckin;
 export const getVisibleRiderCheckins = (state: IAppState) => getRiderCheckinState(state).visibleRiderCheckins;
-export const getMapInfo = (state: IAppState) => getMapInfoState(state);
+export const getMapBounds = (state: IAppState) => getMapInfoState(state).mapBounds;
+export const getMapZoom = (state: IAppState) => getMapInfoState(state).mapZoom;
+export const getMapCenter = (state: IAppState) => getMapInfoState(state).mapCenter;
+export const getMapCenterLoaded = (state: IAppState) => getMapInfoState(state).mapCenterLoaded;

@@ -19,8 +19,16 @@ export const createRiderCheckinResponseAction: ActionCreator<ActionTypes.ICreate
     ActionTypes.CREATE_RIDER_CHECKIN_RESPONSE,
 );
 
-export const setMapBoundsAction: ActionCreator<ActionTypes.ISetMapBoundsPayload> = actionCreator<ActionTypes.ISetMapBoundsPayload>(
-    ActionTypes.SET_MAP_BOUNDS,
+export const updateMapBoundsAction: ActionCreator<ActionTypes.IUpdateMapBoundsPayload> = actionCreator<ActionTypes.IUpdateMapBoundsPayload>(
+    ActionTypes.UPDATE_MAP_BOUNDS,
+);
+
+export const updateMapCenterAction: ActionCreator<ActionTypes.IUpdateMapCenterPayload> = actionCreator<ActionTypes.IUpdateMapCenterPayload>(
+    ActionTypes.UPDATE_MAP_CENTER,
+);
+
+export const updateMapZoomAction: ActionCreator<ActionTypes.IUpdateMapZoomPayload> = actionCreator<ActionTypes.IUpdateMapZoomPayload>(
+    ActionTypes.UPDATE_MAP_ZOOM,
 );
 
 export const updateVisibleRiderCheckinsAction: ActionCreator<any> = actionCreator<any>(

@@ -7,5 +7,5 @@ function* mapBoundsUpdated() {
 }
 
 export default function* watchMapInfoSagas() {
-    yield all([takeLatest(ActionTypes.SET_MAP_BOUNDS, mapBoundsUpdated)]);
+    yield all([takeLatest(ActionTypes.UPDATE_MAP_BOUNDS, mapBoundsUpdated)]);
 }

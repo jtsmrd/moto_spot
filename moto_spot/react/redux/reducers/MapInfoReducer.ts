@@ -1,18 +1,27 @@
 import { Action } from 'typescript-fsa';
 import * as ActionTypes from '../ActionTypes';
+import * as Types from '../Types';
 
 export interface IMapInfoState {
-    neLat: number;
-    neLng: number;
-    swLat: number;
-    swLng: number;
+    mapBounds: Types.MapBounds;
+    mapCenter: Types.MapCenter;
+    mapZoom: number;
+    mapCenterLoaded: boolean;
 }
 
 export const initialState: IMapInfoState = {
-    neLat: 0,
-    neLng: 0,
-    swLat: 0,
-    swLng: 0,
+    mapBounds: {
+        neLat: 0,
+        neLng: 0,
+        swLat: 0,
+        swLng: 0,
+    },
+    mapCenter: {
+        lat: 0,
+        lng: 0,
+    },
+    mapZoom: 0,
+    mapCenterLoaded: false,
 };
 
 export const statePropName = 'mapInfo';
@@ -22,14 +31,26 @@ export default function MapInfoReducer(
     action: Action<ActionTypes.IMapActionsPayload>,
 ): IMapInfoState {
     switch (action.type) {
-        case ActionTypes.SET_MAP_BOUNDS: {
-            const { neLat, neLng, swLat, swLng } = action.payload as ActionTypes.ISetMapBoundsPayload;
+        case ActionTypes.UPDATE_MAP_BOUNDS: {
+            const { mapBounds } = action.payload as ActionTypes.IUpdateMapBoundsPayload;
             return {
                 ...state,
-                neLat,
-                neLng,
-                swLat,
-                swLng,
+                mapBounds: mapBounds,
+            };
+        }
+        case ActionTypes.UPDATE_MAP_CENTER: {
+            const { mapCenter } = action.payload as ActionTypes.IUpdateMapCenterPayload;
+            return {
+                ...state,
+                mapCenter: mapCenter,
+                mapCenterLoaded: true,
+            };
+        }
+        case ActionTypes.UPDATE_MAP_ZOOM: {
+            const { mapZoom } = action.payload as ActionTypes.IUpdateMapZoomPayload;
+            return {
+                ...state,
+                mapZoom: mapZoom,
             };
         }
     }

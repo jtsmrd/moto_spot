@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getRiderCheckins, getUserCheckin, getVisibleRiderCheckins } from '../redux/Selectors';
+import { getMapCenterLoaded, getRiderCheckins, getUserCheckin, getVisibleRiderCheckins } from '../redux/Selectors';
 import {
     createRiderCheckinRequestAction,
     deleteRiderCheckinRequestAction,
     getRiderCheckinsRequestAction,
     removeExpiredRiderCheckins,
-    setMapBoundsAction,
+    updateMapBoundsAction,
+    updateMapCenterAction,
+    updateMapZoomAction,
 } from '../redux/Actions';
 import Map from './Map';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -45,16 +47,15 @@ const MapContainer = (props) => {
     const riderCheckins = useSelector(getRiderCheckins);
     const userCheckin = useSelector(getUserCheckin);
     const visibleRiderCheckins = useSelector(getVisibleRiderCheckins);
+    const mapCenterLoaded = useSelector(getMapCenterLoaded);
+    console.log('rider checkins: ', riderCheckins.length);
+    console.log('visible checkins: ', visibleRiderCheckins.length);
 
     useEffect(() => {
-        dispatch(
-            getRiderCheckinsRequestAction({
-                lat: initialCenter.lat,
-                lng: initialCenter.lng,
-                distance: DEFAULT_DISTANCE_FILTER,
-            }),
-        );
-    }, []);
+        if (mapCenterLoaded) {
+            fetchRiderCheckins();
+        }
+    }, [mapCenterLoaded]);
 
     useEffect(() => {
         getCurrentLocation();
@@ -115,6 +116,10 @@ const MapContainer = (props) => {
         }
     };
 
+    function fetchRiderCheckins() {
+        dispatch(getRiderCheckinsRequestAction({}));
+    }
+
     function getMapVisibleArea() {
         setTimeout(() => {
             try {
@@ -124,11 +129,13 @@ const MapContainer = (props) => {
                 let sw = mapRef.current.map.getBounds().getSouthWest();
                 console.log('Successfully got map bounds');
                 dispatch(
-                    setMapBoundsAction({
-                        neLat: ne.lat(),
-                        neLng: ne.lng(),
-                        swLat: sw.lat(),
-                        swLng: sw.lng(),
+                    updateMapBoundsAction({
+                        mapBounds: {
+                            neLat: ne.lat(),
+                            neLng: ne.lng(),
+                            swLat: sw.lat(),
+                            swLng: sw.lng(),
+                        },
                     }),
                 );
             } catch (e) {
@@ -138,16 +145,37 @@ const MapContainer = (props) => {
         }, 200);
     }
 
-    const onReady = () => {
+    function updateMapCenter(lat: number, lng: number) {
+        dispatch(
+            updateMapCenterAction({
+                mapCenter: {
+                    lat: lat,
+                    lng: lng,
+                },
+            }),
+        );
+    }
+
+    function updateMapZoom(mapZoom: number) {
+        dispatch(updateMapZoomAction({ mapZoom: mapZoom }));
+    }
+
+    const onReady = (mapProps, map, event) => {
+        updateMapCenter(map.center.lat(), map.center.lng());
+        updateMapZoom(map.zoom);
         getMapVisibleArea();
     };
 
-    const onDragEnd = (e) => {
+    const onDragEnd = (mapProps, map, event) => {
+        updateMapCenter(map.center.lat(), map.center.lng());
         getMapVisibleArea();
+        fetchRiderCheckins();
     };
 
-    const onZoomChanged = () => {
+    const onZoomChanged = (mapProps, map, event) => {
+        updateMapZoom(map.zoom);
         getMapVisibleArea();
+        fetchRiderCheckins();
     };
 
     const onMarkerClicked = ({ event, riderCheckin, marker }) => {

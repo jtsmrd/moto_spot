@@ -2,11 +2,7 @@ import * as Types from './Types';
 
 export const GET_RIDER_CHECKINS_REQUEST = 'GET_RIDER_CHECKINS_REQUEST';
 export type GET_RIDER_CHECKINS_REQUEST = typeof GET_RIDER_CHECKINS_REQUEST;
-export interface IGetRiderCheckinsRequestPayload {
-    lat: number;
-    lng: number;
-    distance: number;
-}
+export interface IGetRiderCheckinsRequestPayload {}
 
 export const GET_RIDER_CHECKINS_RESPONSE = 'GET_RIDER_CHECKINS_RESPONSE';
 export type GET_RIDER_CHECKINS_RESPONSE = typeof GET_RIDER_CHECKINS_RESPONSE;
@@ -28,13 +24,22 @@ export interface ICreateRiderCheckinResponsePayload {
     riderCheckin: Types.RiderCheckin;
 }
 
-export const SET_MAP_BOUNDS = 'SET_MAP_BOUNDS';
-export type SET_MAP_BOUNDS = typeof SET_MAP_BOUNDS;
-export interface ISetMapBoundsPayload {
-    neLat: number;
-    neLng: number;
-    swLat: number;
-    swLng: number;
+export const UPDATE_MAP_BOUNDS = 'UPDATE_MAP_BOUNDS';
+export type UPDATE_MAP_BOUNDS = typeof UPDATE_MAP_BOUNDS;
+export interface IUpdateMapBoundsPayload {
+    mapBounds: Types.MapBounds;
+}
+
+export const UPDATE_MAP_CENTER = 'UPDATE_MAP_CENTER';
+export type UPDATE_MAP_CENTER = typeof UPDATE_MAP_CENTER;
+export interface IUpdateMapCenterPayload {
+    mapCenter: Types.MapCenter;
+}
+
+export const UPDATE_MAP_ZOOM = 'UPDATE_MAP_ZOOM';
+export type UPDATE_MAP_ZOOM = typeof UPDATE_MAP_ZOOM;
+export interface IUpdateMapZoomPayload {
+    mapZoom: number;
 }
 
 export const UPDATE_VISIBLE_RIDER_CHECKINS = 'UPDATE_VISIBLE_RIDER_CHECKINS';
@@ -69,4 +74,4 @@ export type IRiderCheckinActionsPayload =
     | IDeleteRiderCheckinRequestPayload
     | IDeleteRiderCheckinResponsePayload
     | IRemoveExpiredRiderCheckinsPayload;
-export type IMapActionsPayload = ISetMapBoundsPayload;
+export type IMapActionsPayload = IUpdateMapBoundsPayload | IUpdateMapCenterPayload | IUpdateMapZoomPayload;
