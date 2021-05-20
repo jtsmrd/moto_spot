@@ -12,7 +12,7 @@ import {
 } from '../redux/Actions';
 import Map from './Map';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import RiderCheckinDialog from './RiderCheckinDialog';
 import * as Types from '../redux/Types';
 import UserCheckinDialog from './UserCheckinDialog';
@@ -26,6 +26,23 @@ const useStyles = makeStyles((theme: Theme) =>
             height: '100%',
             [theme.breakpoints.down('md')]: {
                 height: '50vh',
+            },
+        },
+        numberOfRidersContainer: {
+            zIndex: 1,
+            width: '100%',
+            textAlign: 'center',
+            position: 'absolute',
+            top: '1rem',
+        },
+        numberOfRidersText: {
+            display: 'inline-flex',
+            backgroundColor: 'rgba(255, 192, 18, 0.5)',
+            padding: '1rem 2rem',
+            borderRadius: '1rem',
+            fontSize: '2rem',
+            [theme.breakpoints.up('sm')]: {
+                fontSize: '1rem',
             },
         },
     }),
@@ -207,22 +224,10 @@ const MapContainer = (props) => {
 
     return (
         <div className={classes.root}>
-            <div
-                style={{
-                    zIndex: 1,
-                    width: '100%',
-                    textAlign: 'center',
-                    position: 'absolute',
-                }}
-            >
-                <p
-                    style={{
-                        display: 'inline-flex',
-                        backgroundColor: 'rgba(200, 200, 200, 0.5)',
-                    }}
-                >
+            <div className={classes.numberOfRidersContainer}>
+                <Typography className={classes.numberOfRidersText}>
                     Number of riders: {visibleRiderCheckins.length}
-                </p>
+                </Typography>
             </div>
             <Map
                 // @ts-ignore
@@ -243,16 +248,21 @@ const MapContainer = (props) => {
                     width: '100%',
                     textAlign: 'center',
                     position: 'absolute',
-                    bottom: 0,
+                    bottom: '2rem',
                 }}
             >
                 <Button
-                    style={{ backgroundColor: 'rgba(200, 200, 200, 0.5)' }}
+                    style={{
+                        backgroundColor: 'rgba(18, 215, 255, 0.75)',
+                        textTransform: 'capitalize',
+                        padding: '1rem 4rem',
+                        borderRadius: '1rem',
+                    }}
                     onClick={() => {
                         setCheckinDialogVisible(true);
                     }}
                 >
-                    Check in
+                    <Typography style={{ fontSize: '2rem' }}>Check in</Typography>
                 </Button>
                 <RiderCheckinDialog
                     open={checkinDialogVisible}

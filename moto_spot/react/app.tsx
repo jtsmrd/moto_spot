@@ -34,7 +34,7 @@ ReactDOM.render(
                         <Route path={'/home'} component={Home} />
                         <Route path={'/profile'} component={Profile} />
                     </Switch>
-                    <Footer />
+                    {/*<Footer />*/}
                 </div>
             </div>
         </Router>
