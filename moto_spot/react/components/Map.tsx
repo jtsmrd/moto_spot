@@ -6,10 +6,6 @@ import * as Types from '../redux/Types';
 export interface MapProps {
     mapRef: object;
     defaultZoomLevel: number;
-    initialCenter: {
-        lat: number;
-        lng: number;
-    };
     riderCheckins: Types.RiderCheckin[];
     userCheckin: Types.RiderCheckin;
     onReady: any;
@@ -23,7 +19,6 @@ const Map: React.FC<MapProps> = (props) => {
     const {
         mapRef,
         defaultZoomLevel,
-        initialCenter,
         onDragEnd,
         onZoomChanged,
         riderCheckins,
@@ -40,7 +35,6 @@ const Map: React.FC<MapProps> = (props) => {
             google={props.google}
             // @ts-ignore
             zoom={defaultZoomLevel}
-            initialCenter={initialCenter}
             mapTypeControl={false}
             streetViewControl={false}
             fullscreenControl={false}
