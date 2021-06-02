@@ -29,19 +29,19 @@ const MainAppBar: React.FC<{}> = (props) => {
         <div className={classes.root}>
             <AppBar position={'static'}>
                 <Toolbar>
-                    <IconButton edge={'start'} className={classes.menuButton} color={'inherit'} aria-label={'menu'}>
-                        <MenuIcon />
-                    </IconButton>
+                    {/*<IconButton edge={'start'} className={classes.menuButton} color={'inherit'} aria-label={'menu'}>*/}
+                    {/*    <MenuIcon />*/}
+                    {/*</IconButton>*/}
                     <NavLink to={'/'} style={{ flexGrow: 1 }}>
                         <Typography variant={'h6'} className={classes.title}>
-                            MotoSpot
+                            MotoSpots
                         </Typography>
                     </NavLink>
-                    <NavLink to={'/profile'}>
-                        <Typography variant={'h6'} className={classes.title}>
-                            Profile
-                        </Typography>
-                    </NavLink>
+                    {/*<NavLink to={'/profile'}>*/}
+                    {/*    <Typography variant={'h6'} className={classes.title}>*/}
+                    {/*        Profile*/}
+                    {/*    </Typography>*/}
+                    {/*</NavLink>*/}
                 </Toolbar>
             </AppBar>
         </div>
