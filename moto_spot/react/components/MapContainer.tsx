@@ -40,9 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
             backgroundColor: 'rgba(255, 192, 18, 0.5)',
             padding: '1rem 2rem',
             borderRadius: '1rem',
-            fontSize: '2rem',
+            fontSize: '1rem',
             [theme.breakpoints.up('sm')]: {
-                fontSize: '1rem',
+                fontSize: '2rem',
             },
         },
     }),
@@ -257,6 +257,7 @@ const MapContainer = (props) => {
                         textTransform: 'capitalize',
                         padding: '1rem 4rem',
                         borderRadius: '1rem',
+                        fontSize: '1rem',
                     }}
                     onClick={() => {
                         setCheckinDialogVisible(true);
