@@ -17,6 +17,8 @@ import RiderCheckinDialog from './RiderCheckinDialog';
 import * as Types from '../redux/Types';
 import UserCheckinDialog from './UserCheckinDialog';
 import { getUtcIntervalAddingMinutes } from '../utilities/dateTimeUtils';
+import { usePosition } from '../hooks/usePosition';
+import { useGeoLocation } from '../hooks/useGeoLocation';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -52,29 +54,44 @@ const MapContainer = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
     const mapRef = useRef();
-    const [initialCenter, setInitialCenter] = useState({
-        lat: 40.4406,
-        lng: -79.9959,
-    });
-    const [currentLocation, setCurrentLocation] = useState(null);
+    const { positionLat, positionLng, positionError } = usePosition();
+    const { geoLocationLat, geoLocationLng, geoLocationError } = useGeoLocation();
     const [checkinDialogVisible, setCheckinDialogVisible] = useState(false);
     const [userCheckinDialogVisible, setUserCheckinDialogVisible] = useState(false);
     const DEFAULT_ZOOM_LEVEL = 12;
-    const DEFAULT_DISTANCE_FILTER = 200;
     const riderCheckins = useSelector(getRiderCheckins);
     const userCheckin = useSelector(getUserCheckin);
     const visibleRiderCheckins = useSelector(getVisibleRiderCheckins);
     const mapCenterLoaded = useSelector(getMapCenterLoaded);
+
+    // Set map center after getting users' geo location
+    useEffect(() => {
+        if (geoLocationLat && geoLocationLng) {
+            // @ts-ignore
+            mapRef.current.map.setCenter({
+                lat: geoLocationLat,
+                lng: geoLocationLng,
+            });
+        }
+    }, [geoLocationLat, geoLocationLng]);
+
+    useEffect(() => {
+        if (geoLocationError) {
+            alert(geoLocationError);
+        }
+    }, [geoLocationError]);
+
+    useEffect(() => {
+        if (positionError) {
+            alert(positionError);
+        }
+    }, [positionError]);
 
     useEffect(() => {
         if (mapCenterLoaded) {
             fetchRiderCheckins();
         }
     }, [mapCenterLoaded]);
-
-    useEffect(() => {
-        getCurrentLocation();
-    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -95,40 +112,6 @@ const MapContainer = (props) => {
     const handleUserCheckinDialogDelete = () => {
         setUserCheckinDialogVisible(false);
         handleRemoveCheckin();
-    };
-
-    const locationOptions = {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
-    };
-
-    const locationSuccess = (position) => {
-        console.log(position);
-        setCurrentLocation(position.coords);
-    };
-
-    const locationError = (error) => {
-        console.log(error);
-    };
-
-    const getCurrentLocation = () => {
-        if (navigator.geolocation) {
-            navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
-                if (result.state === 'granted') {
-                    navigator.geolocation.getCurrentPosition(locationSuccess);
-                } else if (result.state === 'prompt') {
-                    navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
-                } else if (result.state === 'denied') {
-                    console.log(result.state);
-                }
-                result.onchange = function () {
-                    console.log(result.state);
-                };
-            });
-        } else {
-            alert('Location unavailable');
-        }
     };
 
     function fetchRiderCheckins() {
@@ -202,16 +185,15 @@ const MapContainer = (props) => {
     };
 
     const handleCheckin = (expireValue) => {
-        if (currentLocation) {
+        if (positionLat && positionLng) {
             dispatch(
                 createRiderCheckinRequestAction({
-                    lat: currentLocation.latitude,
-                    lng: currentLocation.longitude,
+                    lat: positionLat,
+                    lng: positionLng,
                     expire_date: expireValue ? getUtcIntervalAddingMinutes(expireValue) : null,
                 }),
             );
         } else {
-            getCurrentLocation();
             alert('You must enable location to checkin');
         }
     };
@@ -233,7 +215,6 @@ const MapContainer = (props) => {
                 // @ts-ignore
                 mapRef={mapRef}
                 defaultZoomLevel={DEFAULT_ZOOM_LEVEL}
-                initialCenter={initialCenter}
                 onReady={onReady}
                 onDragEnd={onDragEnd}
                 onZoomChanged={onZoomChanged}
