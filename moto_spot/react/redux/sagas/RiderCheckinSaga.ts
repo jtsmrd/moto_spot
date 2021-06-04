@@ -4,13 +4,29 @@ import * as ActionTypes from '../ActionTypes';
 import * as Actions from '../Actions';
 import * as Types from '../Types';
 import { request as httpRequest } from '../../client';
-import { getMapBounds, getMapCenter, getMapZoom, getRiderCheckins } from '../Selectors';
-import { isExpired } from '../../utilities/dateTimeUtils';
+import {
+    getMapBounds,
+    getMapCenter,
+    getMapZoom,
+    getPreviousRiderCheckinFetchInfo,
+    getRiderCheckins,
+} from '../Selectors';
+import {
+    currentTimeIsAfter,
+    currentTimeIsAfterTimePlusMinutes,
+    getCurrentTimestamp,
+} from '../../utilities/dateTimeUtils';
 
-function* fetchRiderCheckins(action: Action<ActionTypes.IGetRiderCheckinsRequestPayload>) {
+function* fetchRiderCheckins() {
     const mapZoom = yield select(getMapZoom);
     const mapCenter = yield select(getMapCenter);
+    const mapBounds = yield select(getMapBounds);
     const distance = getSearchDistance(mapZoom);
+    const previousFetchInfo = yield select(getPreviousRiderCheckinFetchInfo);
+
+    if (!shouldFetchRiderCheckins(previousFetchInfo, mapBounds)) {
+        return;
+    }
 
     try {
         const res = yield call(httpRequest, {
@@ -22,10 +38,17 @@ function* fetchRiderCheckins(action: Action<ActionTypes.IGetRiderCheckinsRequest
                 distance: distance,
             },
         });
+
         const riderCheckinsPayload: ActionTypes.IGetRiderCheckinsResponsePayload = {
             riderCheckins: res.data,
         };
         yield put(Actions.getRiderCheckinsResponseAction(riderCheckinsPayload));
+
+        const riderCheckinFetchInfo: ActionTypes.IUpdateRiderCheckinFetchInfoPayload = {
+            timestamp: getCurrentTimestamp(),
+            bounds: mapBounds,
+        };
+        yield put(Actions.updateRiderCheckinFetchInfoAction(riderCheckinFetchInfo));
     } catch (e) {
         yield put(Actions.getRiderCheckinsResponseAction(e));
     }
@@ -84,7 +107,7 @@ function getVisibleRiderCheckins(riderCheckins: Types.RiderCheckin[], mapBounds:
             rc.lat > mapBounds.swLat &&
             rc.lng < mapBounds.neLng &&
             rc.lng > mapBounds.swLng &&
-            !isExpired(rc.expireDate)
+            !currentTimeIsAfter(rc.expireDate)
         );
     });
 }
@@ -140,6 +163,38 @@ function getSearchDistance(zoomLevel: number): number {
         default:
             return 200;
     }
+}
+
+function shouldFetchRiderCheckins(
+    previousFetchInfo: Types.RiderCheckinFetchInfo,
+    currentMapBounds: Types.MapBounds,
+): boolean {
+    if (!previousFetchInfo) {
+        return true;
+    }
+
+    const oneMinuteHasTranspired = currentTimeIsAfterTimePlusMinutes(previousFetchInfo.timestamp, 1);
+    const previousBoundsContainsCurrentBounds = mapBoundsAContainsMapBoundsB(
+        previousFetchInfo.bounds,
+        currentMapBounds,
+    );
+
+    // If one minute has transpired or the previous map bounds doesn't contain
+    // the current map bounds, return true.
+    // ToDo: Determine a more accurate way to store and compare with previous search
+    return oneMinuteHasTranspired || !previousBoundsContainsCurrentBounds;
+}
+
+function mapBoundsAContainsMapBoundsB(mapBoundsA: Types.MapBounds, mapBoundsB: Types.MapBounds): boolean {
+    if (
+        mapBoundsB.swLng > mapBoundsA.swLng &&
+        mapBoundsB.swLat > mapBoundsA.swLat &&
+        mapBoundsB.neLng < mapBoundsA.neLng &&
+        mapBoundsB.neLat < mapBoundsA.neLat
+    ) {
+        return true;
+    }
+    return false;
 }
 
 export default function* watchRiderCheckinRequests() {

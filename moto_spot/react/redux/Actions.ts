@@ -3,7 +3,7 @@ import * as ActionTypes from './ActionTypes';
 
 const actionCreator = actionCreatorFactory();
 
-export const getRiderCheckinsRequestAction: ActionCreator<ActionTypes.IGetRiderCheckinsRequestPayload> = actionCreator<ActionTypes.IGetRiderCheckinsRequestPayload>(
+export const getRiderCheckinsRequestAction: ActionCreator<any> = actionCreator<any>(
     ActionTypes.GET_RIDER_CHECKINS_REQUEST,
 );
 
@@ -49,4 +49,8 @@ export const deleteRiderCheckinResponseAction: ActionCreator<ActionTypes.IDelete
 
 export const removeExpiredRiderCheckins: ActionCreator<ActionTypes.IRemoveExpiredRiderCheckinsPayload> = actionCreator<ActionTypes.IRemoveExpiredRiderCheckinsPayload>(
     ActionTypes.REMOVE_EXPIRED_RIDER_CHECKINS,
+);
+
+export const updateRiderCheckinFetchInfoAction: ActionCreator<ActionTypes.IUpdateRiderCheckinFetchInfoPayload> = actionCreator<ActionTypes.IUpdateRiderCheckinFetchInfoPayload>(
+    ActionTypes.UPDATE_RIDER_CHECKIN_FETCH_INFO,
 );

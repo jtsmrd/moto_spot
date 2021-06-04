@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import MarkerClusterer from '@googlemaps/markerclustererplus';
-import { isExpired } from '../utilities/dateTimeUtils';
 
 const eventNames = ['click', 'dblclick', 'dragend', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'recenter'];
 

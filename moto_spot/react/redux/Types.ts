@@ -17,3 +17,8 @@ export interface MapCenter {
     lat: number;
     lng: number;
 }
+
+export interface RiderCheckinFetchInfo {
+    timestamp: number;
+    bounds: MapBounds;
+}

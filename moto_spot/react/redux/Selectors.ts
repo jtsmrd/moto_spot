@@ -17,3 +17,4 @@ export const getMapBounds = (state: IAppState) => getMapInfoState(state).mapBoun
 export const getMapZoom = (state: IAppState) => getMapInfoState(state).mapZoom;
 export const getMapCenter = (state: IAppState) => getMapInfoState(state).mapCenter;
 export const getMapCenterLoaded = (state: IAppState) => getMapInfoState(state).mapCenterLoaded;
+export const getPreviousRiderCheckinFetchInfo = (state: IAppState) => getRiderCheckinState(state).previousFetchInfo;

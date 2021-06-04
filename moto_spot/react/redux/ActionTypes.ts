@@ -2,7 +2,6 @@ import * as Types from './Types';
 
 export const GET_RIDER_CHECKINS_REQUEST = 'GET_RIDER_CHECKINS_REQUEST';
 export type GET_RIDER_CHECKINS_REQUEST = typeof GET_RIDER_CHECKINS_REQUEST;
-export interface IGetRiderCheckinsRequestPayload {}
 
 export const GET_RIDER_CHECKINS_RESPONSE = 'GET_RIDER_CHECKINS_RESPONSE';
 export type GET_RIDER_CHECKINS_RESPONSE = typeof GET_RIDER_CHECKINS_RESPONSE;
@@ -65,13 +64,20 @@ export const REMOVE_EXPIRED_RIDER_CHECKINS = 'REMOVE_EXPIRED_RIDER_CHECKINS';
 export type REMOVE_EXPIRED_RIDER_CHECKINS = typeof REMOVE_EXPIRED_RIDER_CHECKINS;
 export interface IRemoveExpiredRiderCheckinsPayload {}
 
+export const UPDATE_RIDER_CHECKIN_FETCH_INFO = 'UPDATE_RIDER_CHECKIN_FETCH_INFO';
+export type UPDATE_RIDER_CHECKIN_FETCH_INFO = typeof UPDATE_RIDER_CHECKIN_FETCH_INFO;
+export interface IUpdateRiderCheckinFetchInfoPayload {
+    timestamp: number;
+    bounds: Types.MapBounds;
+}
+
 export type IRiderCheckinActionsPayload =
-    | IGetRiderCheckinsRequestPayload
     | IGetRiderCheckinsResponsePayload
     | ISetVisibleRiderCheckinsPayload
     | ICreateRiderCheckinRequestPayload
     | ICreateRiderCheckinResponsePayload
     | IDeleteRiderCheckinRequestPayload
     | IDeleteRiderCheckinResponsePayload
-    | IRemoveExpiredRiderCheckinsPayload;
+    | IRemoveExpiredRiderCheckinsPayload
+    | IUpdateRiderCheckinFetchInfoPayload;
 export type IMapActionsPayload = IUpdateMapBoundsPayload | IUpdateMapCenterPayload | IUpdateMapZoomPayload;

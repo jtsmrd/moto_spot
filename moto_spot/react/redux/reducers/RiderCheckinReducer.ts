@@ -2,7 +2,7 @@ import { Action } from 'typescript-fsa';
 import * as Types from '../Types';
 import * as ActionTypes from '../ActionTypes';
 import Cookie from 'js-cookie';
-import { isExpired } from '../../utilities/dateTimeUtils';
+import { currentTimeIsAfter } from '../../utilities/dateTimeUtils';
 
 export interface IRiderCheckinState {
     riderCheckins: Types.RiderCheckin[];
@@ -14,6 +14,7 @@ export interface IRiderCheckinState {
     createCheckinError: object;
     deleteCheckinLoading: boolean;
     deleteCheckinError: object;
+    previousFetchInfo: Types.RiderCheckinFetchInfo;
 }
 
 export const initialState: IRiderCheckinState = {
@@ -26,6 +27,7 @@ export const initialState: IRiderCheckinState = {
     createCheckinError: null,
     deleteCheckinLoading: false,
     deleteCheckinError: null,
+    previousFetchInfo: null,
 };
 
 export const statePropName = 'riderCheckins';
@@ -102,6 +104,10 @@ export default function RiderCheckinReducer(
                 visibleRiderCheckins: removeExpiredRiderCheckins(state.visibleRiderCheckins),
             };
         }
+        case ActionTypes.UPDATE_RIDER_CHECKIN_FETCH_INFO: {
+            const riderCheckinFetchInfo = action.payload as ActionTypes.IUpdateRiderCheckinFetchInfoPayload;
+            return { ...state, previousFetchInfo: riderCheckinFetchInfo };
+        }
     }
     return state;
 }
@@ -109,20 +115,20 @@ export default function RiderCheckinReducer(
 function getActiveRiderCheckins(checkins: Types.RiderCheckin[]) {
     const userUUID = Cookie.get('user_uuid');
     return checkins.filter((checkin) => {
-        return checkin.userUUID !== userUUID && !isExpired(checkin.expireDate);
+        return checkin.userUUID !== userUUID && !currentTimeIsAfter(checkin.expireDate);
     });
 }
 
 function getUserCheckin(checkins: Types.RiderCheckin[]) {
     const userUUID = Cookie.get('user_uuid');
     const results = checkins.filter((checkin) => {
-        return checkin.userUUID === userUUID && !isExpired(checkin.expireDate);
+        return checkin.userUUID === userUUID && !currentTimeIsAfter(checkin.expireDate);
     });
     return (results && results[0]) || null;
 }
 
 function removeExpiredRiderCheckins(checkins: Types.RiderCheckin[]) {
     return checkins.filter((checkin) => {
-        return !isExpired(checkin.expireDate);
+        return !currentTimeIsAfter(checkin.expireDate);
     });
 }
