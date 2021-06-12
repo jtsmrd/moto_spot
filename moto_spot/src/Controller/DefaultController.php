@@ -55,11 +55,11 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/api/rider_checkin", name="delete_rider_checkin", methods={"delete"})
+     * @Route("/api/expire_rider_checkin", name="expire_rider_checkin", methods={"put"})
      * @param Request $request
      * @return Response
      */
-    public function deleteRiderCheckin(Request $request): Response
+    public function expireRiderCheckin(Request $request): Response
     {
         $userUUID = $request->cookies->get('user_uuid');
         if (!$userUUID) {
@@ -69,15 +69,19 @@ class DefaultController extends AbstractController
         $riderCheckinId = floatval($request->query->get('id'));
         $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
 
-        $checkinToDelete = $repository->findOneBy(['userUUID' => $userUUID, 'id' => $riderCheckinId]);
-        if (!$checkinToDelete) {
+        $checkinToExpire = $repository->findOneBy(['userUUID' => $userUUID, 'id' => $riderCheckinId]);
+        if (!$checkinToExpire) {
             return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
 
-        $this->entityManager->remove($checkinToDelete);
+        $expireDate = (new \DateTime('now', new \DateTimeZone('UTC')));
+        $checkinToExpire->setExpireDate($expireDate->getTimestamp());
+        $checkinToExpire->setExpireDateDisplay($expireDate);
+
+        $this->entityManager->persist($checkinToExpire);
         $this->entityManager->flush();
 
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        return new JsonResponse(null, Response::HTTP_OK);
     }
 
     /**

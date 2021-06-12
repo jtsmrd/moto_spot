@@ -84,19 +84,19 @@ function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinReque
     }
 }
 
-function* deleteRiderCheckin(action: Action<ActionTypes.IDeleteRiderCheckinRequestPayload>) {
+function* expireRiderCheckin(action: Action<ActionTypes.IExpireRiderCheckinRequestPayload>) {
     try {
         yield call(httpRequest, {
-            url: '/api/rider_checkin',
-            method: 'DELETE',
+            url: '/api/expire_rider_checkin',
+            method: 'PUT',
             params: {
                 id: action.payload.id,
             },
         });
-        const deleteRiderCheckinPayload: ActionTypes.IDeleteRiderCheckinResponsePayload = {};
-        yield put(Actions.deleteRiderCheckinResponseAction(deleteRiderCheckinPayload));
+        const expireRiderCheckinPayload: ActionTypes.IExpireRiderCheckinResponsePayload = {};
+        yield put(Actions.expireRiderCheckinResponseAction(expireRiderCheckinPayload));
     } catch (e) {
-        yield put(Actions.deleteRiderCheckinResponseAction(e));
+        yield put(Actions.expireRiderCheckinResponseAction(e));
     }
 }
 
@@ -202,6 +202,6 @@ export default function* watchRiderCheckinRequests() {
         takeLatest(ActionTypes.GET_RIDER_CHECKINS_REQUEST, fetchRiderCheckins),
         takeLatest(ActionTypes.UPDATE_VISIBLE_RIDER_CHECKINS, updateVisibleRiderCheckins),
         takeLatest(ActionTypes.CREATE_RIDER_CHECKIN_REQUEST, createRiderCheckin),
-        takeLatest(ActionTypes.DELETE_RIDER_CHECKIN_REQUEST, deleteRiderCheckin),
+        takeLatest(ActionTypes.EXPIRE_RIDER_CHECKIN_REQUEST, expireRiderCheckin),
     ]);
 }

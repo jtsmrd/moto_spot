@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getMapCenterLoaded, getRiderCheckins, getUserCheckin, getVisibleRiderCheckins } from '../redux/Selectors';
 import {
     createRiderCheckinRequestAction,
-    deleteRiderCheckinRequestAction,
+    expireRiderCheckinRequestAction,
     getRiderCheckinsRequestAction,
     removeExpiredRiderCheckins,
     updateMapBoundsAction,
@@ -203,7 +203,7 @@ const MapContainer = (props) => {
 
     const handleRemoveCheckin = () => {
         if (userCheckin) {
-            dispatch(deleteRiderCheckinRequestAction({ id: userCheckin.id }));
+            dispatch(expireRiderCheckinRequestAction({ id: userCheckin.id }));
         }
     };
 

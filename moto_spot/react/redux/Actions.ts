@@ -39,12 +39,12 @@ export const setVisibleRiderCheckinsAction: ActionCreator<ActionTypes.ISetVisibl
     ActionTypes.SET_VISIBLE_RIDER_CHECKINS,
 );
 
-export const deleteRiderCheckinRequestAction: ActionCreator<ActionTypes.IDeleteRiderCheckinRequestPayload> = actionCreator<ActionTypes.IDeleteRiderCheckinRequestPayload>(
-    ActionTypes.DELETE_RIDER_CHECKIN_REQUEST,
+export const expireRiderCheckinRequestAction: ActionCreator<ActionTypes.IExpireRiderCheckinRequestPayload> = actionCreator<ActionTypes.IExpireRiderCheckinRequestPayload>(
+    ActionTypes.EXPIRE_RIDER_CHECKIN_REQUEST,
 );
 
-export const deleteRiderCheckinResponseAction: ActionCreator<ActionTypes.IDeleteRiderCheckinResponsePayload> = actionCreator<ActionTypes.IDeleteRiderCheckinResponsePayload>(
-    ActionTypes.DELETE_RIDER_CHECKIN_RESPONSE,
+export const expireRiderCheckinResponseAction: ActionCreator<ActionTypes.IExpireRiderCheckinResponsePayload> = actionCreator<ActionTypes.IExpireRiderCheckinResponsePayload>(
+    ActionTypes.EXPIRE_RIDER_CHECKIN_RESPONSE,
 );
 
 export const removeExpiredRiderCheckins: ActionCreator<ActionTypes.IRemoveExpiredRiderCheckinsPayload> = actionCreator<ActionTypes.IRemoveExpiredRiderCheckinsPayload>(

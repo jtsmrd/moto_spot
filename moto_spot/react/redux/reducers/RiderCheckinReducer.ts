@@ -88,10 +88,10 @@ export default function RiderCheckinReducer(
                 createCheckinError: null,
             };
         }
-        case ActionTypes.DELETE_RIDER_CHECKIN_REQUEST: {
+        case ActionTypes.EXPIRE_RIDER_CHECKIN_REQUEST: {
             return { ...state, deleteCheckinLoading: true, deleteCheckinError: null };
         }
-        case ActionTypes.DELETE_RIDER_CHECKIN_RESPONSE: {
+        case ActionTypes.EXPIRE_RIDER_CHECKIN_RESPONSE: {
             if (action.error) {
                 return { ...state, deleteCheckinError: action.payload, deleteCheckinLoading: false };
             }
