@@ -72,6 +72,9 @@ const MapContainer = (props) => {
                 lat: geoLocationLat,
                 lng: geoLocationLng,
             });
+            updateMapCenter(geoLocationLat, geoLocationLng);
+            getMapVisibleArea();
+            fetchRiderCheckins();
         }
     }, [geoLocationLat, geoLocationLng]);
 
