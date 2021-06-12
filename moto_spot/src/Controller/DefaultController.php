@@ -110,8 +110,9 @@ class DefaultController extends AbstractController
             $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
             $existingCheckin = $repository->findOneBy(['userUUID' => $userUUID], ['id' => 'DESC']);
             if ($existingCheckin) {
-                $expireDate = (new \DateTime('now', new \DateTimeZone('UTC')))->getTimestamp();
-                $existingCheckin->setExpireDate($expireDate);
+                $expireDate = (new \DateTime('now', new \DateTimeZone('UTC')));
+                $existingCheckin->setExpireDate($expireDate->getTimestamp());
+                $existingCheckin->setExpireDateDisplay($expireDate);
                 $this->entityManager->persist($existingCheckin);
             }
         }
@@ -124,6 +125,7 @@ class DefaultController extends AbstractController
         $riderCheckin->setUserUUID($userUUID ?? $newUserUUID);
         $createDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $riderCheckin->setCreateDate($createDate->getTimestamp());
+        $riderCheckin->setCreateDateDisplay($createDate);
 
         $expireDate = $accessor->getValue($requestData, '[expire_date]');
         if (!$expireDate) {
@@ -132,6 +134,10 @@ class DefaultController extends AbstractController
             $expireDate = $expireDate->add(new \DateInterval('PT5H'))->getTimestamp();
         }
         $riderCheckin->setExpireDate($expireDate);
+
+        $expireDateDisplay = new \DateTime();
+        $expireDateDisplay->setTimestamp($expireDate);
+        $riderCheckin->setExpireDateDisplay($expireDateDisplay);
 
         $this->entityManager->persist($riderCheckin);
         $this->entityManager->flush();

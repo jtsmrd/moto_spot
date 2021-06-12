@@ -62,6 +62,16 @@ class RiderCheckin
      */
     private $expireDate;
 
+    /**
+     * @ORM\Column(type="datetimetz")
+     */
+    private $createDateDisplay;
+
+    /**
+     * @ORM\Column(type="datetimetz", nullable=true)
+     */
+    private $expireDateDisplay;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -123,6 +133,30 @@ class RiderCheckin
     public function setExpireDate(?int $expireDate): self
     {
         $this->expireDate = $expireDate;
+
+        return $this;
+    }
+
+    public function getCreateDateDisplay(): ?\DateTimeInterface
+    {
+        return $this->createDateDisplay;
+    }
+
+    public function setCreateDateDisplay(\DateTimeInterface $createDateDisplay): self
+    {
+        $this->createDateDisplay = $createDateDisplay;
+
+        return $this;
+    }
+
+    public function getExpireDateDisplay(): ?\DateTimeInterface
+    {
+        return $this->expireDateDisplay;
+    }
+
+    public function setExpireDateDisplay(?\DateTimeInterface $expireDateDisplay): self
+    {
+        $this->expireDateDisplay = $expireDateDisplay;
 
         return $this;
     }
