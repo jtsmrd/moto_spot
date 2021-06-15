@@ -69,7 +69,10 @@ class DefaultController extends AbstractController
         $riderCheckinId = floatval($request->query->get('id'));
         $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
 
-        $checkinToExpire = $repository->findOneBy(['userUUID' => $userUUID, 'id' => $riderCheckinId]);
+        $checkinToExpire = $repository->findOneBy([
+            'userUUID' => $userUUID,
+            'id' => $riderCheckinId
+        ]);
         if (!$checkinToExpire) {
             return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
@@ -112,7 +115,9 @@ class DefaultController extends AbstractController
         } else {
             // If existing rider checkin exists, mark as expired
             $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
-            $existingCheckin = $repository->findOneBy(['userUUID' => $userUUID], ['id' => 'DESC']);
+            $existingCheckin = $repository->findOneBy([
+                'userUUID' => $userUUID
+            ], ['id' => 'DESC']);
             if ($existingCheckin) {
                 $expireDate = (new \DateTime('now', new \DateTimeZone('UTC')));
                 $existingCheckin->setExpireDate($expireDate->getTimestamp());
@@ -133,9 +138,9 @@ class DefaultController extends AbstractController
 
         $expireDate = $accessor->getValue($requestData, '[expire_date]');
         if (!$expireDate) {
-            // Default expire date to + 5 hours if one isn't provided
+            // Default expire date to + 1 hour if one isn't provided
             $expireDate = new \DateTime('now', new \DateTimeZone('UTC'));
-            $expireDate = $expireDate->add(new \DateInterval('PT5H'))->getTimestamp();
+            $expireDate = $expireDate->add(new \DateInterval('PT1H'))->getTimestamp();
         }
         $riderCheckin->setExpireDate($expireDate);
 
@@ -168,6 +173,89 @@ class DefaultController extends AbstractController
         return $response;
     }
 
+    /**
+     * @Route("/api/extend_rider_checkin", name="extend_rider_checkin", methods={"put"})
+     * @param Request $request
+     * @return Response
+     */
+    public function extendRiderCheckin(Request $request): Response
+    {
+        $requestData = json_decode($request->getContent(), true);
+        if (!is_array($requestData)) {
+            return new JsonResponse([], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $this->extendRiderCheckinIsValid($requestData);
+        } catch (InvalidDataException $e) {
+            return new JsonResponse([
+                'message' => $e->getMessage(),
+                'errors' => $e->getErrors()
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Make sure we can identify the user updating the rider checkin
+        $userUUID = $request->cookies->get('user_uuid');
+        if (!$userUUID) {
+            return new JsonResponse(null, Response::HTTP_FORBIDDEN);
+        }
+
+        $accessor = PropertyAccess::createPropertyAccessor();
+
+        $riderCheckinId = intval($accessor->getValue($requestData, '[id]'));
+        $extendInterval = intval($accessor->getValue($requestData, '[extend_interval]'));
+
+        $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
+
+        $checkinToExtend = $repository->findOneBy([
+            'userUUID' => $userUUID,
+            'id' => $riderCheckinId
+        ]);
+        if (!$checkinToExtend) {
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        }
+
+        /** @var string|null $expireDuration */
+        $expireDuration = null;
+
+        switch($extendInterval) {
+            case 15:
+                $expireDuration = 'PT15M';
+                break;
+            case 30:
+                $expireDuration = 'PT30M';
+                break;
+            case 60:
+                $expireDuration = 'PT1H';
+                break;
+            default:
+                break;
+        }
+
+        if (!$expireDuration) {
+            return new JsonResponse([], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Extend the existing expire date with the given extend interval
+        $existingExpireDate = new \DateTime();
+        $existingExpireDate->setTimestamp($checkinToExtend->getExpireDate());
+        $newExpireDate = $existingExpireDate->add(new \DateInterval($expireDuration));
+
+        $checkinToExtend->setExpireDate($newExpireDate->getTimestamp());
+        $checkinToExtend->setExpireDateDisplay($newExpireDate);
+
+        $this->entityManager->persist($checkinToExtend);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'id' => $checkinToExtend->getId(),
+            'userUUID' => $checkinToExtend->getUserUUID(),
+            'lat' => $checkinToExtend->getLat(),
+            'lng' => $checkinToExtend->getLng(),
+            'expireDate' => $checkinToExtend->getExpireDate()
+        ], Response::HTTP_OK);
+    }
+
     private function riderCheckinIsValid(array $requestData): void
     {
         $constraints = new Assert\Collection([
@@ -178,6 +266,31 @@ class DefaultController extends AbstractController
                 new Assert\NotBlank()
             ]),
             'expire_date' => new Assert\Optional()
+        ]);
+
+        $validator = Validation::createValidator();
+        $errors = $validator->validate($requestData, $constraints);
+
+        if (count($errors) > 0) {
+            $messages = [];
+
+            /** @var ConstraintViolation $violation */
+            foreach ($errors as $violation) {
+                $messages[$violation->getPropertyPath()][] = $violation->getMessage();
+            }
+            throw new InvalidDataException('Validation Errors', $messages);
+        }
+    }
+
+    private function extendRiderCheckinIsValid(array $requestData): void
+    {
+        $constraints = new Assert\Collection([
+            'id' => new Assert\Required([
+                new Assert\NotBlank()
+            ]),
+            'extend_interval' => new Assert\Required([
+                new Assert\NotBlank()
+            ])
         ]);
 
         $validator = Validation::createValidator();

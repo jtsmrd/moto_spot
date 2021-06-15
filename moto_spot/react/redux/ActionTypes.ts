@@ -71,6 +71,19 @@ export interface IUpdateRiderCheckinFetchInfoPayload {
     bounds: Types.MapBounds;
 }
 
+export const EXTEND_RIDER_CHECKIN_REQUEST = 'EXTEND_RIDER_CHECKIN_REQUEST';
+export type EXTEND_RIDER_CHECKIN_REQUEST = typeof EXTEND_RIDER_CHECKIN_REQUEST;
+export interface IExtendRiderCheckinRequestPayload {
+    id: number;
+    extendInterval: number;
+}
+
+export const EXTEND_RIDER_CHECKIN_RESPONSE = 'EXTEND_RIDER_CHECKIN_RESPONSE';
+export type EXTEND_RIDER_CHECKIN_RESPONSE = typeof EXTEND_RIDER_CHECKIN_RESPONSE;
+export interface IExtendRiderCheckinResponsePayload {
+    riderCheckin: Types.RiderCheckin;
+}
+
 export type IRiderCheckinActionsPayload =
     | IGetRiderCheckinsResponsePayload
     | ISetVisibleRiderCheckinsPayload
@@ -79,5 +92,7 @@ export type IRiderCheckinActionsPayload =
     | IExpireRiderCheckinRequestPayload
     | IExpireRiderCheckinResponsePayload
     | IRemoveExpiredRiderCheckinsPayload
-    | IUpdateRiderCheckinFetchInfoPayload;
+    | IUpdateRiderCheckinFetchInfoPayload
+    | IExtendRiderCheckinRequestPayload
+    | IExtendRiderCheckinResponsePayload;
 export type IMapActionsPayload = IUpdateMapBoundsPayload | IUpdateMapCenterPayload | IUpdateMapZoomPayload;

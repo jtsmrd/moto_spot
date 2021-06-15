@@ -100,6 +100,25 @@ function* expireRiderCheckin(action: Action<ActionTypes.IExpireRiderCheckinReque
     }
 }
 
+function* extendRiderCheckin(action: Action<ActionTypes.IExtendRiderCheckinRequestPayload>) {
+    try {
+        const res = yield call(httpRequest, {
+            url: '/api/extend_rider_checkin',
+            method: 'PUT',
+            data: {
+                id: action.payload.id,
+                extend_interval: action.payload.extendInterval,
+            },
+        });
+        const riderCheckinPayload: ActionTypes.IExtendRiderCheckinResponsePayload = {
+            riderCheckin: res.data,
+        };
+        yield put(Actions.extendRiderCheckinResponseAction(riderCheckinPayload));
+    } catch (e) {
+        yield put(Actions.extendRiderCheckinResponseAction(e));
+    }
+}
+
 function getVisibleRiderCheckins(riderCheckins: Types.RiderCheckin[], mapBounds: Types.MapBounds) {
     return riderCheckins.filter((rc) => {
         return (
@@ -203,5 +222,6 @@ export default function* watchRiderCheckinRequests() {
         takeLatest(ActionTypes.UPDATE_VISIBLE_RIDER_CHECKINS, updateVisibleRiderCheckins),
         takeLatest(ActionTypes.CREATE_RIDER_CHECKIN_REQUEST, createRiderCheckin),
         takeLatest(ActionTypes.EXPIRE_RIDER_CHECKIN_REQUEST, expireRiderCheckin),
+        takeLatest(ActionTypes.EXTEND_RIDER_CHECKIN_REQUEST, extendRiderCheckin),
     ]);
 }

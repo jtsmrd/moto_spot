@@ -54,3 +54,11 @@ export const removeExpiredRiderCheckins: ActionCreator<ActionTypes.IRemoveExpire
 export const updateRiderCheckinFetchInfoAction: ActionCreator<ActionTypes.IUpdateRiderCheckinFetchInfoPayload> = actionCreator<ActionTypes.IUpdateRiderCheckinFetchInfoPayload>(
     ActionTypes.UPDATE_RIDER_CHECKIN_FETCH_INFO,
 );
+
+export const extendRiderCheckinRequestAction: ActionCreator<ActionTypes.IExtendRiderCheckinRequestPayload> = actionCreator<ActionTypes.IExtendRiderCheckinRequestPayload>(
+    ActionTypes.EXTEND_RIDER_CHECKIN_REQUEST,
+);
+
+export const extendRiderCheckinResponseAction: ActionCreator<ActionTypes.IExtendRiderCheckinResponsePayload> = actionCreator<ActionTypes.IExtendRiderCheckinResponsePayload>(
+    ActionTypes.EXTEND_RIDER_CHECKIN_RESPONSE,
+);

@@ -4,6 +4,7 @@ import { getMapCenterLoaded, getRiderCheckins, getUserCheckin, getVisibleRiderCh
 import {
     createRiderCheckinRequestAction,
     expireRiderCheckinRequestAction,
+    extendRiderCheckinRequestAction,
     getRiderCheckinsRequestAction,
     removeExpiredRiderCheckins,
     updateMapBoundsAction,
@@ -108,8 +109,9 @@ const MapContainer = (props) => {
         handleCheckin(expireValue);
     };
 
-    const handleUserCheckinDialogExtend = (extendValue) => {
+    const handleUserCheckinDialogExtend = (extendInterval) => {
         setUserCheckinDialogVisible(false);
+        handleExtendCheckin(extendInterval);
     };
 
     const handleUserCheckinDialogDelete = () => {
@@ -204,6 +206,17 @@ const MapContainer = (props) => {
     const handleRemoveCheckin = () => {
         if (userCheckin) {
             dispatch(expireRiderCheckinRequestAction({ id: userCheckin.id }));
+        }
+    };
+
+    const handleExtendCheckin = (extendInterval) => {
+        if (userCheckin) {
+            dispatch(
+                extendRiderCheckinRequestAction({
+                    id: userCheckin.id,
+                    extendInterval: extendInterval,
+                }),
+            );
         }
     };
 

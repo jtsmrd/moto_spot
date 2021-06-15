@@ -15,6 +15,8 @@ export interface IRiderCheckinState {
     deleteCheckinLoading: boolean;
     deleteCheckinError: object;
     previousFetchInfo: Types.RiderCheckinFetchInfo;
+    extendCheckinLoading: boolean;
+    extendCheckinError: object;
 }
 
 export const initialState: IRiderCheckinState = {
@@ -28,6 +30,8 @@ export const initialState: IRiderCheckinState = {
     deleteCheckinLoading: false,
     deleteCheckinError: null,
     previousFetchInfo: null,
+    extendCheckinLoading: false,
+    extendCheckinError: null,
 };
 
 export const statePropName = 'riderCheckins';
@@ -107,6 +111,29 @@ export default function RiderCheckinReducer(
         case ActionTypes.UPDATE_RIDER_CHECKIN_FETCH_INFO: {
             const riderCheckinFetchInfo = action.payload as ActionTypes.IUpdateRiderCheckinFetchInfoPayload;
             return { ...state, previousFetchInfo: riderCheckinFetchInfo };
+        }
+        case ActionTypes.EXTEND_RIDER_CHECKIN_REQUEST: {
+            return {
+                ...state,
+                extendCheckinLoading: true,
+                extendCheckinError: null,
+            };
+        }
+        case ActionTypes.EXTEND_RIDER_CHECKIN_RESPONSE: {
+            if (action.error) {
+                return {
+                    ...state,
+                    extendCheckinError: action.payload,
+                    extendCheckinLoading: false,
+                };
+            }
+            const { riderCheckin } = action.payload as ActionTypes.IExtendRiderCheckinResponsePayload;
+            return {
+                ...state,
+                userCheckin: riderCheckin,
+                extendCheckinLoading: false,
+                extendCheckinError: null,
+            };
         }
     }
     return state;
