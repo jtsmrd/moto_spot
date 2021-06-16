@@ -13,7 +13,7 @@ import {
 } from '../redux/Actions';
 import Map from './Map';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Button, Typography } from '@material-ui/core';
+import { Button, Typography, useMediaQuery, useTheme } from '@material-ui/core';
 import RiderCheckinDialog from './RiderCheckinDialog';
 import * as Types from '../redux/Types';
 import UserCheckinDialog from './UserCheckinDialog';
@@ -55,6 +55,7 @@ const MapContainer = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
     const mapRef = useRef();
+    const theme = useTheme();
     const { positionLat, positionLng, positionError } = usePosition();
     const { geoLocationLat, geoLocationLng, geoLocationError } = useGeoLocation();
     const [checkinDialogVisible, setCheckinDialogVisible] = useState(false);
@@ -64,6 +65,9 @@ const MapContainer = (props) => {
     const userCheckin = useSelector(getUserCheckin);
     const visibleRiderCheckins = useSelector(getVisibleRiderCheckins);
     const mapCenterLoaded = useSelector(getMapCenterLoaded);
+    const isMobile = useMediaQuery(theme.breakpoints.down('xs'), {
+        defaultMatches: true,
+    });
 
     // Set map center after getting users' geo location
     useEffect(() => {
@@ -238,6 +242,7 @@ const MapContainer = (props) => {
                 userCheckin={userCheckin}
                 onMarkerClicked={onMarkerClicked}
                 onUserMarkerClicked={onUserMarkerClicked}
+                isMobile={isMobile}
             />
             <div
                 style={{

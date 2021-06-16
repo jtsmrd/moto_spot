@@ -13,6 +13,7 @@ export interface MapProps {
     onZoomChanged: any;
     onMarkerClicked: any;
     onUserMarkerClicked: any;
+    isMobile: boolean;
 }
 
 const Map: React.FC<MapProps> = (props) => {
@@ -26,6 +27,7 @@ const Map: React.FC<MapProps> = (props) => {
         onReady,
         onMarkerClicked,
         onUserMarkerClicked,
+        isMobile,
     } = props;
     return (
         <GoogleMap
@@ -38,6 +40,7 @@ const Map: React.FC<MapProps> = (props) => {
             mapTypeControl={false}
             streetViewControl={false}
             fullscreenControl={false}
+            disableDefaultUI={isMobile}
             onReady={onReady}
             onDragend={onDragEnd}
             onZoomChanged={onZoomChanged}
