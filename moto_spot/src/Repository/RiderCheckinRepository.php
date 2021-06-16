@@ -38,6 +38,7 @@ class RiderCheckinRepository extends ServiceEntityRepository
             )
             ) < ?
             AND expire_date > ?
+            ORDER BY expire_date DESC
             ';
 
         $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
