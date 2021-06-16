@@ -43,10 +43,41 @@ const useStyles = makeStyles((theme: Theme) =>
             backgroundColor: 'rgba(255, 192, 18, 0.5)',
             padding: '1rem 2rem',
             borderRadius: '1rem',
+            border: '1px solid gray',
             fontSize: '1rem',
             [theme.breakpoints.up('sm')]: {
                 fontSize: '2rem',
             },
+        },
+        bottomButtonContainer: {
+            zIndex: 1,
+            display: 'flex',
+            justifyContent: 'space-around',
+            width: '100%',
+            position: 'absolute',
+            bottom: '2rem',
+        },
+        meetupButton: {
+            backgroundColor: 'rgba(18, 215, 255, 0.75)',
+            textTransform: 'capitalize',
+            padding: '1rem 0',
+            borderRadius: '1rem',
+            border: '1px solid gray',
+            width: '40%',
+        },
+        meetupButtonTitle: {
+            fontSize: '1rem',
+        },
+        checkinButton: {
+            backgroundColor: 'rgba(18, 215, 255, 0.75)',
+            textTransform: 'capitalize',
+            padding: '1rem 0',
+            borderRadius: '1rem',
+            border: '1px solid gray',
+            width: '40%',
+        },
+        checkinButtonTitle: {
+            fontSize: '1rem',
         },
     }),
 );
@@ -244,45 +275,34 @@ const MapContainer = (props) => {
                 onUserMarkerClicked={onUserMarkerClicked}
                 isMobile={isMobile}
             />
-            <div
-                style={{
-                    zIndex: 1,
-                    width: '100%',
-                    textAlign: 'center',
-                    position: 'absolute',
-                    bottom: '2rem',
-                }}
-            >
+            <div className={classes.bottomButtonContainer}>
+                <Button className={classes.meetupButton}>
+                    <Typography className={classes.meetupButtonTitle}>Create Meetup</Typography>
+                </Button>
                 <Button
-                    style={{
-                        backgroundColor: 'rgba(18, 215, 255, 0.75)',
-                        textTransform: 'capitalize',
-                        padding: '1rem 4rem',
-                        borderRadius: '1rem',
-                        fontSize: '1rem',
-                    }}
+                    className={classes.checkinButton}
                     onClick={() => {
                         setCheckinDialogVisible(true);
                     }}
                 >
-                    <Typography style={{ fontSize: '2rem' }}>Check in</Typography>
+                    <Typography className={classes.checkinButtonTitle}>Check In</Typography>
                 </Button>
-                <RiderCheckinDialog
-                    open={checkinDialogVisible}
-                    onCheckin={handleRiderCheckinDialogCheckin}
-                    onClose={() => {
-                        setCheckinDialogVisible(false);
-                    }}
-                />
-                <UserCheckinDialog
-                    open={userCheckinDialogVisible}
-                    onClose={() => {
-                        setUserCheckinDialogVisible(false);
-                    }}
-                    onExtend={handleUserCheckinDialogExtend}
-                    onDelete={handleUserCheckinDialogDelete}
-                />
             </div>
+            <RiderCheckinDialog
+                open={checkinDialogVisible}
+                onCheckin={handleRiderCheckinDialogCheckin}
+                onClose={() => {
+                    setCheckinDialogVisible(false);
+                }}
+            />
+            <UserCheckinDialog
+                open={userCheckinDialogVisible}
+                onClose={() => {
+                    setUserCheckinDialogVisible(false);
+                }}
+                onExtend={handleUserCheckinDialogExtend}
+                onDelete={handleUserCheckinDialogDelete}
+            />
         </div>
     );
 };
