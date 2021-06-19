@@ -62,3 +62,15 @@ export const extendRiderCheckinRequestAction: ActionCreator<ActionTypes.IExtendR
 export const extendRiderCheckinResponseAction: ActionCreator<ActionTypes.IExtendRiderCheckinResponsePayload> = actionCreator<ActionTypes.IExtendRiderCheckinResponsePayload>(
     ActionTypes.EXTEND_RIDER_CHECKIN_RESPONSE,
 );
+
+export const setCreateMeetupViewStateAction: ActionCreator<ActionTypes.ISetCreateMeetupViewStatePayload> = actionCreator<ActionTypes.ISetCreateMeetupViewStatePayload>(
+    ActionTypes.SET_CREATE_MEETUP_VIEW_STATE,
+);
+
+export const setSelectedUserCheckinAction: ActionCreator<ActionTypes.ISetSelectedUserCheckinPayload> = actionCreator<ActionTypes.ISetSelectedUserCheckinPayload>(
+    ActionTypes.SET_SELECTED_USER_CHECKIN,
+);
+
+export const setSelectedRiderCheckinAction: ActionCreator<ActionTypes.ISetSelectedRiderCheckinPayload> = actionCreator<ActionTypes.ISetSelectedRiderCheckinPayload>(
+    ActionTypes.SET_SELECTED_RIDER_CHECKIN,
+);

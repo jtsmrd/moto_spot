@@ -11,9 +11,10 @@ export interface MapProps {
     onReady: any;
     onDragEnd: any;
     onZoomChanged: any;
-    onMarkerClicked: any;
+    onRiderMarkerClicked: any;
     onUserMarkerClicked: any;
     isMobile: boolean;
+    isCreatingMeetup: boolean;
 }
 
 const Map: React.FC<MapProps> = (props) => {
@@ -25,10 +26,12 @@ const Map: React.FC<MapProps> = (props) => {
         riderCheckins,
         userCheckin,
         onReady,
-        onMarkerClicked,
+        onRiderMarkerClicked,
         onUserMarkerClicked,
         isMobile,
+        isCreatingMeetup,
     } = props;
+
     return (
         <GoogleMap
             // @ts-ignore
@@ -45,7 +48,7 @@ const Map: React.FC<MapProps> = (props) => {
             onDragend={onDragEnd}
             onZoomChanged={onZoomChanged}
         >
-            {userCheckin && (
+            {!isCreatingMeetup && userCheckin && (
                 <Marker
                     // @ts-ignore
                     position={{ lat: userCheckin.lat, lng: userCheckin.lng }}
@@ -54,7 +57,7 @@ const Map: React.FC<MapProps> = (props) => {
                     }}
                 />
             )}
-            <MarkerCluster riderCheckins={riderCheckins} click={onMarkerClicked} />
+            {!isCreatingMeetup && <MarkerCluster riderCheckins={riderCheckins} click={onRiderMarkerClicked} />}
         </GoogleMap>
     );
 };

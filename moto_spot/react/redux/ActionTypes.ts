@@ -84,6 +84,24 @@ export interface IExtendRiderCheckinResponsePayload {
     riderCheckin: Types.RiderCheckin;
 }
 
+export const SET_CREATE_MEETUP_VIEW_STATE = 'SET_CREATE_MEETUP_VIEW_STATE';
+export type SET_CREATE_MEETUP_VIEW_STATE = typeof SET_CREATE_MEETUP_VIEW_STATE;
+export interface ISetCreateMeetupViewStatePayload {
+    isCreatingMeetup: boolean;
+}
+
+export const SET_SELECTED_USER_CHECKIN = 'SET_SELECTED_USER_CHECKIN';
+export type SET_SELECTED_USER_CHECKIN = typeof SET_SELECTED_USER_CHECKIN;
+export interface ISetSelectedUserCheckinPayload {
+    userCheckin?: Types.RiderCheckin;
+}
+
+export const SET_SELECTED_RIDER_CHECKIN = 'SET_SELECTED_RIDER_CHECKIN';
+export type SET_SELECTED_RIDER_CHECKIN = typeof SET_SELECTED_RIDER_CHECKIN;
+export interface ISetSelectedRiderCheckinPayload {
+    riderCheckin?: Types.RiderCheckin;
+}
+
 export type IRiderCheckinActionsPayload =
     | IGetRiderCheckinsResponsePayload
     | ISetVisibleRiderCheckinsPayload
@@ -95,4 +113,12 @@ export type IRiderCheckinActionsPayload =
     | IUpdateRiderCheckinFetchInfoPayload
     | IExtendRiderCheckinRequestPayload
     | IExtendRiderCheckinResponsePayload;
-export type IMapActionsPayload = IUpdateMapBoundsPayload | IUpdateMapCenterPayload | IUpdateMapZoomPayload;
+
+export type IMapActionsPayload =
+    | IUpdateMapBoundsPayload
+    | IUpdateMapCenterPayload
+    | IUpdateMapZoomPayload
+    | ISetSelectedUserCheckinPayload
+    | ISetSelectedRiderCheckinPayload;
+
+export type IRiderMeetupActionsPayload = ISetCreateMeetupViewStatePayload;

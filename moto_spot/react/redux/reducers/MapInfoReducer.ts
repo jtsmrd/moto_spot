@@ -7,6 +7,8 @@ export interface IMapInfoState {
     mapCenter: Types.MapCenter;
     mapZoom: number;
     mapCenterLoaded: boolean;
+    selectedUserCheckin?: Types.RiderCheckin;
+    selectedRiderCheckin?: Types.RiderCheckin;
 }
 
 export const initialState: IMapInfoState = {
@@ -22,6 +24,8 @@ export const initialState: IMapInfoState = {
     },
     mapZoom: 0,
     mapCenterLoaded: false,
+    selectedUserCheckin: null,
+    selectedRiderCheckin: null,
 };
 
 export const statePropName = 'mapInfo';
@@ -51,6 +55,20 @@ export default function MapInfoReducer(
             return {
                 ...state,
                 mapZoom: mapZoom,
+            };
+        }
+        case ActionTypes.SET_SELECTED_USER_CHECKIN: {
+            const { userCheckin } = action.payload as ActionTypes.ISetSelectedUserCheckinPayload;
+            return {
+                ...state,
+                selectedUserCheckin: userCheckin,
+            };
+        }
+        case ActionTypes.SET_SELECTED_RIDER_CHECKIN: {
+            const { riderCheckin } = action.payload as ActionTypes.ISetSelectedRiderCheckinPayload;
+            return {
+                ...state,
+                selectedRiderCheckin: riderCheckin,
             };
         }
     }
