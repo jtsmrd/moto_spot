@@ -66,7 +66,7 @@ class DefaultController extends AbstractController
             return new JsonResponse(null, Response::HTTP_FORBIDDEN);
         }
 
-        $riderCheckinId = floatval($request->query->get('id'));
+        $riderCheckinId = intval($request->query->get('id'));
         $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
 
         $checkinToExpire = $repository->findOneBy([

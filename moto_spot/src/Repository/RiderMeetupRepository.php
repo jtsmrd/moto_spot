@@ -2,32 +2,32 @@
 
 namespace App\Repository;
 
-use App\Entity\RiderCheckin;
+use App\Entity\RiderMeetup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method RiderCheckin|null find($id, $lockMode = null, $lockVersion = null)
- * @method RiderCheckin|null findOneBy(array $criteria, array $orderBy = null)
- * @method RiderCheckin[]    findAll()
- * @method RiderCheckin[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method RiderMeetup|null find($id, $lockMode = null, $lockVersion = null)
+ * @method RiderMeetup|null findOneBy(array $criteria, array $orderBy = null)
+ * @method RiderMeetup[]    findAll()
+ * @method RiderMeetup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RiderCheckinRepository extends ServiceEntityRepository
+class RiderMeetupRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, RiderCheckin::class);
+        parent::__construct($registry, RiderMeetup::class);
     }
 
-    public function getRiderCheckinsAroundLocation(float $lat, float $lng, float $distance)
+    public function getRiderMeetupsAroundLocation(float $lat, float $lng, float $distance)
     {
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata('App\Entity\RiderCheckin', 'rc');
+        $rsm->addRootEntityFromClassMetadata('App\Entity\RiderMeetup', 'rm');
 
         $sql = '
-            SELECT id, user_uuid, lng, lat, expire_date 
-            FROM rider_checkin rc
+            SELECT id, user_uuid, lat, lng, meetup_timestamp, expire_timestamp 
+            FROM rider_meetup rm
             WHERE (
             3959 * acos(
                 cos(radians(?))
@@ -54,7 +54,7 @@ class RiderCheckinRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return RiderCheckin[] Returns an array of RiderCheckin objects
+    //  * @return RiderMeetup[] Returns an array of RiderMeetup objects
     //  */
     /*
     public function findByExampleField($value)
@@ -71,7 +71,7 @@ class RiderCheckinRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?RiderCheckin
+    public function findOneBySomeField($value): ?RiderMeetup
     {
         return $this->createQueryBuilder('r')
             ->andWhere('r.exampleField = :val')
