@@ -7,12 +7,14 @@ export interface MapProps {
     mapRef: object;
     defaultZoomLevel: number;
     riderCheckins: Types.RiderCheckin[];
+    riderMeetups: Types.RiderMeetup[];
     userCheckin: Types.RiderCheckin;
     onReady: any;
     onDragEnd: any;
     onZoomChanged: any;
     onRiderMarkerClicked: any;
     onUserMarkerClicked: any;
+    onMeetupMarkerClicked: any;
     isMobile: boolean;
     isCreatingMeetup: boolean;
 }
@@ -24,13 +26,31 @@ const Map: React.FC<MapProps> = (props) => {
         onDragEnd,
         onZoomChanged,
         riderCheckins,
+        riderMeetups,
         userCheckin,
         onReady,
         onRiderMarkerClicked,
         onUserMarkerClicked,
+        onMeetupMarkerClicked,
         isMobile,
         isCreatingMeetup,
     } = props;
+
+    const displayMeetups = () => {
+        return riderMeetups.map((meetup) => {
+            const meetupMarker = (
+                <Marker
+                    key={meetup.id}
+                    // @ts-ignore
+                    position={{ lat: meetup.lat, lng: meetup.lng }}
+                    onClick={() => {
+                        onMeetupMarkerClicked(meetup);
+                    }}
+                />
+            );
+            return meetupMarker;
+        });
+    };
 
     return (
         <GoogleMap
@@ -58,6 +78,7 @@ const Map: React.FC<MapProps> = (props) => {
                 />
             )}
             {!isCreatingMeetup && <MarkerCluster riderCheckins={riderCheckins} click={onRiderMarkerClicked} />}
+            {!isCreatingMeetup && displayMeetups()}
         </GoogleMap>
     );
 };

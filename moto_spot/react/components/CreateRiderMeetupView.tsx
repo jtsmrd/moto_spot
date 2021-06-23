@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, Button, Typography } from '@material-ui/core';
 import { setCreateMeetupViewStateAction } from '../redux/Actions';
 import GpsNotFixedIcon from '@material-ui/icons/GpsNotFixed';
+import CreateRiderMeetupModal from './CreateRiderMeetupModal';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -50,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const CreateRiderMeetupView: React.FC<{}> = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
+    const [meetupModalVisible, setMeetupModalVisible] = useState(false);
 
     const setMeetupViewState = useCallback(
         (isCreating) => {
@@ -72,10 +74,21 @@ const CreateRiderMeetupView: React.FC<{}> = (props) => {
                 >
                     <Typography className={classes.cancelButtonTitle}>Cancel</Typography>
                 </Button>
-                <Button className={classes.confirmButton}>
+                <Button
+                    className={classes.confirmButton}
+                    onClick={() => {
+                        setMeetupModalVisible(true);
+                    }}
+                >
                     <Typography className={classes.confirmButtonTitle}>Confirm</Typography>
                 </Button>
             </Box>
+            <CreateRiderMeetupModal
+                open={meetupModalVisible}
+                onClose={() => {
+                    setMeetupModalVisible(false);
+                }}
+            />
         </div>
     );
 };

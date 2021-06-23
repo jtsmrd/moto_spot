@@ -6,6 +6,15 @@ export interface RiderCheckin {
     expireDate: number;
 }
 
+export interface RiderMeetup {
+    id: number;
+    userUUID: string;
+    lat: number;
+    lng: number;
+    meetupTimestamp: number;
+    expireTimestamp: number;
+}
+
 export interface MapBounds {
     neLat: number;
     neLng: number;

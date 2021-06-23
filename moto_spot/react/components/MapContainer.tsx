@@ -1,8 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getMapCenterLoaded, getRiderCheckins, getRiderMeetupState, getUserCheckin } from '../redux/Selectors';
+import {
+    getMapCenterLoaded,
+    getRiderCheckins,
+    getRiderMeetups,
+    getRiderMeetupState,
+    getUserCheckin,
+} from '../redux/Selectors';
 import {
     getRiderCheckinsRequestAction,
+    getRiderMeetupsRequestAction,
     removeExpiredRiderCheckins,
     setSelectedRiderCheckinAction,
     setSelectedUserCheckinAction,
@@ -40,6 +47,7 @@ const MapContainer: React.FC<{}> = (props) => {
     const DEFAULT_ZOOM_LEVEL = 12;
     const riderCheckins = useSelector(getRiderCheckins);
     const userCheckin = useSelector(getUserCheckin);
+    const riderMeetups = useSelector(getRiderMeetups);
     const mapCenterLoaded = useSelector(getMapCenterLoaded);
     const { isCreatingMeetup } = useSelector(getRiderMeetupState);
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'), {
@@ -57,6 +65,7 @@ const MapContainer: React.FC<{}> = (props) => {
             updateMapCenter(geoLocationLat, geoLocationLng);
             getMapVisibleArea();
             fetchRiderCheckins();
+            fetchRiderMeetups();
         }
     }, [geoLocationLat, geoLocationLng]);
 
@@ -69,6 +78,7 @@ const MapContainer: React.FC<{}> = (props) => {
     useEffect(() => {
         if (mapCenterLoaded) {
             fetchRiderCheckins();
+            fetchRiderMeetups();
         }
     }, [mapCenterLoaded]);
 
@@ -82,6 +92,11 @@ const MapContainer: React.FC<{}> = (props) => {
     function fetchRiderCheckins() {
         console.log('Fetch rider checkins');
         dispatch(getRiderCheckinsRequestAction({}));
+    }
+
+    function fetchRiderMeetups() {
+        console.log('Fetch rider meetups');
+        dispatch(getRiderMeetupsRequestAction({}));
     }
 
     function getMapVisibleArea() {
@@ -136,6 +151,7 @@ const MapContainer: React.FC<{}> = (props) => {
 
         if (!isCreatingMeetup) {
             fetchRiderCheckins();
+            fetchRiderMeetups();
         }
     };
 
@@ -145,6 +161,7 @@ const MapContainer: React.FC<{}> = (props) => {
 
         if (!isCreatingMeetup) {
             fetchRiderCheckins();
+            fetchRiderMeetups();
         }
     };
 
@@ -157,6 +174,10 @@ const MapContainer: React.FC<{}> = (props) => {
         dispatch(setSelectedUserCheckinAction({ userCheckin: userCheckin }));
     };
 
+    const onMeetupMarkerClicked = (riderMeetup: Types.RiderMeetup) => {
+        console.log(riderMeetup);
+    };
+
     return (
         <div className={classes.root}>
             <Map
@@ -167,9 +188,11 @@ const MapContainer: React.FC<{}> = (props) => {
                 onDragEnd={onDragEnd}
                 onZoomChanged={onZoomChanged}
                 riderCheckins={riderCheckins}
+                riderMeetups={riderMeetups}
                 userCheckin={userCheckin}
                 onRiderMarkerClicked={onRiderMarkerClicked}
                 onUserMarkerClicked={onUserMarkerClicked}
+                onMeetupMarkerClicked={onMeetupMarkerClicked}
                 isMobile={isMobile}
                 isCreatingMeetup={isCreatingMeetup}
             />

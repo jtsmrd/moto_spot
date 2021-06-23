@@ -3,6 +3,8 @@ import * as ActionTypes from './ActionTypes';
 
 const actionCreator = actionCreatorFactory();
 
+//<editor-fold desc="RiderCheckin Actions">
+
 export const getRiderCheckinsRequestAction: ActionCreator<any> = actionCreator<any>(
     ActionTypes.GET_RIDER_CHECKINS_REQUEST,
 );
@@ -17,18 +19,6 @@ export const createRiderCheckinRequestAction: ActionCreator<ActionTypes.ICreateR
 
 export const createRiderCheckinResponseAction: ActionCreator<ActionTypes.ICreateRiderCheckinResponsePayload> = actionCreator<ActionTypes.ICreateRiderCheckinResponsePayload>(
     ActionTypes.CREATE_RIDER_CHECKIN_RESPONSE,
-);
-
-export const updateMapBoundsAction: ActionCreator<ActionTypes.IUpdateMapBoundsPayload> = actionCreator<ActionTypes.IUpdateMapBoundsPayload>(
-    ActionTypes.UPDATE_MAP_BOUNDS,
-);
-
-export const updateMapCenterAction: ActionCreator<ActionTypes.IUpdateMapCenterPayload> = actionCreator<ActionTypes.IUpdateMapCenterPayload>(
-    ActionTypes.UPDATE_MAP_CENTER,
-);
-
-export const updateMapZoomAction: ActionCreator<ActionTypes.IUpdateMapZoomPayload> = actionCreator<ActionTypes.IUpdateMapZoomPayload>(
-    ActionTypes.UPDATE_MAP_ZOOM,
 );
 
 export const updateVisibleRiderCheckinsAction: ActionCreator<any> = actionCreator<any>(
@@ -63,8 +53,20 @@ export const extendRiderCheckinResponseAction: ActionCreator<ActionTypes.IExtend
     ActionTypes.EXTEND_RIDER_CHECKIN_RESPONSE,
 );
 
-export const setCreateMeetupViewStateAction: ActionCreator<ActionTypes.ISetCreateMeetupViewStatePayload> = actionCreator<ActionTypes.ISetCreateMeetupViewStatePayload>(
-    ActionTypes.SET_CREATE_MEETUP_VIEW_STATE,
+//</editor-fold>
+
+//<editor-fold desc="MapInfo Actions">
+
+export const updateMapBoundsAction: ActionCreator<ActionTypes.IUpdateMapBoundsPayload> = actionCreator<ActionTypes.IUpdateMapBoundsPayload>(
+    ActionTypes.UPDATE_MAP_BOUNDS,
+);
+
+export const updateMapCenterAction: ActionCreator<ActionTypes.IUpdateMapCenterPayload> = actionCreator<ActionTypes.IUpdateMapCenterPayload>(
+    ActionTypes.UPDATE_MAP_CENTER,
+);
+
+export const updateMapZoomAction: ActionCreator<ActionTypes.IUpdateMapZoomPayload> = actionCreator<ActionTypes.IUpdateMapZoomPayload>(
+    ActionTypes.UPDATE_MAP_ZOOM,
 );
 
 export const setSelectedUserCheckinAction: ActionCreator<ActionTypes.ISetSelectedUserCheckinPayload> = actionCreator<ActionTypes.ISetSelectedUserCheckinPayload>(
@@ -74,3 +76,37 @@ export const setSelectedUserCheckinAction: ActionCreator<ActionTypes.ISetSelecte
 export const setSelectedRiderCheckinAction: ActionCreator<ActionTypes.ISetSelectedRiderCheckinPayload> = actionCreator<ActionTypes.ISetSelectedRiderCheckinPayload>(
     ActionTypes.SET_SELECTED_RIDER_CHECKIN,
 );
+
+//</editor-fold>
+
+//<editor-fold desc="RiderMeetup Actions">
+
+export const setCreateMeetupViewStateAction: ActionCreator<ActionTypes.ISetCreateMeetupViewStatePayload> = actionCreator<ActionTypes.ISetCreateMeetupViewStatePayload>(
+    ActionTypes.SET_CREATE_MEETUP_VIEW_STATE,
+);
+
+export const createRiderMeetupRequestAction: ActionCreator<ActionTypes.ICreateRiderMeetupRequestPayload> = actionCreator<ActionTypes.ICreateRiderMeetupRequestPayload>(
+    ActionTypes.CREATE_RIDER_MEETUP_REQUEST,
+);
+
+export const createRiderMeetupResponseAction: ActionCreator<ActionTypes.ICreateRiderMeetupResponsePayload> = actionCreator<ActionTypes.ICreateRiderMeetupResponsePayload>(
+    ActionTypes.CREATE_RIDER_MEETUP_RESPONSE,
+);
+
+export const getRiderMeetupsRequestAction: ActionCreator<any> = actionCreator<any>(
+    ActionTypes.GET_RIDER_MEETUPS_REQUEST,
+);
+
+export const getRiderMeetupsResponseAction: ActionCreator<ActionTypes.IGetRiderMeetupsResponsePayload> = actionCreator<ActionTypes.IGetRiderMeetupsResponsePayload>(
+    ActionTypes.GET_RIDER_MEETUPS_RESPONSE,
+);
+
+export const updateVisibleRiderMeetupsAction: ActionCreator<any> = actionCreator<any>(
+    ActionTypes.UPDATE_VISIBLE_RIDER_MEETUPS,
+);
+
+export const setVisibleRiderMeetupsAction: ActionCreator<ActionTypes.ISetVisibleRiderMeetupsPayload> = actionCreator<ActionTypes.ISetVisibleRiderMeetupsPayload>(
+    ActionTypes.SET_VISIBLE_RIDER_MEETUPS,
+);
+
+//</editor-fold>
