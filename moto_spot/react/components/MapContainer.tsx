@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
+    getMapBounds,
     getMapCenterLoaded,
     getRiderCheckins,
     getRiderMeetups,
@@ -45,6 +46,7 @@ const MapContainer: React.FC<{}> = (props) => {
     const theme = useTheme();
     const { geoLocationLat, geoLocationLng, geoLocationError } = useGeoLocation();
     const DEFAULT_ZOOM_LEVEL = 12;
+    const mapBounds = useSelector(getMapBounds);
     const riderCheckins = useSelector(getRiderCheckins);
     const userCheckin = useSelector(getUserCheckin);
     const riderMeetups = useSelector(getRiderMeetups);
@@ -63,7 +65,6 @@ const MapContainer: React.FC<{}> = (props) => {
                 lng: geoLocationLng,
             });
             updateMapCenter(geoLocationLat, geoLocationLng);
-            getMapVisibleArea();
             fetchRiderCheckins();
             fetchRiderMeetups();
         }
@@ -99,14 +100,20 @@ const MapContainer: React.FC<{}> = (props) => {
         dispatch(getRiderMeetupsRequestAction({}));
     }
 
-    function getMapVisibleArea() {
-        setTimeout(() => {
-            try {
-                // @ts-ignore
-                let ne = mapRef.current.map.getBounds().getNorthEast();
-                // @ts-ignore
-                let sw = mapRef.current.map.getBounds().getSouthWest();
-                console.log('Successfully got map bounds');
+    // Update the map bounds when they change
+    useEffect(() => {
+        // @ts-ignore
+        const googleMapBounds = mapRef?.current?.map?.getBounds();
+        if (googleMapBounds) {
+            const ne = googleMapBounds.getNorthEast();
+            const sw = googleMapBounds.getSouthWest();
+
+            if (
+                ne.lat() != mapBounds.neLat ||
+                ne.lng() != mapBounds.neLng ||
+                sw.lat() != mapBounds.swLat ||
+                sw.lng() != mapBounds.swLng
+            ) {
                 dispatch(
                     updateMapBoundsAction({
                         mapBounds: {
@@ -117,12 +124,10 @@ const MapContainer: React.FC<{}> = (props) => {
                         },
                     }),
                 );
-            } catch (e) {
-                console.log('Unable to get map bounds on load, retrying: ', e);
-                getMapVisibleArea();
             }
-        }, 200);
-    }
+        }
+        // @ts-ignore
+    }, [mapRef?.current?.map?.getBounds()]);
 
     function updateMapCenter(lat: number, lng: number) {
         dispatch(
@@ -142,12 +147,10 @@ const MapContainer: React.FC<{}> = (props) => {
     const onReady = (mapProps, map, event) => {
         updateMapCenter(map.center.lat(), map.center.lng());
         updateMapZoom(map.zoom);
-        getMapVisibleArea();
     };
 
     const onDragEnd = (mapProps, map, event) => {
         updateMapCenter(map.center.lat(), map.center.lng());
-        getMapVisibleArea();
 
         if (!isCreatingMeetup) {
             fetchRiderCheckins();
@@ -157,7 +160,6 @@ const MapContainer: React.FC<{}> = (props) => {
 
     const onZoomChanged = (mapProps, map, event) => {
         updateMapZoom(map.zoom);
-        getMapVisibleArea();
 
         if (!isCreatingMeetup) {
             fetchRiderCheckins();
