@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     getMapBounds,
     getMapCenterLoaded,
+    getMapViewMode,
     getRiderCheckins,
     getRiderMeetups,
     getRiderMeetupState,
@@ -25,6 +26,8 @@ import * as Types from '../redux/Types';
 import { useGeoLocation } from '../hooks/useGeoLocation';
 import RiderCheckinView from './RiderCheckinView';
 import CreateRiderMeetupView from './CreateRiderMeetupView';
+import { MapViewMode } from '../redux/reducers/MapInfoReducer';
+import RiderMeetupView from './RiderMeetupView';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -51,7 +54,7 @@ const MapContainer: React.FC<{}> = (props) => {
     const userCheckin = useSelector(getUserCheckin);
     const riderMeetups = useSelector(getRiderMeetups);
     const mapCenterLoaded = useSelector(getMapCenterLoaded);
-    const { isCreatingMeetup } = useSelector(getRiderMeetupState);
+    const mapViewMode = useSelector(getMapViewMode);
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'), {
         defaultMatches: true,
     });
@@ -152,8 +155,9 @@ const MapContainer: React.FC<{}> = (props) => {
     const onDragEnd = (mapProps, map, event) => {
         updateMapCenter(map.center.lat(), map.center.lng());
 
-        if (!isCreatingMeetup) {
+        if (mapViewMode === MapViewMode.RiderCheckins) {
             fetchRiderCheckins();
+        } else if (mapViewMode === MapViewMode.RiderMeetups) {
             fetchRiderMeetups();
         }
     };
@@ -161,8 +165,9 @@ const MapContainer: React.FC<{}> = (props) => {
     const onZoomChanged = (mapProps, map, event) => {
         updateMapZoom(map.zoom);
 
-        if (!isCreatingMeetup) {
+        if (mapViewMode === MapViewMode.RiderCheckins) {
             fetchRiderCheckins();
+        } else if (mapViewMode === MapViewMode.RiderMeetups) {
             fetchRiderMeetups();
         }
     };
@@ -180,6 +185,19 @@ const MapContainer: React.FC<{}> = (props) => {
         console.log(riderMeetup);
     };
 
+    const getView = useCallback(() => {
+        switch (mapViewMode) {
+            case MapViewMode.RiderCheckins:
+                return <RiderCheckinView />;
+            case MapViewMode.RiderMeetups:
+                return <RiderMeetupView />;
+            case MapViewMode.CreateRiderMeetup:
+                return <CreateRiderMeetupView />;
+            default:
+                return null;
+        }
+    }, [mapViewMode]);
+
     return (
         <div className={classes.root}>
             <Map
@@ -196,9 +214,9 @@ const MapContainer: React.FC<{}> = (props) => {
                 onUserMarkerClicked={onUserMarkerClicked}
                 onMeetupMarkerClicked={onMeetupMarkerClicked}
                 isMobile={isMobile}
-                isCreatingMeetup={isCreatingMeetup}
+                mapViewMode={mapViewMode}
             />
-            {isCreatingMeetup ? <CreateRiderMeetupView /> : <RiderCheckinView />}
+            {getView()}
         </div>
     );
 };

@@ -2,9 +2,10 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, Button, Typography } from '@material-ui/core';
-import { setCreateMeetupViewStateAction } from '../redux/Actions';
+import { setMapViewModeAction } from '../redux/Actions';
 import GpsNotFixedIcon from '@material-ui/icons/GpsNotFixed';
 import CreateRiderMeetupModal from './CreateRiderMeetupModal';
+import { MapViewMode } from '../redux/reducers/MapInfoReducer';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -53,12 +54,9 @@ const CreateRiderMeetupView: React.FC<{}> = (props) => {
     const classes = useStyles();
     const [meetupModalVisible, setMeetupModalVisible] = useState(false);
 
-    const setMeetupViewState = useCallback(
-        (isCreating) => {
-            dispatch(setCreateMeetupViewStateAction({ isCreatingMeetup: isCreating }));
-        },
-        [dispatch],
-    );
+    const cancelCreateMeetup = useCallback(() => {
+        dispatch(setMapViewModeAction({ mapViewMode: MapViewMode.RiderMeetups }));
+    }, [dispatch]);
 
     return (
         <div>
@@ -66,12 +64,7 @@ const CreateRiderMeetupView: React.FC<{}> = (props) => {
                 <GpsNotFixedIcon color={'primary'} />
             </Box>
             <Box className={classes.bottomButtonContainer}>
-                <Button
-                    className={classes.cancelButton}
-                    onClick={() => {
-                        setMeetupViewState(false);
-                    }}
-                >
+                <Button className={classes.cancelButton} onClick={cancelCreateMeetup}>
                     <Typography className={classes.cancelButtonTitle}>Cancel</Typography>
                 </Button>
                 <Button

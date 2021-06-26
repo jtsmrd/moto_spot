@@ -77,13 +77,13 @@ export const setSelectedRiderCheckinAction: ActionCreator<ActionTypes.ISetSelect
     ActionTypes.SET_SELECTED_RIDER_CHECKIN,
 );
 
+export const setMapViewModeAction: ActionCreator<ActionTypes.ISetMapViewMode> = actionCreator<ActionTypes.ISetMapViewMode>(
+    ActionTypes.SET_MAP_VIEW_MODE,
+);
+
 //</editor-fold>
 
 //<editor-fold desc="RiderMeetup Actions">
-
-export const setCreateMeetupViewStateAction: ActionCreator<ActionTypes.ISetCreateMeetupViewStatePayload> = actionCreator<ActionTypes.ISetCreateMeetupViewStatePayload>(
-    ActionTypes.SET_CREATE_MEETUP_VIEW_STATE,
-);
 
 export const createRiderMeetupRequestAction: ActionCreator<ActionTypes.ICreateRiderMeetupRequestPayload> = actionCreator<ActionTypes.ICreateRiderMeetupRequestPayload>(
     ActionTypes.CREATE_RIDER_MEETUP_REQUEST,

@@ -43,6 +43,7 @@ function* fetchRiderCheckins() {
             riderCheckins: res.data,
         };
         yield put(Actions.getRiderCheckinsResponseAction(riderCheckinsPayload));
+        yield call(updateVisibleRiderCheckins);
 
         const riderCheckinFetchInfo: ActionTypes.IUpdateRiderCheckinFetchInfoPayload = {
             timestamp: getCurrentTimestamp(),

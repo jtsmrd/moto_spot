@@ -2,6 +2,12 @@ import { Action } from 'typescript-fsa';
 import * as ActionTypes from '../ActionTypes';
 import * as Types from '../Types';
 
+export enum MapViewMode {
+    RiderCheckins,
+    RiderMeetups,
+    CreateRiderMeetup,
+}
+
 export interface IMapInfoState {
     mapBounds: Types.MapBounds;
     mapCenter: Types.MapCenter;
@@ -9,6 +15,7 @@ export interface IMapInfoState {
     mapCenterLoaded: boolean;
     selectedUserCheckin?: Types.RiderCheckin;
     selectedRiderCheckin?: Types.RiderCheckin;
+    mapViewMode: MapViewMode;
 }
 
 export const initialState: IMapInfoState = {
@@ -26,6 +33,7 @@ export const initialState: IMapInfoState = {
     mapCenterLoaded: false,
     selectedUserCheckin: null,
     selectedRiderCheckin: null,
+    mapViewMode: MapViewMode.RiderCheckins,
 };
 
 export const statePropName = 'mapInfo';
@@ -69,6 +77,13 @@ export default function MapInfoReducer(
             return {
                 ...state,
                 selectedRiderCheckin: riderCheckin,
+            };
+        }
+        case ActionTypes.SET_MAP_VIEW_MODE: {
+            const { mapViewMode } = action.payload as ActionTypes.ISetMapViewMode;
+            return {
+                ...state,
+                mapViewMode: mapViewMode,
             };
         }
     }

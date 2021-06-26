@@ -1,4 +1,4 @@
-import { call, put, all, takeLatest, select } from 'redux-saga/effects';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 import { Action } from 'typescript-fsa';
 import * as ActionTypes from '../ActionTypes';
 import * as Actions from '../Actions';
@@ -6,6 +6,7 @@ import * as Types from '../Types';
 import { request as httpRequest } from '../../client';
 import { getMapBounds, getMapCenter, getMapZoom, getRiderMeetups } from '../Selectors';
 import { currentTimeIsAfter } from '../../utilities/dateTimeUtils';
+import { MapViewMode } from '../reducers/MapInfoReducer';
 
 function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequestPayload>) {
     try {
@@ -23,6 +24,7 @@ function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequest
             riderMeetup: res.data,
         };
         yield put(Actions.createRiderMeetupResponseAction(riderMeetupPayload));
+        yield put(Actions.setMapViewModeAction({ mapViewMode: MapViewMode.RiderMeetups }));
     } catch (e) {
         yield put(Actions.createRiderMeetupResponseAction(e));
     }
@@ -51,6 +53,7 @@ function* fetchRiderMeetups() {
             riderMeetups: res.data,
         };
         yield put(Actions.getRiderMeetupsResponseAction(riderMeetupsPayload));
+        yield call(updateVisibleRiderMeetups);
     } catch (e) {
         yield put(Actions.getRiderMeetupsResponseAction(e));
     }

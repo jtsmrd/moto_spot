@@ -1,4 +1,5 @@
 import * as Types from './Types';
+import { MapViewMode } from './reducers/MapInfoReducer';
 
 //<editor-fold desc="IRiderCheckinActionsPayload">
 
@@ -102,15 +103,15 @@ export interface ISetSelectedRiderCheckinPayload {
     riderCheckin?: Types.RiderCheckin;
 }
 
+export const SET_MAP_VIEW_MODE = 'SET_MAP_VIEW_MODE';
+export type SET_MAP_VIEW_MODE = typeof SET_MAP_VIEW_MODE;
+export interface ISetMapViewMode {
+    mapViewMode: MapViewMode;
+}
+
 //</editor-fold>
 
 //<editor-fold desc="IRiderMeetupActionsPayload">
-
-export const SET_CREATE_MEETUP_VIEW_STATE = 'SET_CREATE_MEETUP_VIEW_STATE';
-export type SET_CREATE_MEETUP_VIEW_STATE = typeof SET_CREATE_MEETUP_VIEW_STATE;
-export interface ISetCreateMeetupViewStatePayload {
-    isCreatingMeetup: boolean;
-}
 
 export const CREATE_RIDER_MEETUP_REQUEST = 'CREATE_RIDER_MEETUP_REQUEST';
 export type CREATE_RIDER_MEETUP_REQUEST = typeof CREATE_RIDER_MEETUP_REQUEST;
@@ -164,10 +165,10 @@ export type IMapActionsPayload =
     | IUpdateMapCenterPayload
     | IUpdateMapZoomPayload
     | ISetSelectedUserCheckinPayload
-    | ISetSelectedRiderCheckinPayload;
+    | ISetSelectedRiderCheckinPayload
+    | ISetMapViewMode;
 
 export type IRiderMeetupActionsPayload =
-    | ISetCreateMeetupViewStatePayload
     | ICreateRiderMeetupRequestPayload
     | ICreateRiderMeetupResponsePayload
     | IGetRiderMeetupsResponsePayload

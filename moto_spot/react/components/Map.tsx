@@ -2,6 +2,7 @@ import React from 'react';
 import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
 import MarkerCluster from './MarkerCluster';
 import * as Types from '../redux/Types';
+import { MapViewMode } from '../redux/reducers/MapInfoReducer';
 
 export interface MapProps {
     mapRef: object;
@@ -16,7 +17,7 @@ export interface MapProps {
     onUserMarkerClicked: any;
     onMeetupMarkerClicked: any;
     isMobile: boolean;
-    isCreatingMeetup: boolean;
+    mapViewMode: MapViewMode;
 }
 
 const Map: React.FC<MapProps> = (props) => {
@@ -33,7 +34,7 @@ const Map: React.FC<MapProps> = (props) => {
         onUserMarkerClicked,
         onMeetupMarkerClicked,
         isMobile,
-        isCreatingMeetup,
+        mapViewMode,
     } = props;
 
     const displayMeetups = () => {
@@ -52,6 +53,37 @@ const Map: React.FC<MapProps> = (props) => {
         });
     };
 
+    const mapContent = () => {
+        switch (mapViewMode) {
+            case MapViewMode.RiderCheckins:
+                let elements = [];
+
+                if (userCheckin) {
+                    elements.push(
+                        <Marker
+                            key={0}
+                            // @ts-ignore
+                            position={{ lat: userCheckin.lat, lng: userCheckin.lng }}
+                            onClick={() => {
+                                onUserMarkerClicked(userCheckin);
+                            }}
+                        />,
+                    );
+                }
+
+                elements.push(<MarkerCluster key={1} riderCheckins={riderCheckins} click={onRiderMarkerClicked} />);
+
+                return elements;
+
+            case MapViewMode.RiderMeetups:
+                return displayMeetups();
+            case MapViewMode.CreateRiderMeetup:
+                return null;
+            default:
+                return null;
+        }
+    };
+
     return (
         <GoogleMap
             // @ts-ignore
@@ -68,17 +100,7 @@ const Map: React.FC<MapProps> = (props) => {
             onDragend={onDragEnd}
             onZoomChanged={onZoomChanged}
         >
-            {!isCreatingMeetup && userCheckin && (
-                <Marker
-                    // @ts-ignore
-                    position={{ lat: userCheckin.lat, lng: userCheckin.lng }}
-                    onClick={() => {
-                        onUserMarkerClicked(userCheckin);
-                    }}
-                />
-            )}
-            {!isCreatingMeetup && <MarkerCluster riderCheckins={riderCheckins} click={onRiderMarkerClicked} />}
-            {!isCreatingMeetup && displayMeetups()}
+            {mapContent()}
         </GoogleMap>
     );
 };
