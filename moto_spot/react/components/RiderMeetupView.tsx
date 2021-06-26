@@ -1,31 +1,18 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Box, Button, Typography } from '@material-ui/core';
+import { Fab } from '@material-ui/core';
 import { setMapViewModeAction } from '../redux/Actions';
 import RiderCheckinMeetupSelector from './RiderCheckinMeetupSelector';
 import { MapViewMode } from '../redux/reducers/MapInfoReducer';
+import AddIcon from '@material-ui/icons/Add';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        bottomButtonContainer: {
-            zIndex: 1,
-            display: 'flex',
-            justifyContent: 'space-around',
-            width: '100%',
-            position: 'absolute',
-            bottom: '2rem',
-        },
         meetupButton: {
-            backgroundColor: 'rgba(18, 215, 255, 0.75)',
-            textTransform: 'capitalize',
-            padding: '1rem 0',
-            borderRadius: '1rem',
-            border: '1px solid gray',
-            width: '40%',
-        },
-        meetupButtonTitle: {
-            fontSize: '1rem',
+            position: 'absolute',
+            right: '1rem',
+            bottom: '3rem',
         },
     }),
 );
@@ -41,11 +28,9 @@ const RiderMeetupView: React.FC<{}> = (props) => {
     return (
         <div>
             <RiderCheckinMeetupSelector />
-            <Box className={classes.bottomButtonContainer}>
-                <Button className={classes.meetupButton} onClick={createMeetup}>
-                    <Typography className={classes.meetupButtonTitle}>Create Meetup</Typography>
-                </Button>
-            </Box>
+            <Fab color="secondary" aria-label="add" className={classes.meetupButton} onClick={createMeetup}>
+                <AddIcon />
+            </Fab>
         </div>
     );
 };
