@@ -47,8 +47,8 @@ class RiderMeetupRepository extends ServiceEntityRepository
         $query->setParameter(3, $lat);
         $query->setParameter(4, $distance);
 
-        $timestampNow = (new \DateTime('now', new \DateTimeZone('UTC')))->getTimestamp();
-        $query->setParameter(5, $timestampNow);
+        $dateNow = (new \DateTime('now', new \DateTimeZone('UTC')));
+        $query->setParameter(5, $dateNow);
 
         return $query->getArrayResult();
     }
