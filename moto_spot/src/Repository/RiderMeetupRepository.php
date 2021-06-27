@@ -26,7 +26,7 @@ class RiderMeetupRepository extends ServiceEntityRepository
         $rsm->addRootEntityFromClassMetadata('App\Entity\RiderMeetup', 'rm');
 
         $sql = '
-            SELECT id, user_uuid, lat, lng, meetup_timestamp, expire_timestamp 
+            SELECT id, user_uuid, title, description, lat, lng, meetup_timestamp, expire_timestamp 
             FROM rider_meetup rm
             WHERE (
             3959 * acos(

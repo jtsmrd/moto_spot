@@ -62,6 +62,9 @@ class AppFixtures extends Fixture
             $riderMeetup->setLat($lat);
             $riderMeetup->setLng($lon);
 
+            $riderMeetup->setTitle($this->faker->sentence);
+            $riderMeetup->setDescription($this->faker->sentence);
+
             $createDate = (new \DateTime('now', new \DateTimeZone('UTC')));
             $riderMeetup->setCreateDate($createDate);
 
