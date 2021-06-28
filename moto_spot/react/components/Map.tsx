@@ -3,6 +3,8 @@ import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
 import MarkerCluster from './MarkerCluster';
 import * as Types from '../redux/Types';
 import { MapViewMode } from '../redux/reducers/MapInfoReducer';
+import MapMarker from './MapMarker';
+import { mdiTooltipAccount, mdiAccountGroup } from '@mdi/js';
 
 export interface MapProps {
     mapRef: object;
@@ -40,10 +42,12 @@ const Map: React.FC<MapProps> = (props) => {
     const displayMeetups = () => {
         return riderMeetups.map((meetup) => {
             const meetupMarker = (
-                <Marker
+                <MapMarker
+                    lat={meetup.lat}
+                    lng={meetup.lng}
+                    svgPath={mdiAccountGroup}
+                    color={'orange'}
                     key={meetup.id}
-                    // @ts-ignore
-                    position={{ lat: meetup.lat, lng: meetup.lng }}
                     onClick={() => {
                         onMeetupMarkerClicked(meetup);
                     }}
@@ -60,17 +64,18 @@ const Map: React.FC<MapProps> = (props) => {
 
                 if (userCheckin) {
                     elements.push(
-                        <Marker
-                            key={0}
-                            // @ts-ignore
-                            position={{ lat: userCheckin.lat, lng: userCheckin.lng }}
+                        <MapMarker
+                            lat={userCheckin.lat}
+                            lng={userCheckin.lng}
+                            svgPath={mdiTooltipAccount}
+                            color={'blue'}
+                            key={userCheckin.id}
                             onClick={() => {
                                 onUserMarkerClicked(userCheckin);
                             }}
                         />,
                     );
                 }
-
                 elements.push(<MarkerCluster key={1} riderCheckins={riderCheckins} click={onRiderMarkerClicked} />);
 
                 return elements;
