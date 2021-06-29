@@ -23,6 +23,7 @@ export const getMapCenter = (state: IAppState) => mapInfoState(state).mapCenter;
 export const getMapCenterLoaded = (state: IAppState) => mapInfoState(state).mapCenterLoaded;
 export const getSelectedUserCheckin = (state: IAppState) => mapInfoState(state).selectedUserCheckin;
 export const getSelectedRiderCheckin = (state: IAppState) => mapInfoState(state).selectedRiderCheckin;
+export const getSelectedRiderMeetup = (state: IAppState) => mapInfoState(state).selectedRiderMeetup;
 export const getMapViewMode = (state: IAppState) => mapInfoState(state).mapViewMode;
 
 const riderMeetupState = (state: IAppState) => state[riderMeetupStatePropName];

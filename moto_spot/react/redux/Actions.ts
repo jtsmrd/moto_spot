@@ -77,6 +77,10 @@ export const setSelectedRiderCheckinAction: ActionCreator<ActionTypes.ISetSelect
     ActionTypes.SET_SELECTED_RIDER_CHECKIN,
 );
 
+export const setSelectedRiderMeetupAction: ActionCreator<ActionTypes.ISetSelectedRiderMeetupPayload> = actionCreator<ActionTypes.ISetSelectedRiderMeetupPayload>(
+    ActionTypes.SET_SELECTED_RIDER_MEETUP,
+);
+
 export const setMapViewModeAction: ActionCreator<ActionTypes.ISetMapViewMode> = actionCreator<ActionTypes.ISetMapViewMode>(
     ActionTypes.SET_MAP_VIEW_MODE,
 );

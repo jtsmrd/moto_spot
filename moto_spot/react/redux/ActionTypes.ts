@@ -103,6 +103,12 @@ export interface ISetSelectedRiderCheckinPayload {
     riderCheckin?: Types.RiderCheckin;
 }
 
+export const SET_SELECTED_RIDER_MEETUP = 'SET_SELECTED_RIDER_MEETUP';
+export type SET_SELECTED_RIDER_MEETUP = typeof SET_SELECTED_RIDER_MEETUP;
+export interface ISetSelectedRiderMeetupPayload {
+    riderMeetup?: Types.RiderMeetup;
+}
+
 export const SET_MAP_VIEW_MODE = 'SET_MAP_VIEW_MODE';
 export type SET_MAP_VIEW_MODE = typeof SET_MAP_VIEW_MODE;
 export interface ISetMapViewMode {
@@ -166,6 +172,7 @@ export type IMapActionsPayload =
     | IUpdateMapZoomPayload
     | ISetSelectedUserCheckinPayload
     | ISetSelectedRiderCheckinPayload
+    | ISetSelectedRiderMeetupPayload
     | ISetMapViewMode;
 
 export type IRiderMeetupActionsPayload =

@@ -37,7 +37,7 @@ const RiderCheckinMeetupSelector: React.FC<{}> = (props) => {
     const visibleRiderCheckins = useSelector(getVisibleRiderCheckins);
     const visibleRiderMeetups = useSelector(getVisibleRiderMeetups);
     const [selectedTabIndex, setSelectedTabIndex] = useState(mapViewMode);
-    const checkinsTabText = `Checkins (${visibleRiderCheckins.length})`;
+    const checkinsTabText = `Riders (${visibleRiderCheckins.length})`;
     const meetupsTabText = `Meetups (${visibleRiderMeetups.length})`;
 
     useEffect(() => {

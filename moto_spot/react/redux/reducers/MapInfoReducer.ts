@@ -15,6 +15,7 @@ export interface IMapInfoState {
     mapCenterLoaded: boolean;
     selectedUserCheckin?: Types.RiderCheckin;
     selectedRiderCheckin?: Types.RiderCheckin;
+    selectedRiderMeetup?: Types.RiderMeetup;
     mapViewMode: MapViewMode;
 }
 
@@ -33,6 +34,7 @@ export const initialState: IMapInfoState = {
     mapCenterLoaded: false,
     selectedUserCheckin: null,
     selectedRiderCheckin: null,
+    selectedRiderMeetup: null,
     mapViewMode: MapViewMode.RiderCheckins,
 };
 
@@ -77,6 +79,13 @@ export default function MapInfoReducer(
             return {
                 ...state,
                 selectedRiderCheckin: riderCheckin,
+            };
+        }
+        case ActionTypes.SET_SELECTED_RIDER_MEETUP: {
+            const { riderMeetup } = action.payload as ActionTypes.ISetSelectedRiderMeetupPayload;
+            return {
+                ...state,
+                selectedRiderMeetup: riderMeetup,
             };
         }
         case ActionTypes.SET_MAP_VIEW_MODE: {

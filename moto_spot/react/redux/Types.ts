@@ -9,6 +9,8 @@ export interface RiderCheckin {
 export interface RiderMeetup {
     id: number;
     userUUID: string;
+    title: string;
+    description: string;
     lat: number;
     lng: number;
     meetupTimestamp: number;

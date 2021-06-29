@@ -14,6 +14,7 @@ import {
     getRiderMeetupsRequestAction,
     removeExpiredRiderCheckins,
     setSelectedRiderCheckinAction,
+    setSelectedRiderMeetupAction,
     setSelectedUserCheckinAction,
     updateMapBoundsAction,
     updateMapCenterAction,
@@ -182,6 +183,7 @@ const MapContainer: React.FC<{}> = (props) => {
     };
 
     const onMeetupMarkerClicked = (riderMeetup: Types.RiderMeetup) => {
+        dispatch(setSelectedRiderMeetupAction({ riderMeetup: riderMeetup }));
         console.log(riderMeetup);
     };
 
