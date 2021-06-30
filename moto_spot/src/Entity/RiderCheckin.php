@@ -39,9 +39,14 @@ class RiderCheckin
     private $userUUID;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="datetime")
      */
     private $createDate;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $expireDate;
 
     /**
      * @ORM\Column(type="float")
@@ -57,20 +62,10 @@ class RiderCheckin
      */
     private $lat;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $expireDate;
-
-    /**
-     * @ORM\Column(type="datetimetz")
-     */
-    private $createDateDisplay;
-
-    /**
-     * @ORM\Column(type="datetimetz", nullable=true)
-     */
-    private $expireDateDisplay;
+    public function __construct()
+    {
+        $this->createDate = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
 
     public function getId(): ?int
     {
@@ -89,14 +84,19 @@ class RiderCheckin
         return $this;
     }
 
-    public function getCreateDate(): ?int
+    public function getCreateDate(): ?\DateTimeInterface
     {
         return $this->createDate;
     }
 
-    public function setCreateDate(int $createDate): self
+    public function getExpireDate(): ?\DateTimeInterface
     {
-        $this->createDate = $createDate;
+        return $this->expireDate;
+    }
+
+    public function setExpireDate(\DateTimeInterface $expireDate): self
+    {
+        $this->expireDate = $expireDate;
 
         return $this;
     }
@@ -121,42 +121,6 @@ class RiderCheckin
     public function setLat(float $lat): self
     {
         $this->lat = $lat;
-
-        return $this;
-    }
-
-    public function getExpireDate(): ?int
-    {
-        return $this->expireDate;
-    }
-
-    public function setExpireDate(?int $expireDate): self
-    {
-        $this->expireDate = $expireDate;
-
-        return $this;
-    }
-
-    public function getCreateDateDisplay(): ?\DateTimeInterface
-    {
-        return $this->createDateDisplay;
-    }
-
-    public function setCreateDateDisplay(\DateTimeInterface $createDateDisplay): self
-    {
-        $this->createDateDisplay = $createDateDisplay;
-
-        return $this;
-    }
-
-    public function getExpireDateDisplay(): ?\DateTimeInterface
-    {
-        return $this->expireDateDisplay;
-    }
-
-    public function setExpireDateDisplay(?\DateTimeInterface $expireDateDisplay): self
-    {
-        $this->expireDateDisplay = $expireDateDisplay;
 
         return $this;
     }

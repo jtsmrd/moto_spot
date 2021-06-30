@@ -81,8 +81,8 @@ const RiderMeetupInfoDialog: React.FC<RiderMeetupInfoDialogProps> = (props) => {
                 <Typography id="meetup-description" className={classes.descriptionText}>
                     {riderMeetup?.description}
                 </Typography>
-                <Typography id="meetup-start-date">Starts: {riderMeetup?.meetupTimestamp}</Typography>
-                <Typography id="meetup-expire-date">Ends: {riderMeetup?.expireTimestamp}</Typography>
+                <Typography id="meetup-start-date">Starts: {riderMeetup?.meetupDate}</Typography>
+                <Typography id="meetup-expire-date">Ends: {riderMeetup?.expireDate}</Typography>
             </DialogContent>
             {/*ToDo: Allow creator to edit, allow non-creator users to show interest*/}
             {/*<DialogActions>*/}

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Dialog, DialogTitle, List, ListItem, ListItemText } from '@material-ui/core';
 import { createRiderCheckinRequestAction } from '../redux/Actions';
-import { getUtcIntervalAddingMinutes } from '../utilities/dateTimeUtils';
+import { getUtcStringAddingMinutes } from '../utilities/dateTimeUtils';
 import { usePosition } from '../hooks/usePosition';
 
 export interface RiderCheckinDialogProps {
@@ -47,7 +47,7 @@ const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
                     createRiderCheckinRequestAction({
                         lat: positionLat,
                         lng: positionLng,
-                        expire_date: expireInterval ? getUtcIntervalAddingMinutes(expireInterval) : null,
+                        expire_date: expireInterval ? getUtcStringAddingMinutes(expireInterval) : null,
                     }),
                 );
             } else {

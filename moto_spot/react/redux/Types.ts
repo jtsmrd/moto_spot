@@ -1,20 +1,22 @@
 export interface RiderCheckin {
     id: number;
     userUUID: string;
+    createDate: string;
+    expireDate: string;
     lat: number;
     lng: number;
-    expireDate: number;
 }
 
 export interface RiderMeetup {
     id: number;
     userUUID: string;
+    createDate: string;
+    meetupDate: string;
+    expireDate: string;
     title: string;
     description: string;
     lat: number;
     lng: number;
-    meetupTimestamp: number;
-    expireTimestamp: number;
 }
 
 export interface MapBounds {

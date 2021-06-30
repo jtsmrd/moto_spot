@@ -2,7 +2,7 @@ import { Action } from 'typescript-fsa';
 import * as Types from '../Types';
 import * as ActionTypes from '../ActionTypes';
 import Cookie from 'js-cookie';
-import { currentTimeIsAfter } from '../../utilities/dateTimeUtils';
+import { currentDateIsAfter } from '../../utilities/dateTimeUtils';
 
 export interface IRiderCheckinState {
     riderCheckins: Types.RiderCheckin[];
@@ -142,20 +142,20 @@ export default function RiderCheckinReducer(
 function getActiveRiderCheckins(checkins: Types.RiderCheckin[]) {
     const userUUID = Cookie.get('user_uuid');
     return checkins.filter((checkin) => {
-        return checkin.userUUID !== userUUID && !currentTimeIsAfter(checkin.expireDate);
+        return checkin.userUUID !== userUUID && !currentDateIsAfter(checkin.expireDate);
     });
 }
 
 function getUserCheckin(checkins: Types.RiderCheckin[]) {
     const userUUID = Cookie.get('user_uuid');
     const results = checkins.filter((checkin) => {
-        return checkin.userUUID === userUUID && !currentTimeIsAfter(checkin.expireDate);
+        return checkin.userUUID === userUUID && !currentDateIsAfter(checkin.expireDate);
     });
     return (results && results[0]) || null;
 }
 
 function removeExpiredRiderCheckins(checkins: Types.RiderCheckin[]) {
     return checkins.filter((checkin) => {
-        return !currentTimeIsAfter(checkin.expireDate);
+        return !currentDateIsAfter(checkin.expireDate);
     });
 }

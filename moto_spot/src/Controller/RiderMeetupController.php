@@ -62,28 +62,29 @@ class RiderMeetupController extends AbstractController
 
         $riderMeetup = new RiderMeetup();
         $riderMeetup->setUserUUID($userUUID ?? $newUserUUID);
+
+        $title = $accessor->getValue($requestData, '[title]') ?? 'New Meetup';
+        $riderMeetup->setTitle($title);
+
+        $riderMeetup->setDescription($accessor->getValue($requestData, '[description]'));
+
         $riderMeetup->setLat($accessor->getValue($requestData, '[lat]'));
         $riderMeetup->setLng($accessor->getValue($requestData, '[lng]'));
-        $riderMeetup->setCreateDate(new \DateTime('now', new \DateTimeZone('UTC')));
 
-        $meetupDateTimestamp = $accessor->getValue($requestData, '[meetup_date]');
-        $meetupDate = new \DateTime();
-        $meetupDate->setTimestamp($meetupDateTimestamp);
+        $meetupDateString = $accessor->getValue($requestData, '[meetup_date]');
+        $meetupDate = new \DateTime($meetupDateString, new \DateTimeZone('UTC'));
         $riderMeetup->setMeetupDate($meetupDate);
-        $riderMeetup->setMeetupTimestamp($meetupDate->getTimestamp());
 
-        $expireDateTimestamp = $accessor->getValue($requestData, '[expire_date]');
-        $expireDate = new \DateTime();
-        if (!$expireDateTimestamp) {
+        $expireDateString = $accessor->getValue($requestData, '[expire_date]');
+        if (!$expireDateString) {
             // Default expire date to end of meetup day if one isn't provided
             $expireDate = clone $meetupDate;
             $expireDate->modify('tomorrow');
             $expireDate->setTimestamp($expireDate->getTimestamp() - 1);
         } else {
-            $expireDate = $expireDate->setTimestamp($expireDateTimestamp);
+            $expireDate = new \DateTime($expireDateString);
         }
         $riderMeetup->setExpireDate($expireDate);
-        $riderMeetup->setExpireTimestamp($expireDate->getTimestamp());
 
         $this->entityManager->persist($riderMeetup);
         $this->entityManager->flush();
@@ -91,11 +92,15 @@ class RiderMeetupController extends AbstractController
         $response = new JsonResponse([
             'id' => $riderMeetup->getId(),
             'userUUID' => $riderMeetup->getUserUUID(),
+            'createDate' => $riderMeetup->getCreateDate()->format('Y-m-d H:i:s'),
+            'meetupDate' => $riderMeetup->getMeetupDate()->format('Y-m-d H:i:s'),
+            'expireDate' => $riderMeetup->getExpireDate()->format('Y-m-d H:i:s'),
+            'title' => $riderMeetup->getTitle(),
+            'description' => $riderMeetup->getDescription(),
             'lat' => $riderMeetup->getLat(),
-            'lng' => $riderMeetup->getLng(),
-            'meetupTimestamp' => $riderMeetup->getMeetupTimestamp(),
-            'expireTimestamp' => $riderMeetup->getExpireTimestamp()
+            'lng' => $riderMeetup->getLng()
         ], Response::HTTP_CREATED);
+
         if (!$userUUID) {
             $response->headers->setCookie(new Cookie(
                 'user_uuid',
@@ -125,7 +130,24 @@ class RiderMeetupController extends AbstractController
         $repository = $this->getDoctrine()->getRepository(RiderMeetup::class);
         $meetups = $repository->getRiderMeetupsAroundLocation($lat, $lng, $distance);
 
-        return new JsonResponse($meetups, Response::HTTP_OK);
+        $meetupsCollection = [];
+
+        /** @var RiderMeetup $meetup */
+        foreach ($meetups as $meetup) {
+            $meetupsCollection[] = [
+                'id' => $meetup->getId(),
+                'userUUID' => $meetup->getUserUUID(),
+                'createDate' => $meetup->getCreateDate()->format('Y-m-d H:i:s'),
+                'meetupDate' => $meetup->getMeetupDate()->format('Y-m-d H:i:s'),
+                'expireDate' => $meetup->getExpireDate()->format('Y-m-d H:i:s'),
+                'title' => $meetup->getTitle(),
+                'description' => $meetup->getDescription(),
+                'lat' => $meetup->getLat(),
+                'lng' => $meetup->getLng()
+            ];
+        }
+
+        return new JsonResponse($meetupsCollection, Response::HTTP_OK);
     }
 
     /**
@@ -154,7 +176,6 @@ class RiderMeetupController extends AbstractController
 
         $expireDate = (new \DateTime('now', new \DateTimeZone('UTC')));
         $checkinToExpire->setExpireDate($expireDate);
-        $checkinToExpire->setExpireTimestamp($expireDate->getTimestamp());
 
         $this->entityManager->persist($checkinToExpire);
         $this->entityManager->flush();
@@ -165,16 +186,18 @@ class RiderMeetupController extends AbstractController
     private function riderMeetupIsValid(array $requestData): void
     {
         $constraints = new Assert\Collection([
+            'title' => new Assert\Optional(),
+            'description' => new Assert\Optional(),
+            'meetup_date' => new Assert\Required([
+                new Assert\NotBlank()
+            ]),
+            'expire_date' => new Assert\Optional(),
             'lat' => new Assert\Required([
                 new Assert\NotBlank()
             ]),
             'lng' => new Assert\Required([
                 new Assert\NotBlank()
             ]),
-            'meetup_date' => new Assert\Required([
-                new Assert\NotBlank()
-            ]),
-            'expire_date' => new Assert\Optional()
         ]);
 
         $validator = Validation::createValidator();

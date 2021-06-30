@@ -22,35 +22,24 @@ class RiderCheckinRepository extends ServiceEntityRepository
 
     public function getRiderCheckinsAroundLocation(float $lat, float $lng, float $distance)
     {
-        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata('App\Entity\RiderCheckin', 'rc');
+        $dateNow = (new \DateTime('now', new \DateTimeZone('UTC')));
 
-        $sql = '
-            SELECT id, user_uuid, lng, lat, expire_date 
-            FROM rider_checkin rc
-            WHERE (
-            3959 * acos(
-                cos(radians(?))
-                * cos(radians(lat))
-                * cos(radians(lng) - radians(?))
-                + sin(radians(?))
-                * sin(radians(lat))
-            )
-            ) < ?
-            AND expire_date > ?
-            ORDER BY expire_date DESC
-            ';
-
-        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-        $query->setParameter(1, $lat);
-        $query->setParameter(2, $lng);
-        $query->setParameter(3, $lat);
-        $query->setParameter(4, $distance);
-
-        $timestampNow = (new \DateTime('now', new \DateTimeZone('UTC')))->getTimestamp();
-        $query->setParameter(5, $timestampNow);
-
-        return $query->getArrayResult();
+        return $this->createQueryBuilder('rc')
+            ->andWhere(
+                '3959 * acos(cos(radians(:lat))' .
+                '* cos(radians(rc.lat))' .
+                '* cos(radians(rc.lng) - radians(:lng))'.
+                '+ sin(radians(:lat))'.
+                '* sin(radians(rc.lat))) < :distance')
+            ->setParameter('lat', $lat)
+            ->setParameter('lng', $lng)
+            ->setParameter('distance', $distance)
+            ->andWhere('rc.expireDate > :now')
+            ->setParameter('now', $dateNow)
+            ->orderBy('rc.expireDate', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     // /**

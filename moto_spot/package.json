@@ -42,6 +42,7 @@
         "@material-ui/pickers": "^3.3.10",
         "@mdi/js": "^5.9.55",
         "date-fns": "^2.22.1",
+        "date-fns-tz": "^1.1.4",
         "google-maps-react": "^2.0.6",
         "haversine-distance": "^1.2.1",
         "js-cookie": "^2.2.1",

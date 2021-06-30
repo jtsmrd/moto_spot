@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210410133642 extends AbstractMigration
+final class Version20210629115408 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -20,12 +20,12 @@ final class Version20210410133642 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE rider_checkin CHANGE create_date create_date VARCHAR(255) NOT NULL COMMENT \'(DC2Type:dateinterval)\', CHANGE expire_date expire_date VARCHAR(255) DEFAULT NULL COMMENT \'(DC2Type:dateinterval)\'');
+        $this->addSql('ALTER TABLE rider_meetup ADD create_date DATETIME NOT NULL, ADD meetup_date DATETIME NOT NULL, ADD expire_date DATETIME NOT NULL');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE rider_checkin CHANGE create_date create_date DATETIME NOT NULL, CHANGE expire_date expire_date DATETIME DEFAULT NULL');
+        $this->addSql('ALTER TABLE rider_meetup DROP create_date, DROP meetup_date, DROP expire_date');
     }
 }

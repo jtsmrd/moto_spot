@@ -25,17 +25,17 @@ class RiderMeetup
     private $userUUID;
 
     /**
-     * @ORM\Column(type="datetimetz")
+     * @ORM\Column(type="datetime")
      */
     private $createDate;
 
     /**
-     * @ORM\Column(type="datetimetz")
+     * @ORM\Column(type="datetime")
      */
     private $meetupDate;
 
     /**
-     * @ORM\Column(type="datetimetz", nullable=true)
+     * @ORM\Column(type="datetime")
      */
     private $expireDate;
 
@@ -50,16 +50,6 @@ class RiderMeetup
     private $lng;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $meetupTimestamp;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $expireTimestamp;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $title;
@@ -68,6 +58,11 @@ class RiderMeetup
      * @ORM\Column(type="string", length=1000, nullable=true)
      */
     private $description;
+
+    public function __construct()
+    {
+        $this->createDate = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
 
     public function getId(): ?int
     {
@@ -91,13 +86,6 @@ class RiderMeetup
         return $this->createDate;
     }
 
-    public function setCreateDate(\DateTimeInterface $createDate): self
-    {
-        $this->createDate = $createDate;
-
-        return $this;
-    }
-
     public function getMeetupDate(): ?\DateTimeInterface
     {
         return $this->meetupDate;
@@ -115,7 +103,7 @@ class RiderMeetup
         return $this->expireDate;
     }
 
-    public function setExpireDate(?\DateTimeInterface $expireDate): self
+    public function setExpireDate(\DateTimeInterface $expireDate): self
     {
         $this->expireDate = $expireDate;
 
@@ -142,30 +130,6 @@ class RiderMeetup
     public function setLng(float $lng): self
     {
         $this->lng = $lng;
-
-        return $this;
-    }
-
-    public function getMeetupTimestamp(): ?int
-    {
-        return $this->meetupTimestamp;
-    }
-
-    public function setMeetupTimestamp(int $meetupTimestamp): self
-    {
-        $this->meetupTimestamp = $meetupTimestamp;
-
-        return $this;
-    }
-
-    public function getExpireTimestamp(): ?int
-    {
-        return $this->expireTimestamp;
-    }
-
-    public function setExpireTimestamp(int $expireTimestamp): self
-    {
-        $this->expireTimestamp = $expireTimestamp;
 
         return $this;
     }

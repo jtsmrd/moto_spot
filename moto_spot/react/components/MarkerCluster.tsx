@@ -73,7 +73,7 @@ MarkerCluster.propTypes = {
         PropTypes.shape({
             lat: PropTypes.number.isRequired,
             lng: PropTypes.number.isRequired,
-            expireDate: PropTypes.number.isRequired,
+            expireDate: PropTypes.string.isRequired,
         }),
     ),
     click: PropTypes.func,

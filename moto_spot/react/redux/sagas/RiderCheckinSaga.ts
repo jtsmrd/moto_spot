@@ -12,7 +12,7 @@ import {
     getRiderCheckins,
 } from '../Selectors';
 import {
-    currentTimeIsAfter,
+    currentDateIsAfter,
     currentTimeIsAfterTimePlusMinutes,
     getCurrentTimestamp,
 } from '../../utilities/dateTimeUtils';
@@ -127,7 +127,7 @@ function getVisibleRiderCheckins(riderCheckins: Types.RiderCheckin[], mapBounds:
             rc.lat > mapBounds.swLat &&
             rc.lng < mapBounds.neLng &&
             rc.lng > mapBounds.swLng &&
-            !currentTimeIsAfter(rc.expireDate)
+            !currentDateIsAfter(rc.expireDate)
         );
     });
 }

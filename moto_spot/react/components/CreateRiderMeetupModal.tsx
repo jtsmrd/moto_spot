@@ -6,6 +6,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
 import { getMapCenter } from '../redux/Selectors';
 import { createRiderMeetupRequestAction } from '../redux/Actions';
+import { formatUtcString } from '../utilities/dateTimeUtils';
 
 export interface CreateRiderMeetupModalProps {
     open: boolean;
@@ -52,10 +53,10 @@ const CreateRiderMeetupModal: React.FC<CreateRiderMeetupModalProps> = (props) =>
     const classes = useStyles();
     const mapCenter = useSelector(getMapCenter);
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [meetupTimestamp, setMeetupTimestamp] = useState(null);
+    const [meetupDate, setMeetupDate] = useState(null);
 
     const meetupDateSelected = (date) => {
-        setMeetupTimestamp(date.getTime() / 1000);
+        setMeetupDate(formatUtcString(date));
     };
 
     const createMeetup = () => {
@@ -63,7 +64,7 @@ const CreateRiderMeetupModal: React.FC<CreateRiderMeetupModalProps> = (props) =>
             createRiderMeetupRequestAction({
                 lat: mapCenter.lat,
                 lng: mapCenter.lng,
-                meetup_date: meetupTimestamp,
+                meetup_date: meetupDate,
             }),
         );
         onClose();

@@ -5,7 +5,7 @@ import * as Actions from '../Actions';
 import * as Types from '../Types';
 import { request as httpRequest } from '../../client';
 import { getMapBounds, getMapCenter, getMapZoom, getRiderMeetups } from '../Selectors';
-import { currentTimeIsAfter } from '../../utilities/dateTimeUtils';
+import { currentDateIsAfter } from '../../utilities/dateTimeUtils';
 import { MapViewMode } from '../reducers/MapInfoReducer';
 
 function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequestPayload>) {
@@ -76,7 +76,7 @@ function getVisibleRiderMeetups(riderMeetups: Types.RiderMeetup[], mapBounds: Ty
             rm.lat > mapBounds.swLat &&
             rm.lng < mapBounds.neLng &&
             rm.lng > mapBounds.swLng &&
-            !currentTimeIsAfter(rm.expireTimestamp)
+            !currentDateIsAfter(rm.expireDate)
         );
     });
 }
