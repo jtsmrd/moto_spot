@@ -1,6 +1,7 @@
 import { statePropName as riderCheckinStatePropName, IRiderCheckinState } from './reducers/RiderCheckinReducer';
 import { statePropName as mapStatePropName, IMapInfoState } from './reducers/MapInfoReducer';
 import { statePropName as riderMeetupStatePropName, IRiderMeetupState } from './reducers/RiderMeetupReducer';
+import * as Types from './Types';
 
 export interface IAppState {
     [riderCheckinStatePropName]: IRiderCheckinState;
@@ -11,7 +12,7 @@ export interface IAppState {
 const riderCheckinState = (state: IAppState) => state[riderCheckinStatePropName];
 
 export const getRiderCheckins = (state: IAppState) => riderCheckinState(state).riderCheckins;
-export const getUserCheckin = (state: IAppState) => riderCheckinState(state).userCheckin;
+export const getUserCheckin = (state: IAppState): Types.RiderCheckin => riderCheckinState(state).userCheckin;
 export const getVisibleRiderCheckins = (state: IAppState) => riderCheckinState(state).visibleRiderCheckins;
 export const getPreviousRiderCheckinFetchInfo = (state: IAppState) => riderCheckinState(state).previousFetchInfo;
 

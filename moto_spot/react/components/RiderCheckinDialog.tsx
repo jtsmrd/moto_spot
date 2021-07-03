@@ -138,9 +138,9 @@ const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
 
     return (
         <React.Fragment>
-            <Dialog id="rider-checkin-dialog" aria-labelledby="simple-dialog-title" open={open} onClose={onClose}>
+            <Dialog id="rider-checkin-dialog" open={open} onClose={onClose}>
                 <DialogTitle id="rider-checkin-title" onClose={onClose} infoButtonSelected={infoButtonSelected}>
-                    Create new checkin
+                    Create Checkin
                 </DialogTitle>
                 <DialogContent dividers>
                     <Typography id="rider-checkin-hangout-question">How long do you plan on hanging out?</Typography>
@@ -179,6 +179,7 @@ const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
                 onClose={() => {
                     setInfoDialogVisible(false);
                 }}
+                titleText="Rider Checkin"
                 infoText="A checkin uses your current location and adds a marker to the map for other riders to see. Specify
                     how long you plan on hanging out at your current spot. Once that time is up, your marker will be
                     removed, unless you decide to extend your time."

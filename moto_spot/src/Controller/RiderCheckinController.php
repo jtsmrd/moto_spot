@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\RiderCheckin;
 use App\Exception\InvalidDataException;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,9 +27,18 @@ class RiderCheckinController extends AbstractController
      */
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger
+    )
     {
         $this->entityManager = $entityManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -235,6 +245,9 @@ class RiderCheckinController extends AbstractController
             case 60:
                 $expireDuration = 'PT1H';
                 break;
+            case 120:
+                $expireDuration = 'PT2H';
+                break;
             default:
                 break;
         }
@@ -243,15 +256,26 @@ class RiderCheckinController extends AbstractController
             return new JsonResponse([], Response::HTTP_BAD_REQUEST);
         }
 
+        $this->logger->info('Extend checkin current expire date', [
+            'expire_date' => $checkinToExtend->getExpireDate()->format('Y-m-d H:i:s')
+        ]);
+
         // Extend the existing expire date with the given extend interval
-        $existingExpireDate = new \DateTime();
-        $existingExpireDate->setTimestamp($checkinToExtend->getExpireDate());
-        $newExpireDate = $existingExpireDate->add(new \DateInterval($expireDuration));
+        $newExpireDate = clone $checkinToExtend->getExpireDate();
+        $newExpireDate = $newExpireDate->add(new \DateInterval($expireDuration));
+
+        $this->logger->info('Extend checkin new expire date', [
+            'expire_date' => $newExpireDate->format('Y-m-d H:i:s')
+        ]);
 
         $checkinToExtend->setExpireDate($newExpireDate);
 
         $this->entityManager->persist($checkinToExtend);
         $this->entityManager->flush();
+
+        $this->logger->info('Extend checkin updated expire date', [
+            'expire_date' => $checkinToExtend->getExpireDate()->format('Y-m-d H:i:s')
+        ]);
 
         return new JsonResponse([
             'id' => $checkinToExtend->getId(),

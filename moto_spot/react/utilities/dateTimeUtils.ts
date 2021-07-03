@@ -13,8 +13,9 @@ export function currentTimeIsAfterTimePlusMinutes(timeInterval: number, minutesT
     return moment.utc().isAfter(moment.unix(timeInterval).utc().add(minutesToAdd, 'minutes'));
 }
 
-export function getUtcStringAddingMinutes(minutesToAdd: number): string {
-    return moment.utc().add(minutesToAdd, 'minutes').format('yyyy-MM-DD kk:mm:ss');
+export function getUtcStringAddingMinutes(minutes: number, date?: string): string {
+    const targetMoment = date ? moment.utc(date) : moment.utc();
+    return targetMoment.add(minutes, 'minutes').format('yyyy-MM-DD kk:mm:ss');
 }
 
 export function getLocalDateStringAddingMinutes(minutesToAdd: number): string {
@@ -30,6 +31,30 @@ export function getExpireDisplayStringAddingMinutes(minutesToAdd: number): strin
         return `today at ${expireDateString}`;
     } else {
         return `tomorrow at ${expireDateString}`;
+    }
+}
+
+export function getExpireDisplayString(date: string): string {
+    const expireDate = moment(date);
+    const expireDateString = expireDate.format('h:mm a');
+    const isToday = expireDate.isSame(new Date(), 'day');
+
+    if (isToday) {
+        return `today at ${expireDateString}`;
+    } else {
+        return `tomorrow at ${expireDateString}`;
+    }
+}
+
+export function formatLocalTodayTomorrowTime(utcDate: string): string {
+    const targetMoment = moment(moment.utc(utcDate).toDate()).local();
+    const formattedDate = targetMoment.format('h:mm a');
+    const isToday = targetMoment.isSame(new Date(), 'day');
+
+    if (isToday) {
+        return `today at ${formattedDate}`;
+    } else {
+        return `tomorrow at ${formattedDate}`;
     }
 }
 

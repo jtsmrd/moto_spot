@@ -8,6 +8,7 @@ import CloseIcon from '@material-ui/icons/Close';
 export interface InfoDialogProps {
     open: boolean;
     onClose: () => void;
+    titleText: string;
     infoText: string;
 }
 
@@ -54,12 +55,12 @@ const DialogContent = withStyles((theme: Theme) => ({
 }))(MuiDialogContent);
 
 const InfoDialog: React.FC<InfoDialogProps> = (props) => {
-    const { open, onClose, infoText } = props;
+    const { open, onClose, titleText, infoText } = props;
 
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle id="info-title" onClose={onClose}>
-                Rider Checkin
+                {titleText}
             </DialogTitle>
             <DialogContent dividers>
                 <Typography id="info-text">{infoText}</Typography>
