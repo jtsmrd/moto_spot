@@ -109,9 +109,11 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
     const userCheckin = useSelector(getUserCheckin);
     const [infoDialogVisible, setInfoDialogVisible] = useState(false);
     const [extendInterval, setExtendInterval] = useState(15);
+
     const currentExpireDateDisplay = useMemo(() => {
         return userCheckin?.expireDate.formatTodayTomorrowTime();
     }, [userCheckin]);
+
     const expireDateDisplay = useMemo(() => {
         return userCheckin?.expireDate.addMinutes(extendInterval).formatTodayTomorrowTime();
     }, [extendInterval, userCheckin]);
@@ -147,7 +149,7 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
 
     return (
         <React.Fragment>
-            <Dialog id="user-checkin-dialog" open={open} onClose={onClose}>
+            <Dialog id="user-checkin-dialog" fullWidth open={open} onClose={onClose}>
                 <DialogTitle id="user-checkin-title" onClose={onClose} infoButtonSelected={infoButtonSelected}>
                     Update Checkin
                 </DialogTitle>

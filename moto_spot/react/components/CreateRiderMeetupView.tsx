@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, Button, Typography } from '@material-ui/core';
 import { setMapViewModeAction } from '../redux/Actions';
 import GpsNotFixedIcon from '@material-ui/icons/GpsNotFixed';
-import CreateRiderMeetupModal from './CreateRiderMeetupModal';
 import { MapViewMode } from '../redux/reducers/MapInfoReducer';
+import CreateRiderMeetupDialog from './CreateRiderMeetupDialog';
+import { getMapCenter } from '../redux/Selectors';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -18,26 +19,16 @@ const useStyles = makeStyles((theme: Theme) =>
             bottom: '2rem',
         },
         cancelButton: {
-            backgroundColor: 'rgba(18, 215, 255, 0.75)',
+            backgroundColor: 'red',
+            color: 'white',
             textTransform: 'capitalize',
-            padding: '1rem 0',
-            borderRadius: '1rem',
-            border: '1px solid gray',
             width: '40%',
-        },
-        cancelButtonTitle: {
-            fontSize: '1rem',
         },
         confirmButton: {
-            backgroundColor: 'rgba(18, 215, 255, 0.75)',
+            backgroundColor: theme.palette.primary.main,
+            color: 'white',
             textTransform: 'capitalize',
-            padding: '1rem 0',
-            borderRadius: '1rem',
-            border: '1px solid gray',
             width: '40%',
-        },
-        confirmButtonTitle: {
-            fontSize: '1rem',
         },
         meetupReticleContainer: {
             position: 'absolute',
@@ -52,37 +43,51 @@ const useStyles = makeStyles((theme: Theme) =>
 const CreateRiderMeetupView: React.FC<{}> = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
-    const [meetupModalVisible, setMeetupModalVisible] = useState(false);
+    const mapCenter = useSelector(getMapCenter);
+    const [isSelectingLocation, setIsSelectingLocation] = useState(false);
+    const [meetupLocation, setMeetupLocation] = useState(null);
+
+    const confirmMeetupLocation = useCallback(() => {
+        setMeetupLocation({ lat: mapCenter.lat, lng: mapCenter.lng });
+        setIsSelectingLocation(false);
+    }, [mapCenter]);
 
     const cancelCreateMeetup = useCallback(() => {
         dispatch(setMapViewModeAction({ mapViewMode: MapViewMode.RiderMeetups }));
     }, [dispatch]);
 
     return (
-        <div>
-            <Box className={classes.meetupReticleContainer}>
-                <GpsNotFixedIcon color={'primary'} />
-            </Box>
-            <Box className={classes.bottomButtonContainer}>
-                <Button className={classes.cancelButton} onClick={cancelCreateMeetup}>
-                    <Typography className={classes.cancelButtonTitle}>Cancel</Typography>
-                </Button>
-                <Button
-                    className={classes.confirmButton}
-                    onClick={() => {
-                        setMeetupModalVisible(true);
-                    }}
-                >
-                    <Typography className={classes.confirmButtonTitle}>Confirm</Typography>
-                </Button>
-            </Box>
-            <CreateRiderMeetupModal
-                open={meetupModalVisible}
-                onClose={() => {
-                    setMeetupModalVisible(false);
+        <React.Fragment>
+            <CreateRiderMeetupDialog
+                open={!isSelectingLocation}
+                onClose={cancelCreateMeetup}
+                selectMeetupLocation={() => {
+                    setIsSelectingLocation(true);
                 }}
+                meetupLocation={meetupLocation}
             />
-        </div>
+            {isSelectingLocation && (
+                <React.Fragment>
+                    <Box className={classes.meetupReticleContainer}>
+                        <GpsNotFixedIcon color={'primary'} />
+                    </Box>
+                    <Box className={classes.bottomButtonContainer}>
+                        <Button
+                            variant={'outlined'}
+                            className={classes.cancelButton}
+                            onClick={() => {
+                                setIsSelectingLocation(false);
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button variant={'outlined'} className={classes.confirmButton} onClick={confirmMeetupLocation}>
+                            Confirm
+                        </Button>
+                    </Box>
+                </React.Fragment>
+            )}
+        </React.Fragment>
     );
 };
 

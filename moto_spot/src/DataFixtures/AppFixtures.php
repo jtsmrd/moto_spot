@@ -56,8 +56,13 @@ class AppFixtures extends Fixture
             $meetupDate = (new \DateTime('now', new \DateTimeZone('UTC')));
             $riderMeetup->setMeetupDate($meetupDate);
 
-            $expireDate = new \DateTime('now', new \DateTimeZone('UTC'));
-            $expireDate = $expireDate->add(new \DateInterval('PT5H'));
+            $rideStartDate = (new \DateTime('now', new \DateTimeZone('UTC')));
+            $rideStartDate = $rideStartDate->add(new \DateInterval('PT30M'));
+            $riderMeetup->setRideStartDate($rideStartDate);
+
+            $expireDate = clone $meetupDate;
+            $expireDate->modify('tomorrow');
+            $expireDate->setTimestamp($expireDate->getTimestamp() - 1);
             $riderMeetup->setExpireDate($expireDate);
 
             $lat = $this->faker->randomFloat(12, 40.38362639665043, 40.497339166747636);

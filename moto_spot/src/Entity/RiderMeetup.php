@@ -32,12 +32,17 @@ class RiderMeetup
     /**
      * @ORM\Column(type="datetime")
      */
+    private $expireDate;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
     private $meetupDate;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $expireDate;
+    private $rideStartDate;
 
     /**
      * @ORM\Column(type="float")
@@ -86,6 +91,18 @@ class RiderMeetup
         return $this->createDate;
     }
 
+    public function getExpireDate(): ?\DateTimeInterface
+    {
+        return $this->expireDate;
+    }
+
+    public function setExpireDate(\DateTimeInterface $expireDate): self
+    {
+        $this->expireDate = $expireDate;
+
+        return $this;
+    }
+
     public function getMeetupDate(): ?\DateTimeInterface
     {
         return $this->meetupDate;
@@ -98,14 +115,14 @@ class RiderMeetup
         return $this;
     }
 
-    public function getExpireDate(): ?\DateTimeInterface
+    public function getRideStartDate(): ?\DateTimeInterface
     {
-        return $this->expireDate;
+        return $this->rideStartDate;
     }
 
-    public function setExpireDate(\DateTimeInterface $expireDate): self
+    public function setRideStartDate(\DateTimeInterface $rideStartDate): self
     {
-        $this->expireDate = $expireDate;
+        $this->rideStartDate = $rideStartDate;
 
         return $this;
     }

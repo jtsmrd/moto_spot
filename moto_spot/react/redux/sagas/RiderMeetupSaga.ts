@@ -17,7 +17,7 @@ function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequest
                 lat: action.payload.lat,
                 lng: action.payload.lng,
                 meetup_date: action.payload.meetup_date,
-                expire_date: action.payload.expire_date,
+                ride_start_date: action.payload.ride_start_date,
             },
         });
         const riderMeetupPayload: ActionTypes.ICreateRiderMeetupResponsePayload = {

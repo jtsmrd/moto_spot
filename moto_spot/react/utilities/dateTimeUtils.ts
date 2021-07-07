@@ -13,37 +13,8 @@ export function currentTimeIsAfterTimePlusMinutes(timeInterval: number, minutesT
     return moment.utc().isAfter(moment.unix(timeInterval).utc().add(minutesToAdd, 'minutes'));
 }
 
-export function getUtcStringAddingMinutes(minutes: number, date?: string): string {
-    const targetMoment = date ? moment.utc(date) : moment.utc();
-    return targetMoment.add(minutes, 'minutes').format('yyyy-MM-DD kk:mm:ss');
-}
-
-export function getLocalDateStringAddingMinutes(minutesToAdd: number): string {
-    return moment().add(minutesToAdd, 'minutes').format('yyyy-MM-DD kk:mm:ss');
-}
-
-export function getExpireDisplayStringAddingMinutes(minutesToAdd: number): string {
-    const expireDate = moment().add(minutesToAdd, 'minutes');
-    const expireDateString = expireDate.format('h:mm a');
-    const isToday = expireDate.isSame(new Date(), 'day');
-
-    if (isToday) {
-        return `today at ${expireDateString}`;
-    } else {
-        return `tomorrow at ${expireDateString}`;
-    }
-}
-
-export function getExpireDisplayString(date: string): string {
-    const expireDate = moment(date);
-    const expireDateString = expireDate.format('h:mm a');
-    const isToday = expireDate.isSame(new Date(), 'day');
-
-    if (isToday) {
-        return `today at ${expireDateString}`;
-    } else {
-        return `tomorrow at ${expireDateString}`;
-    }
+export function getUtcDate(): any {
+    return moment.utc().format('yyyy-MM-DD kk:mm:ss');
 }
 
 export function formatLocalTodayTomorrowTime(utcDate: string): string {
@@ -58,11 +29,6 @@ export function formatLocalTodayTomorrowTime(utcDate: string): string {
     }
 }
 
-export function getLocalDateFromUtcInterval(utcInterval: number): Date {
-    const localDateInterval = convertUtcIntervalToLocal(utcInterval);
-    return moment.unix(localDateInterval).toDate();
-}
-
 export function getCurrentTimestamp(): number {
     return moment.utc().valueOf() / 1000;
 }
@@ -70,7 +36,3 @@ export function getCurrentTimestamp(): number {
 export const formatUtcString = (date) => {
     return format(utcToZonedTime(date, 'UTC'), 'yyyy-MM-dd kk:mm:ss', { timeZone: 'UTC' });
 };
-
-function convertUtcIntervalToLocal(utcInterval: number): number {
-    return 0;
-}

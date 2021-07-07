@@ -24,13 +24,13 @@ const RiderMeetupView: React.FC<{}> = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
     const selectedRiderMeetup: Types.RiderMeetup = useSelector(getSelectedRiderMeetup);
-    const [meetupDialogVisible, setMeetupDialogVisible] = useState(false);
+    const [meetupInfoDialogVisible, setMeetupInfoDialogVisible] = useState(false);
 
     useEffect(() => {
-        setMeetupDialogVisible(selectedRiderMeetup !== null);
+        setMeetupInfoDialogVisible(selectedRiderMeetup !== null);
     }, [selectedRiderMeetup]);
 
-    const createMeetup = useCallback(() => {
+    const createRiderMeetup = useCallback(() => {
         dispatch(setMapViewModeAction({ mapViewMode: MapViewMode.CreateRiderMeetup }));
     }, [dispatch]);
 
@@ -41,11 +41,11 @@ const RiderMeetupView: React.FC<{}> = (props) => {
     return (
         <div>
             <RiderCheckinMeetupSelector />
-            <Fab color="secondary" aria-label="add" className={classes.meetupButton} onClick={createMeetup}>
+            <Fab color="secondary" aria-label="add" className={classes.meetupButton} onClick={createRiderMeetup}>
                 <AddIcon />
             </Fab>
             <RiderMeetupInfoDialog
-                open={meetupDialogVisible}
+                open={meetupInfoDialogVisible}
                 onClose={onCloseRiderMeetupDialog}
                 riderMeetup={selectedRiderMeetup}
             />

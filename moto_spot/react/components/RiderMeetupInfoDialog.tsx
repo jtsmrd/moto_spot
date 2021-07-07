@@ -6,6 +6,7 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import * as Types from '../redux/Types';
+import '../utilities/date.string.extensions';
 
 export interface RiderMeetupInfoDialogProps {
     open: boolean;
@@ -73,7 +74,7 @@ const RiderMeetupInfoDialog: React.FC<RiderMeetupInfoDialogProps> = (props) => {
     const classes = useStyles();
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog id="rider-meetup-info-dialog" fullWidth open={open} onClose={onClose}>
             <DialogTitle id="meetup-title" onClose={onClose}>
                 {riderMeetup?.title}
             </DialogTitle>

@@ -11,10 +11,11 @@ export interface RiderMeetup {
     id: number;
     userUUID: string;
     createDate: string;
-    meetupDate: string;
     expireDate: string;
+    meetupDate: string;
+    rideStartDate: string;
     title: string;
-    description: string;
+    description?: string;
     lat: number;
     lng: number;
 }
@@ -27,6 +28,11 @@ export interface MapBounds {
 }
 
 export interface MapCenter {
+    lat: number;
+    lng: number;
+}
+
+export interface MapCoords {
     lat: number;
     lng: number;
 }

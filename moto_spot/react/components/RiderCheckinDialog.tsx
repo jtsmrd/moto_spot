@@ -8,10 +8,11 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import { createRiderCheckinRequestAction } from '../redux/Actions';
-import { getUtcStringAddingMinutes, getExpireDisplayStringAddingMinutes } from '../utilities/dateTimeUtils';
+import { getUtcDate } from '../utilities/dateTimeUtils';
 import { usePosition } from '../hooks/usePosition';
 import { createStyles, makeStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import InfoDialog from './InfoDialog';
+import '../utilities/date.string.extensions';
 
 export interface RiderCheckinDialogProps {
     open: boolean;
@@ -102,8 +103,9 @@ const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
     const { positionLat, positionLng, positionError } = usePosition();
     const [infoDialogVisible, setInfoDialogVisible] = useState(false);
     const [expireInterval, setExpireInterval] = useState(15);
+
     const expireDateDisplay = useMemo(() => {
-        return getExpireDisplayStringAddingMinutes(expireInterval);
+        return getUtcDate().addMinutes(expireInterval).formatTodayTomorrowTime();
     }, [expireInterval]);
 
     useEffect(() => {
@@ -126,7 +128,7 @@ const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
                 createRiderCheckinRequestAction({
                     lat: positionLat,
                     lng: positionLng,
-                    expire_date: getUtcStringAddingMinutes(expireInterval),
+                    expire_date: getUtcDate().addMinutes(expireInterval),
                 }),
             );
         } else {
@@ -138,7 +140,7 @@ const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
 
     return (
         <React.Fragment>
-            <Dialog id="rider-checkin-dialog" open={open} onClose={onClose}>
+            <Dialog id="rider-checkin-dialog" fullWidth open={open} onClose={onClose}>
                 <DialogTitle id="rider-checkin-title" onClose={onClose} infoButtonSelected={infoButtonSelected}>
                     Create Checkin
                 </DialogTitle>

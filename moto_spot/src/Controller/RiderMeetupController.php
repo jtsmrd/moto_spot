@@ -75,15 +75,14 @@ class RiderMeetupController extends AbstractController
         $meetupDate = new \DateTime($meetupDateString, new \DateTimeZone('UTC'));
         $riderMeetup->setMeetupDate($meetupDate);
 
-        $expireDateString = $accessor->getValue($requestData, '[expire_date]');
-        if (!$expireDateString) {
-            // Default expire date to end of meetup day if one isn't provided
-            $expireDate = clone $meetupDate;
-            $expireDate->modify('tomorrow');
-            $expireDate->setTimestamp($expireDate->getTimestamp() - 1);
-        } else {
-            $expireDate = new \DateTime($expireDateString);
-        }
+        $rideStartDateString = $accessor->getValue($requestData, '[ride_start_date]');
+        $rideStartDate = new \DateTime($rideStartDateString, new \DateTimeZone('UTC'));
+        $riderMeetup->setRideStartDate($rideStartDate);
+
+        // Default expire date to end of meetup day
+        $expireDate = clone $meetupDate;
+        $expireDate->modify('tomorrow');
+        $expireDate->setTimestamp($expireDate->getTimestamp() - 1);
         $riderMeetup->setExpireDate($expireDate);
 
         $this->entityManager->persist($riderMeetup);
@@ -93,8 +92,9 @@ class RiderMeetupController extends AbstractController
             'id' => $riderMeetup->getId(),
             'userUUID' => $riderMeetup->getUserUUID(),
             'createDate' => $riderMeetup->getCreateDate()->format('Y-m-d H:i:s'),
-            'meetupDate' => $riderMeetup->getMeetupDate()->format('Y-m-d H:i:s'),
             'expireDate' => $riderMeetup->getExpireDate()->format('Y-m-d H:i:s'),
+            'meetupDate' => $riderMeetup->getMeetupDate()->format('Y-m-d H:i:s'),
+            'rideStartDate' => $riderMeetup->getRideStartDate()->format('Y-m-d H:i:s'),
             'title' => $riderMeetup->getTitle(),
             'description' => $riderMeetup->getDescription(),
             'lat' => $riderMeetup->getLat(),
@@ -138,8 +138,9 @@ class RiderMeetupController extends AbstractController
                 'id' => $meetup->getId(),
                 'userUUID' => $meetup->getUserUUID(),
                 'createDate' => $meetup->getCreateDate()->format('Y-m-d H:i:s'),
-                'meetupDate' => $meetup->getMeetupDate()->format('Y-m-d H:i:s'),
                 'expireDate' => $meetup->getExpireDate()->format('Y-m-d H:i:s'),
+                'meetupDate' => $meetup->getMeetupDate()->format('Y-m-d H:i:s'),
+                'rideStartDate' => $meetup->getRideStartDate()->format('Y-m-d H:i:s'),
                 'title' => $meetup->getTitle(),
                 'description' => $meetup->getDescription(),
                 'lat' => $meetup->getLat(),
@@ -191,7 +192,9 @@ class RiderMeetupController extends AbstractController
             'meetup_date' => new Assert\Required([
                 new Assert\NotBlank()
             ]),
-            'expire_date' => new Assert\Optional(),
+            'ride_start_date' => new Assert\Required([
+                new Assert\NotBlank()
+            ]),
             'lat' => new Assert\Required([
                 new Assert\NotBlank()
             ]),
