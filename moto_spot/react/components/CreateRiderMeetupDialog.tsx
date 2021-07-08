@@ -137,6 +137,8 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
     const dispatch = useDispatch();
     const classes = useStyles();
     const [infoDialogVisible, setInfoDialogVisible] = useState(false);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
     const [meetupDate, setMeetupDate] = useState(null);
     const [rideStartDate, setRideStartDate] = useState(null);
     const [confirmSelected, setConfirmSelected] = useState(false);
@@ -161,6 +163,14 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
         setInfoDialogVisible(true);
     };
 
+    const onTitleChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTitle(event.currentTarget.value);
+    };
+
+    const onDescriptionChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setDescription(event.currentTarget.value);
+    };
+
     const meetupDateSelected = (date) => {
         setMeetupDate(date);
         const defaultRideStartDate = add(date, {
@@ -179,6 +189,8 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                 createRiderMeetupRequestAction({
                     lat: meetupLocation.lat,
                     lng: meetupLocation.lng,
+                    title: title,
+                    description: description,
                     meetup_date: formatUtcString(meetupDate),
                     ride_start_date: formatUtcString(rideStartDate),
                 }),
@@ -198,7 +210,6 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                 <DialogContent dividers>
                     <Box display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
-                            {/*<Typography className={classes.meetupLocationText}>Location:</Typography>*/}
                             {meetupLocation ? (
                                 <Typography className={classes.meetupLocationSetText}>Location set</Typography>
                             ) : (
@@ -228,6 +239,8 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                             label="Title"
                             variant="outlined"
                             className={classes.meetupTitleTextField}
+                            value={title}
+                            onChange={onTitleChanged}
                         />
                         <TextField
                             id="meetup-description"
@@ -236,6 +249,7 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                             className={classes.meetupDescriptionTextField}
                             multiline
                             rowsMax={2}
+                            onChange={onDescriptionChanged}
                         />
                     </Box>
                     <Box display={'flex'} flexDirection={'column'} className={classes.datePickersContainer}>

@@ -63,10 +63,17 @@ class RiderMeetupController extends AbstractController
         $riderMeetup = new RiderMeetup();
         $riderMeetup->setUserUUID($userUUID ?? $newUserUUID);
 
-        $title = $accessor->getValue($requestData, '[title]') ?? 'New Meetup';
+        $title = $accessor->getValue($requestData, '[title]');
+        if (!isset($title) || trim($title) === '') {
+            $title = 'New Meetup';
+        }
         $riderMeetup->setTitle($title);
 
-        $riderMeetup->setDescription($accessor->getValue($requestData, '[description]'));
+        $description = $accessor->getValue($requestData, '[description]');
+        if (!isset($description) || trim($description) === '') {
+            $description = '(no description)';
+        }
+        $riderMeetup->setDescription($description);
 
         $riderMeetup->setLat($accessor->getValue($requestData, '[lat]'));
         $riderMeetup->setLng($accessor->getValue($requestData, '[lng]'));

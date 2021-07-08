@@ -16,6 +16,8 @@ function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequest
             data: {
                 lat: action.payload.lat,
                 lng: action.payload.lng,
+                title: action.payload.title,
+                description: action.payload.description,
                 meetup_date: action.payload.meetup_date,
                 ride_start_date: action.payload.ride_start_date,
             },

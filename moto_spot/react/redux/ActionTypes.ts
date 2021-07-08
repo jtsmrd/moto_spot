@@ -124,6 +124,8 @@ export type CREATE_RIDER_MEETUP_REQUEST = typeof CREATE_RIDER_MEETUP_REQUEST;
 export interface ICreateRiderMeetupRequestPayload {
     lat: number;
     lng: number;
+    title: string;
+    description: string;
     meetup_date: string;
     ride_start_date: string;
 }
