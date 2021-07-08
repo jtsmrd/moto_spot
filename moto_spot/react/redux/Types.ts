@@ -6,14 +6,14 @@ export interface RiderCheckin {
     lat: number;
     lng: number;
 }
-
+// TODO: Change meetupDate and rideStartDate back to strings after getting global string extensions to work
 export interface RiderMeetup {
     id: number;
     userUUID: string;
     createDate: string;
     expireDate: string;
-    meetupDate: string;
-    rideStartDate: string;
+    meetupDate: any;
+    rideStartDate: any;
     title: string;
     description?: string;
     lat: number;
