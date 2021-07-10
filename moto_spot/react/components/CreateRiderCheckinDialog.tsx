@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Box, Button, Dialog, IconButton, Typography } from '@material-ui/core';
+import { Box, Button, Dialog, IconButton, TextField, Typography } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import CloseIcon from '@material-ui/icons/Close';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
@@ -75,6 +75,11 @@ const DialogActions = withStyles((theme: Theme) => ({
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        motorcycleMakeModelTextField: {
+            display: 'flex',
+            flex: 1,
+            marginBottom: '1.5rem',
+        },
         expireButtonContainer: {
             margin: '1rem auto',
         },
@@ -103,6 +108,7 @@ const CreateRiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
     const { positionLat, positionLng, positionError } = usePosition();
     const [infoDialogVisible, setInfoDialogVisible] = useState(false);
     const [expireInterval, setExpireInterval] = useState(15);
+    const [motorcycleMakeModel, setMotorcycleMakeModel] = useState('');
 
     const expireDateDisplay = useMemo(() => {
         return getUtcDate().addMinutes(expireInterval).formatTodayTomorrowTime();
@@ -113,6 +119,10 @@ const CreateRiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
             alert(positionError);
         }
     }, [positionError]);
+
+    const onMotorcycleMakeModelChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setMotorcycleMakeModel(event.currentTarget.value);
+    };
 
     const handleExpireIntervalSelected = (event: React.MouseEvent<HTMLElement>, expireInterval: number | null) => {
         setExpireInterval(expireInterval);
@@ -126,9 +136,10 @@ const CreateRiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
         if (positionLat && positionLng) {
             dispatch(
                 createRiderCheckinRequestAction({
+                    expire_date: getUtcDate().addMinutes(expireInterval),
+                    motorcycle_make_model: motorcycleMakeModel,
                     lat: positionLat,
                     lng: positionLng,
-                    expire_date: getUtcDate().addMinutes(expireInterval),
                 }),
             );
         } else {
@@ -136,7 +147,7 @@ const CreateRiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
         }
 
         onClose();
-    }, [positionLat, positionLng, expireInterval, dispatch]);
+    }, [positionLat, positionLng, dispatch, expireInterval, motorcycleMakeModel]);
 
     return (
         <React.Fragment>
@@ -145,6 +156,14 @@ const CreateRiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
                     Create Checkin
                 </DialogTitle>
                 <DialogContent dividers>
+                    <TextField
+                        id="create-rider-checkin-motorcycle-make-model"
+                        label="Motorcycle make/model (optional)"
+                        variant="outlined"
+                        className={classes.motorcycleMakeModelTextField}
+                        value={motorcycleMakeModel}
+                        onChange={onMotorcycleMakeModelChanged}
+                    />
                     <Typography id="rider-checkin-hangout-question">How long do you plan on hanging out?</Typography>
                     <Box display="flex">
                         <ToggleButtonGroup
@@ -171,7 +190,7 @@ const CreateRiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
                     <Typography className={classes.expiresText}>Expires {expireDateDisplay}</Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button className={classes.confirmButton} onClick={handleCheckin}>
+                    <Button variant={'outlined'} className={classes.confirmButton} onClick={handleCheckin}>
                         Confirm
                     </Button>
                 </DialogActions>

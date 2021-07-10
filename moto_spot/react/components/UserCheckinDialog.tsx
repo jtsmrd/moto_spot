@@ -84,6 +84,11 @@ const useStyles = makeStyles((theme: Theme) =>
         extendIntervalButtonText: {
             textTransform: 'lowercase',
         },
+        motorcycleMakeModelText: {
+            textAlign: 'center',
+            marginBottom: '1.5rem',
+            fontWeight: 300,
+        },
         currentExpireTimeText: {
             marginBottom: '0.5rem',
         },
@@ -156,6 +161,9 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
                     Update Checkin
                 </DialogTitle>
                 <DialogContent dividers>
+                    <Typography className={classes.motorcycleMakeModelText}>
+                        {userCheckin?.motorcycleMakeModel}
+                    </Typography>
                     <Typography className={classes.currentExpireTimeText}>
                         Your checkin will expire {currentExpireDateDisplay}.
                     </Typography>
@@ -182,7 +190,7 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
                             </ToggleButton>
                         </ToggleButtonGroup>
                     </Box>
-                    <Typography className={classes.expiresText}>Will expire {expireDateDisplay}</Typography>
+                    <Typography className={classes.expiresText}>Will be extended until {expireDateDisplay}</Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button

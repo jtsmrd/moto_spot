@@ -3,6 +3,7 @@ import { Action } from 'typescript-fsa';
 import * as ActionTypes from '../ActionTypes';
 import * as Actions from '../Actions';
 import * as Types from '../Types';
+import * as Endpoints from '../../constants/Endpoints';
 import { request as httpRequest } from '../../client';
 import {
     getMapBounds,
@@ -30,7 +31,7 @@ function* fetchRiderCheckins() {
 
     try {
         const res = yield call(httpRequest, {
-            url: '/api/get_rider_checkins',
+            url: Endpoints.GET_RIDER_CHECKINS,
             method: 'GET',
             params: {
                 lat: mapCenter.lat,
@@ -55,25 +56,16 @@ function* fetchRiderCheckins() {
     }
 }
 
-function* updateVisibleRiderCheckins() {
-    const riderCheckins = yield select(getRiderCheckins);
-    const mapBounds = yield select(getMapBounds);
-    const visibleRiderCheckins = getVisibleRiderCheckins(riderCheckins, mapBounds);
-    const visibleRiderCheckinsPayload: ActionTypes.ISetVisibleRiderCheckinsPayload = {
-        visibleRiderCheckins: visibleRiderCheckins,
-    };
-    yield put(Actions.setVisibleRiderCheckinsAction(visibleRiderCheckinsPayload));
-}
-
 function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
-            url: '/api/create_rider_checkin',
+            url: Endpoints.CREATE_RIDER_CHECKIN,
             method: 'POST',
             data: {
+                expire_date: action.payload.expire_date,
+                motorcycle_make_model: action.payload.motorcycle_make_model,
                 lat: action.payload.lat,
                 lng: action.payload.lng,
-                expire_date: action.payload.expire_date,
             },
         });
         const riderCheckinPayload: ActionTypes.ICreateRiderCheckinResponsePayload = {
@@ -88,7 +80,7 @@ function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinReque
 function* expireRiderCheckin(action: Action<ActionTypes.IExpireRiderCheckinRequestPayload>) {
     try {
         yield call(httpRequest, {
-            url: '/api/expire_rider_checkin',
+            url: Endpoints.EXPIRE_RIDER_CHECKIN,
             method: 'PUT',
             params: {
                 id: action.payload.id,
@@ -104,7 +96,7 @@ function* expireRiderCheckin(action: Action<ActionTypes.IExpireRiderCheckinReque
 function* extendRiderCheckin(action: Action<ActionTypes.IExtendRiderCheckinRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
-            url: '/api/extend_rider_checkin',
+            url: Endpoints.EXTEND_RIDER_CHECKIN,
             method: 'PUT',
             data: {
                 id: action.payload.id,
@@ -118,6 +110,16 @@ function* extendRiderCheckin(action: Action<ActionTypes.IExtendRiderCheckinReque
     } catch (e) {
         yield put(Actions.extendRiderCheckinResponseAction(e));
     }
+}
+
+function* updateVisibleRiderCheckins() {
+    const riderCheckins = yield select(getRiderCheckins);
+    const mapBounds = yield select(getMapBounds);
+    const visibleRiderCheckins = getVisibleRiderCheckins(riderCheckins, mapBounds);
+    const visibleRiderCheckinsPayload: ActionTypes.ISetVisibleRiderCheckinsPayload = {
+        visibleRiderCheckins: visibleRiderCheckins,
+    };
+    yield put(Actions.setVisibleRiderCheckinsAction(visibleRiderCheckinsPayload));
 }
 
 function getVisibleRiderCheckins(riderCheckins: Types.RiderCheckin[], mapBounds: Types.MapBounds) {

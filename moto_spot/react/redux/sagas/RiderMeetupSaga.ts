@@ -3,15 +3,45 @@ import { Action } from 'typescript-fsa';
 import * as ActionTypes from '../ActionTypes';
 import * as Actions from '../Actions';
 import * as Types from '../Types';
+import * as Endpoints from '../../constants/Endpoints';
 import { request as httpRequest } from '../../client';
 import { getMapBounds, getMapCenter, getMapZoom, getRiderMeetups } from '../Selectors';
 import { currentDateIsAfter } from '../../utilities/dateTimeUtils';
 import { MapViewMode } from '../reducers/MapInfoReducer';
 
+function* fetchRiderMeetups() {
+    const mapZoom = yield select(getMapZoom);
+    const mapCenter = yield select(getMapCenter);
+    // const mapBounds = yield select(getMapBounds);
+    const distance = getSearchDistance(mapZoom);
+
+    //ToDo: Limit fetch calls
+
+    try {
+        const res = yield call(httpRequest, {
+            url: Endpoints.GET_RIDER_MEETUPS,
+            method: 'GET',
+            params: {
+                lat: mapCenter.lat,
+                lng: mapCenter.lng,
+                distance: distance,
+            },
+        });
+
+        const riderMeetupsPayload: ActionTypes.IGetRiderMeetupsResponsePayload = {
+            riderMeetups: res.data,
+        };
+        yield put(Actions.getRiderMeetupsResponseAction(riderMeetupsPayload));
+        yield call(updateVisibleRiderMeetups);
+    } catch (e) {
+        yield put(Actions.getRiderMeetupsResponseAction(e));
+    }
+}
+
 function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
-            url: '/api/create_rider_meetup',
+            url: Endpoints.CREATE_RIDER_MEETUP,
             method: 'POST',
             data: {
                 lat: action.payload.lat,
@@ -36,7 +66,7 @@ function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequest
 function* updateRiderMeetup(action: Action<ActionTypes.IUpdateRiderMeetupRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
-            url: `/api/update_rider_meetup/${action.payload.id}`,
+            url: Endpoints.updateRiderMeetup(action.payload.id),
             method: 'PUT',
             data: {
                 title: action.payload.title,
@@ -58,7 +88,7 @@ function* updateRiderMeetup(action: Action<ActionTypes.IUpdateRiderMeetupRequest
 function* expireRiderMeetup(action: Action<ActionTypes.IExpireRiderMeetupRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
-            url: `/api/expire_rider_meetup/${action.payload.id}`,
+            url: Endpoints.expireRiderMeetup(action.payload.id),
             method: 'PUT',
         });
         const riderMeetupPayload: ActionTypes.IExpireRiderMeetupResponsePayload = {
@@ -68,35 +98,6 @@ function* expireRiderMeetup(action: Action<ActionTypes.IExpireRiderMeetupRequest
         yield call(updateVisibleRiderMeetups);
     } catch (e) {
         yield put(Actions.expireRiderMeetupResponseAction(e));
-    }
-}
-
-function* fetchRiderMeetups() {
-    const mapZoom = yield select(getMapZoom);
-    const mapCenter = yield select(getMapCenter);
-    // const mapBounds = yield select(getMapBounds);
-    const distance = getSearchDistance(mapZoom);
-
-    //ToDo: Limit fetch calls
-
-    try {
-        const res = yield call(httpRequest, {
-            url: '/api/get_rider_meetups',
-            method: 'GET',
-            params: {
-                lat: mapCenter.lat,
-                lng: mapCenter.lng,
-                distance: distance,
-            },
-        });
-
-        const riderMeetupsPayload: ActionTypes.IGetRiderMeetupsResponsePayload = {
-            riderMeetups: res.data,
-        };
-        yield put(Actions.getRiderMeetupsResponseAction(riderMeetupsPayload));
-        yield call(updateVisibleRiderMeetups);
-    } catch (e) {
-        yield put(Actions.getRiderMeetupsResponseAction(e));
     }
 }
 

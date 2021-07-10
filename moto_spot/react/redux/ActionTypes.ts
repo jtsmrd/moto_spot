@@ -15,9 +15,10 @@ export interface IGetRiderCheckinsResponsePayload {
 export const CREATE_RIDER_CHECKIN_REQUEST = 'CREATE_RIDER_CHECKIN_REQUEST';
 export type CREATE_RIDER_CHECKIN_REQUEST = typeof CREATE_RIDER_CHECKIN_REQUEST;
 export interface ICreateRiderCheckinRequestPayload {
+    expire_date?: string;
+    motorcycle_make_model?: string;
     lat: number;
     lng: number;
-    expire_date?: string;
 }
 
 export const CREATE_RIDER_CHECKIN_RESPONSE = 'CREATE_RIDER_CHECKIN_RESPONSE';

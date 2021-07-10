@@ -5,20 +5,10 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\RiderCheckinRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource(
- *     itemOperations={"get"},
- *     collectionOperations={},
- *     normalizationContext={
- *          "groups"={"read"}
- *     }
- * )
+ * @ApiResource()
  * @ORM\Entity(repositoryClass=RiderCheckinRepository::class)
- * @UniqueEntity("userUUID")
  */
 class RiderCheckin
 {
@@ -26,15 +16,11 @@ class RiderCheckin
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read"})
-     * @Assert\NotBlank()
-     * @Assert\Uuid()
      */
     private $userUUID;
 
@@ -49,22 +35,26 @@ class RiderCheckin
     private $expireDate;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $motorcycleMakeModel;
+
+    /**
      * @ORM\Column(type="float")
-     * @Groups({"read"})
-     * @Assert\NotBlank()
      */
     private $lng;
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"read"})
-     * @Assert\NotBlank()
      */
     private $lat;
 
     public function __construct()
     {
-        $this->createDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->createDate = new \DateTime(
+            'now',
+            new \DateTimeZone('UTC')
+        );
     }
 
     public function getId(): ?int
@@ -97,6 +87,18 @@ class RiderCheckin
     public function setExpireDate(\DateTimeInterface $expireDate): self
     {
         $this->expireDate = $expireDate;
+
+        return $this;
+    }
+
+    public function getMotorcycleMakeModel(): ?string
+    {
+        return $this->motorcycleMakeModel;
+    }
+
+    public function setMotorcycleMakeModel(?string $motorcycleMakeModel): self
+    {
+        $this->motorcycleMakeModel = $motorcycleMakeModel;
 
         return $this;
     }

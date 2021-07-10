@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const CreateRiderMeetupView: React.FC<{}> = (props) => {
+const SelectRiderMeetupLocationView: React.FC<{}> = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
     const mapCenter = useSelector(getMapCenter);
@@ -91,4 +91,4 @@ const CreateRiderMeetupView: React.FC<{}> = (props) => {
     );
 };
 
-export default CreateRiderMeetupView;
+export default SelectRiderMeetupLocationView;

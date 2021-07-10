@@ -23,7 +23,7 @@ const MainAppBar: React.FC<{}> = (props) => {
     const [infoDialogVisible, setInfoDialogVisible] = useState(false);
 
     return (
-        <div>
+        <React.Fragment>
             <AppBar position={'static'}>
                 <Toolbar>
                     <Typography variant={'h6'} className={classes.title}>
@@ -59,7 +59,7 @@ const MainAppBar: React.FC<{}> = (props) => {
                     <br>
                     Enjoy!'
             />
-        </div>
+        </React.Fragment>
     );
 };
 

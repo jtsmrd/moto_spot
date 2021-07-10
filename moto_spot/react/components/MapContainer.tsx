@@ -26,7 +26,7 @@ import { useMediaQuery, useTheme } from '@material-ui/core';
 import * as Types from '../redux/Types';
 import { useGeoLocation } from '../hooks/useGeoLocation';
 import RiderCheckinView from './RiderCheckinView';
-import CreateRiderMeetupView from './CreateRiderMeetupView';
+import SelectRiderMeetupLocationView from './SelectRiderMeetupLocationView';
 import { MapViewMode } from '../redux/reducers/MapInfoReducer';
 import RiderMeetupView from './RiderMeetupView';
 
@@ -193,7 +193,7 @@ const MapContainer: React.FC<{}> = (props) => {
             case MapViewMode.RiderMeetups:
                 return <RiderMeetupView />;
             case MapViewMode.CreateRiderMeetup:
-                return <CreateRiderMeetupView />;
+                return <SelectRiderMeetupLocationView />;
             default:
                 return null;
         }

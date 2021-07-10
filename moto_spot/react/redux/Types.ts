@@ -3,6 +3,7 @@ export interface RiderCheckin {
     userUUID: string;
     createDate: string;
     expireDate: string;
+    motorcycleMakeModel?: string;
     lat: number;
     lng: number;
 }
