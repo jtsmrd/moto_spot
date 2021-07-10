@@ -8,10 +8,12 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import * as Types from '../redux/Types';
 import '../utilities/date.string.extensions';
 import formatDistanceStrict from 'date-fns/formatDistanceStrict';
+import Cookie from 'js-cookie';
 
 export interface RiderMeetupInfoDialogProps {
     open: boolean;
     onClose: any;
+    onEditRiderMeetup: () => void;
     riderMeetup: Types.RiderMeetup;
 }
 
@@ -30,6 +32,10 @@ const useStyles = makeStyles((theme: Theme) =>
             marginTop: '1rem',
             fontSize: '0.8rem',
             fontWeight: 300,
+        },
+        editButton: {
+            color: theme.palette.primary.main,
+            textTransform: 'capitalize',
         },
     }),
 );
@@ -81,8 +87,13 @@ const DialogActions = withStyles((theme: Theme) => ({
 }))(MuiDialogActions);
 
 const RiderMeetupInfoDialog: React.FC<RiderMeetupInfoDialogProps> = (props) => {
-    const { open, onClose, riderMeetup } = props;
+    const { open, onClose, onEditRiderMeetup, riderMeetup } = props;
+    const userUUID = Cookie.get('user_uuid');
     const classes = useStyles();
+
+    const shouldShowEdit = useMemo(() => {
+        return userUUID === riderMeetup?.userUUID;
+    }, [riderMeetup]);
 
     // Displays the time interval in words between the meetup time and ride time
     const hangoutTimeText = useMemo(() => {
@@ -110,15 +121,17 @@ const RiderMeetupInfoDialog: React.FC<RiderMeetupInfoDialogProps> = (props) => {
                 </Typography>
                 <Typography className={classes.hangoutTimeText}>Time before rideout: {hangoutTimeText}</Typography>
             </DialogContent>
-            {/*ToDo: Allow creator to edit, allow non-creator users to show interest*/}
-            {/*<DialogActions>*/}
-            {/*    <Button onClick={onClose} color="primary">*/}
-            {/*        Edit*/}
-            {/*    </Button>*/}
-            {/*    <Button onClick={onClose} color="primary">*/}
-            {/*        Interested*/}
-            {/*    </Button>*/}
-            {/*</DialogActions>*/}
+            {shouldShowEdit && (
+                <DialogActions>
+                    <Button variant={'outlined'} className={classes.editButton} onClick={onEditRiderMeetup}>
+                        Edit
+                    </Button>
+                    {/*ToDo: Allow non-creator users to show interest*/}
+                    {/*<Button onClick={onClose} color="primary">*/}
+                    {/*    Interested*/}
+                    {/*</Button>*/}
+                </DialogActions>
+            )}
         </Dialog>
     );
 };

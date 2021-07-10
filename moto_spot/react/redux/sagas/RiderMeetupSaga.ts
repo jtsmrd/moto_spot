@@ -27,8 +27,47 @@ function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequest
         };
         yield put(Actions.createRiderMeetupResponseAction(riderMeetupPayload));
         yield put(Actions.setMapViewModeAction({ mapViewMode: MapViewMode.RiderMeetups }));
+        yield call(updateVisibleRiderMeetups);
     } catch (e) {
         yield put(Actions.createRiderMeetupResponseAction(e));
+    }
+}
+
+function* updateRiderMeetup(action: Action<ActionTypes.IUpdateRiderMeetupRequestPayload>) {
+    try {
+        const res = yield call(httpRequest, {
+            url: `/api/update_rider_meetup/${action.payload.id}`,
+            method: 'PUT',
+            data: {
+                title: action.payload.title,
+                description: action.payload.description,
+                meetup_date: action.payload.meetup_date,
+                ride_start_date: action.payload.ride_start_date,
+            },
+        });
+        const riderMeetupPayload: ActionTypes.IUpdateRiderMeetupResponsePayload = {
+            riderMeetup: res.data,
+        };
+        yield put(Actions.updateRiderMeetupResponseAction(riderMeetupPayload));
+        yield put(Actions.setSelectedRiderMeetupAction({ riderMeetup: riderMeetupPayload.riderMeetup }));
+    } catch (e) {
+        yield put(Actions.updateRiderMeetupResponseAction(e));
+    }
+}
+
+function* expireRiderMeetup(action: Action<ActionTypes.IExpireRiderMeetupRequestPayload>) {
+    try {
+        const res = yield call(httpRequest, {
+            url: `/api/expire_rider_meetup/${action.payload.id}`,
+            method: 'PUT',
+        });
+        const riderMeetupPayload: ActionTypes.IExpireRiderMeetupResponsePayload = {
+            expiredRiderMeetup: res.data,
+        };
+        yield put(Actions.expireRiderMeetupResponseAction(riderMeetupPayload));
+        yield call(updateVisibleRiderMeetups);
+    } catch (e) {
+        yield put(Actions.expireRiderMeetupResponseAction(e));
     }
 }
 
@@ -139,6 +178,8 @@ function getSearchDistance(zoomLevel: number): number {
 export default function* watchRiderMeetupRequests() {
     yield all([
         takeLatest(ActionTypes.CREATE_RIDER_MEETUP_REQUEST, createRiderMeetup),
+        takeLatest(ActionTypes.UPDATE_RIDER_MEETUP_REQUEST, updateRiderMeetup),
+        takeLatest(ActionTypes.EXPIRE_RIDER_MEETUP_REQUEST, expireRiderMeetup),
         takeLatest(ActionTypes.GET_RIDER_MEETUPS_REQUEST, fetchRiderMeetups),
         takeLatest(ActionTypes.UPDATE_VISIBLE_RIDER_MEETUPS, updateVisibleRiderMeetups),
     ]);

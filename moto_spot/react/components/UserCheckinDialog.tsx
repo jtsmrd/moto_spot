@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme: Theme) =>
             fontSize: '0.8rem',
             fontWeight: 300,
         },
-        confirmButton: {
+        updateButton: {
             color: theme.palette.primary.main,
             textTransform: 'capitalize',
         },
@@ -183,10 +183,10 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
                     <Typography className={classes.expiresText}>Will expire {expireDateDisplay}</Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button className={classes.deleteButton} onClick={handleExpireCheckin}>
+                    <Button variant={'outlined'} className={classes.deleteButton} onClick={handleExpireCheckin}>
                         Delete
                     </Button>
-                    <Button className={classes.confirmButton} onClick={handleExtendCheckin}>
+                    <Button variant={'outlined'} className={classes.updateButton} onClick={handleExtendCheckin}>
                         Update
                     </Button>
                 </DialogActions>

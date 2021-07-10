@@ -97,9 +97,18 @@ export default function RiderCheckinReducer(
         }
         case ActionTypes.EXPIRE_RIDER_CHECKIN_RESPONSE: {
             if (action.error) {
-                return { ...state, deleteCheckinError: action.payload, deleteCheckinLoading: false };
+                return {
+                    ...state,
+                    deleteCheckinError: action.payload,
+                    deleteCheckinLoading: false,
+                };
             }
-            return { ...state, userCheckin: null, deleteCheckinError: null, deleteCheckinLoading: false };
+            return {
+                ...state,
+                userCheckin: null,
+                deleteCheckinError: null,
+                deleteCheckinLoading: false,
+            };
         }
         case ActionTypes.REMOVE_EXPIRED_RIDER_CHECKINS: {
             return {

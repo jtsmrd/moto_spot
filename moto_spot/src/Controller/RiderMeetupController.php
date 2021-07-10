@@ -32,11 +32,11 @@ class RiderMeetupController extends AbstractController
     }
 
     /**
-     * @Route("/api/create_rider_meetup", name="create_rider_meetup", methods={"post"})
+     * @Route("/api/create_rider_meetup", name="create_rider_meetup", methods={"POST"})
      * @param Request $request
-     * @return Response
+     * @return JsonResponse
      */
-    public function createRiderMeetup(Request $request): Response
+    public function createRiderMeetup(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
         if (!is_array($requestData)) {
@@ -44,7 +44,7 @@ class RiderMeetupController extends AbstractController
         }
 
         try {
-            $this->riderMeetupIsValid($requestData);
+            $this->createRiderMeetupIsValid($requestData);
         } catch (InvalidDataException $e) {
             return new JsonResponse([
                 'message' => $e->getMessage(),
@@ -124,11 +124,95 @@ class RiderMeetupController extends AbstractController
     }
 
     /**
-     * @Route("/api/get_rider_meetups", name="get_rider_meetups", methods={"get"})
+     * @Route("/api/update_rider_meetup/{id}", name="update_rider_meetup", methods={"PUT"})
      * @param Request $request
-     * @return Response
+     * @param int $id
+     * @return JsonResponse
+     * @throws \Exception
      */
-    public function getRiderMeetups(Request $request): Response
+    public function updateRiderMeetup(Request $request, int $id): JsonResponse
+    {
+        $requestData = json_decode($request->getContent(), true);
+        if (!is_array($requestData)) {
+            return new JsonResponse([], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $this->updateRiderMeetupIsValid($requestData);
+        } catch (InvalidDataException $e) {
+            return new JsonResponse([
+                'message' => $e->getMessage(),
+                'errors' => $e->getErrors()
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Make sure we can identify the user updating the rider meetup
+        $userUUID = $request->cookies->get('user_uuid');
+        if (!$userUUID) {
+            return new JsonResponse(null, Response::HTTP_FORBIDDEN);
+        }
+
+        $repository = $this->getDoctrine()->getRepository(RiderMeetup::class);
+        $riderMeetup = $repository->findOneBy([
+            'userUUID' => $userUUID,
+            'id' => $id
+        ]);
+
+        if (!$riderMeetup) {
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        }
+
+        $accessor = PropertyAccess::createPropertyAccessor();
+
+        $title = $accessor->getValue($requestData, '[title]');
+        if (!isset($title) || trim($title) === '') {
+            $title = 'New Meetup';
+        }
+        $riderMeetup->setTitle($title);
+
+        $description = $accessor->getValue($requestData, '[description]');
+        if (!isset($description) || trim($description) === '') {
+            $description = '(no description)';
+        }
+        $riderMeetup->setDescription($description);
+
+        $meetupDateString = $accessor->getValue($requestData, '[meetup_date]');
+        $meetupDate = new \DateTime($meetupDateString, new \DateTimeZone('UTC'));
+        $riderMeetup->setMeetupDate($meetupDate);
+
+        $rideStartDateString = $accessor->getValue($requestData, '[ride_start_date]');
+        $rideStartDate = new \DateTime($rideStartDateString, new \DateTimeZone('UTC'));
+        $riderMeetup->setRideStartDate($rideStartDate);
+
+        // Default expire date to end of meetup day
+        $expireDate = clone $meetupDate;
+        $expireDate->modify('tomorrow');
+        $expireDate->setTimestamp($expireDate->getTimestamp() - 1);
+        $riderMeetup->setExpireDate($expireDate);
+
+        $this->entityManager->persist($riderMeetup);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'id' => $riderMeetup->getId(),
+            'userUUID' => $riderMeetup->getUserUUID(),
+            'createDate' => $riderMeetup->getCreateDate()->format('Y-m-d H:i:s'),
+            'expireDate' => $riderMeetup->getExpireDate()->format('Y-m-d H:i:s'),
+            'meetupDate' => $riderMeetup->getMeetupDate()->format('Y-m-d H:i:s'),
+            'rideStartDate' => $riderMeetup->getRideStartDate()->format('Y-m-d H:i:s'),
+            'title' => $riderMeetup->getTitle(),
+            'description' => $riderMeetup->getDescription(),
+            'lat' => $riderMeetup->getLat(),
+            'lng' => $riderMeetup->getLng()
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/get_rider_meetups", name="get_rider_meetups", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getRiderMeetups(Request $request): JsonResponse
     {
         $lat = floatval($request->query->get('lat'));
         $lng = floatval($request->query->get('lng'));
@@ -159,39 +243,51 @@ class RiderMeetupController extends AbstractController
     }
 
     /**
-     * @Route("/api/expire_rider_meetup", name="expire_rider_meetup", methods={"put"})
+     * @Route("/api/expire_rider_meetup/{id}", name="expire_rider_meetup", methods={"PUT"})
      * @param Request $request
-     * @return Response
+     * @param int $id
+     * @return JsonResponse
+     * @throws \Exception
      */
-    public function expireRiderMeetup(Request $request): Response
+    public function expireRiderMeetup(Request $request, int $id): JsonResponse
     {
         $userUUID = $request->cookies->get('user_uuid');
         if (!$userUUID) {
             return new JsonResponse(null, Response::HTTP_FORBIDDEN);
         }
 
-        $riderMeetupId = intval($request->query->get('id'));
         $repository = $this->getDoctrine()->getRepository(RiderMeetup::class);
 
-        /** @var RiderMeetup $checkinToExpire */
-        $checkinToExpire = $repository->findOneBy([
+        /** @var RiderMeetup $meetupToExpire */
+        $meetupToExpire = $repository->findOneBy([
             'userUUID' => $userUUID,
-            'id' => $riderMeetupId
+            'id' => $id
         ]);
-        if (!$checkinToExpire) {
+        if (!$meetupToExpire) {
             return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
 
         $expireDate = (new \DateTime('now', new \DateTimeZone('UTC')));
-        $checkinToExpire->setExpireDate($expireDate);
+        $meetupToExpire->setExpireDate($expireDate);
 
-        $this->entityManager->persist($checkinToExpire);
+        $this->entityManager->persist($meetupToExpire);
         $this->entityManager->flush();
 
-        return new JsonResponse(null, Response::HTTP_OK);
+        return new JsonResponse([
+            'id' => $meetupToExpire->getId(),
+            'userUUID' => $meetupToExpire->getUserUUID(),
+            'createDate' => $meetupToExpire->getCreateDate()->format('Y-m-d H:i:s'),
+            'expireDate' => $meetupToExpire->getExpireDate()->format('Y-m-d H:i:s'),
+            'meetupDate' => $meetupToExpire->getMeetupDate()->format('Y-m-d H:i:s'),
+            'rideStartDate' => $meetupToExpire->getRideStartDate()->format('Y-m-d H:i:s'),
+            'title' => $meetupToExpire->getTitle(),
+            'description' => $meetupToExpire->getDescription(),
+            'lat' => $meetupToExpire->getLat(),
+            'lng' => $meetupToExpire->getLng()
+        ], Response::HTTP_OK);
     }
 
-    private function riderMeetupIsValid(array $requestData): void
+    private function createRiderMeetupIsValid(array $requestData): void
     {
         $constraints = new Assert\Collection([
             'title' => new Assert\Optional(),
@@ -206,6 +302,33 @@ class RiderMeetupController extends AbstractController
                 new Assert\NotBlank()
             ]),
             'lng' => new Assert\Required([
+                new Assert\NotBlank()
+            ]),
+        ]);
+
+        $validator = Validation::createValidator();
+        $errors = $validator->validate($requestData, $constraints);
+
+        if (count($errors) > 0) {
+            $messages = [];
+
+            /** @var ConstraintViolation $violation */
+            foreach ($errors as $violation) {
+                $messages[$violation->getPropertyPath()][] = $violation->getMessage();
+            }
+            throw new InvalidDataException('Validation Errors', $messages);
+        }
+    }
+
+    private function updateRiderMeetupIsValid(array $requestData): void
+    {
+        $constraints = new Assert\Collection([
+            'title' => new Assert\Optional(),
+            'description' => new Assert\Optional(),
+            'meetup_date' => new Assert\Required([
+                new Assert\NotBlank()
+            ]),
+            'ride_start_date' => new Assert\Required([
                 new Assert\NotBlank()
             ]),
         ]);

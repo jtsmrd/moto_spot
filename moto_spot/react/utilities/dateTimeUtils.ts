@@ -29,6 +29,11 @@ export function formatLocalTodayTomorrowTime(utcDate: string): string {
     }
 }
 
+export function formatToLocalDate(utcDate: string): Date {
+    const targetMoment = moment(moment.utc(utcDate).toDate()).local();
+    return targetMoment.toDate();
+}
+
 export function getCurrentTimestamp(): number {
     return moment.utc().valueOf() / 1000;
 }

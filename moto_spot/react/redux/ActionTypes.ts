@@ -136,6 +136,34 @@ export interface ICreateRiderMeetupResponsePayload {
     riderMeetup: Types.RiderMeetup;
 }
 
+export const UPDATE_RIDER_MEETUP_REQUEST = 'UPDATE_RIDER_MEETUP_REQUEST';
+export type UPDATE_RIDER_MEETUP_REQUEST = typeof UPDATE_RIDER_MEETUP_REQUEST;
+export interface IUpdateRiderMeetupRequestPayload {
+    id: number;
+    title: string;
+    description: string;
+    meetup_date: string;
+    ride_start_date: string;
+}
+
+export const UPDATE_RIDER_MEETUP_RESPONSE = 'UPDATE_RIDER_MEETUP_RESPONSE';
+export type UPDATE_RIDER_MEETUP_RESPONSE = typeof UPDATE_RIDER_MEETUP_RESPONSE;
+export interface IUpdateRiderMeetupResponsePayload {
+    riderMeetup: Types.RiderMeetup;
+}
+
+export const EXPIRE_RIDER_MEETUP_REQUEST = 'EXPIRE_RIDER_MEETUP_REQUEST';
+export type EXPIRE_RIDER_MEETUP_REQUEST = typeof EXPIRE_RIDER_MEETUP_REQUEST;
+export interface IExpireRiderMeetupRequestPayload {
+    id: number;
+}
+
+export const EXPIRE_RIDER_MEETUP_RESPONSE = 'EXPIRE_RIDER_MEETUP_RESPONSE';
+export type EXPIRE_RIDER_MEETUP_RESPONSE = typeof EXPIRE_RIDER_MEETUP_RESPONSE;
+export interface IExpireRiderMeetupResponsePayload {
+    expiredRiderMeetup: Types.RiderMeetup;
+}
+
 export const GET_RIDER_MEETUPS_REQUEST = 'GET_RIDER_MEETUPS_REQUEST';
 export type GET_RIDER_MEETUPS_REQUEST = typeof GET_RIDER_MEETUPS_REQUEST;
 
@@ -181,4 +209,8 @@ export type IRiderMeetupActionsPayload =
     | ICreateRiderMeetupRequestPayload
     | ICreateRiderMeetupResponsePayload
     | IGetRiderMeetupsResponsePayload
-    | ISetVisibleRiderMeetupsPayload;
+    | ISetVisibleRiderMeetupsPayload
+    | IUpdateRiderMeetupRequestPayload
+    | IUpdateRiderMeetupResponsePayload
+    | IExpireRiderMeetupRequestPayload
+    | IExpireRiderMeetupResponsePayload;

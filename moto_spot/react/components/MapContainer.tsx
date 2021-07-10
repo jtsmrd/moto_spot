@@ -184,7 +184,6 @@ const MapContainer: React.FC<{}> = (props) => {
 
     const onMeetupMarkerClicked = (riderMeetup: Types.RiderMeetup) => {
         dispatch(setSelectedRiderMeetupAction({ riderMeetup: riderMeetup }));
-        console.log(riderMeetup);
     };
 
     const getView = useCallback(() => {

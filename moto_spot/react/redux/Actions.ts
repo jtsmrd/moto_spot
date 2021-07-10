@@ -97,6 +97,22 @@ export const createRiderMeetupResponseAction: ActionCreator<ActionTypes.ICreateR
     ActionTypes.CREATE_RIDER_MEETUP_RESPONSE,
 );
 
+export const updateRiderMeetupRequestAction: ActionCreator<ActionTypes.IUpdateRiderMeetupRequestPayload> = actionCreator<ActionTypes.IUpdateRiderMeetupRequestPayload>(
+    ActionTypes.UPDATE_RIDER_MEETUP_REQUEST,
+);
+
+export const updateRiderMeetupResponseAction: ActionCreator<ActionTypes.IUpdateRiderMeetupResponsePayload> = actionCreator<ActionTypes.IUpdateRiderMeetupResponsePayload>(
+    ActionTypes.UPDATE_RIDER_MEETUP_RESPONSE,
+);
+
+export const expireRiderMeetupRequestAction: ActionCreator<ActionTypes.IExpireRiderMeetupRequestPayload> = actionCreator<ActionTypes.IExpireRiderMeetupRequestPayload>(
+    ActionTypes.EXPIRE_RIDER_MEETUP_REQUEST,
+);
+
+export const expireRiderMeetupResponseAction: ActionCreator<ActionTypes.IExpireRiderMeetupResponsePayload> = actionCreator<ActionTypes.IExpireRiderMeetupResponsePayload>(
+    ActionTypes.EXPIRE_RIDER_MEETUP_RESPONSE,
+);
+
 export const getRiderMeetupsRequestAction: ActionCreator<any> = actionCreator<any>(
     ActionTypes.GET_RIDER_MEETUPS_REQUEST,
 );

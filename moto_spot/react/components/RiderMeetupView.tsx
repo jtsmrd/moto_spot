@@ -9,6 +9,7 @@ import AddIcon from '@material-ui/icons/Add';
 import * as Types from '../redux/Types';
 import { getSelectedRiderMeetup } from '../redux/Selectors';
 import RiderMeetupInfoDialog from './RiderMeetupInfoDialog';
+import EditRiderMeetupDialog from './EditRiderMeetupDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -25,9 +26,10 @@ const RiderMeetupView: React.FC<{}> = (props) => {
     const classes = useStyles();
     const selectedRiderMeetup: Types.RiderMeetup = useSelector(getSelectedRiderMeetup);
     const [meetupInfoDialogVisible, setMeetupInfoDialogVisible] = useState(false);
+    const [editMeetupInfoDialogVisible, setEditMeetupInfoDialogVisible] = useState(false);
 
     useEffect(() => {
-        setMeetupInfoDialogVisible(selectedRiderMeetup !== null);
+        setMeetupInfoDialogVisible(selectedRiderMeetup !== null && !editMeetupInfoDialogVisible);
     }, [selectedRiderMeetup]);
 
     const createRiderMeetup = useCallback(() => {
@@ -35,6 +37,21 @@ const RiderMeetupView: React.FC<{}> = (props) => {
     }, [dispatch]);
 
     const onCloseRiderMeetupDialog = useCallback(() => {
+        dispatch(setSelectedRiderMeetupAction({ riderMeetup: null }));
+    }, [dispatch]);
+
+    const onEditRiderMeetup = useCallback(() => {
+        setMeetupInfoDialogVisible(false);
+        setEditMeetupInfoDialogVisible(true);
+    }, []);
+
+    const onCloseEditRiderMeetupDialog = useCallback(() => {
+        setEditMeetupInfoDialogVisible(false);
+        setMeetupInfoDialogVisible(true);
+    }, []);
+
+    const onRiderMeetupExpired = useCallback(() => {
+        setEditMeetupInfoDialogVisible(false);
         dispatch(setSelectedRiderMeetupAction({ riderMeetup: null }));
     }, [dispatch]);
 
@@ -47,8 +64,17 @@ const RiderMeetupView: React.FC<{}> = (props) => {
             <RiderMeetupInfoDialog
                 open={meetupInfoDialogVisible}
                 onClose={onCloseRiderMeetupDialog}
+                onEditRiderMeetup={onEditRiderMeetup}
                 riderMeetup={selectedRiderMeetup}
             />
+            {selectedRiderMeetup && (
+                <EditRiderMeetupDialog
+                    open={editMeetupInfoDialogVisible}
+                    onClose={onCloseEditRiderMeetupDialog}
+                    onExpire={onRiderMeetupExpired}
+                    riderMeetup={selectedRiderMeetup}
+                />
+            )}
         </div>
     );
 };
