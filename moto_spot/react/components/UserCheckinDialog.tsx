@@ -12,6 +12,7 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import InfoDialog from './InfoDialog';
 import '../utilities/date.string.extensions';
+import ConfirmDialog from './ConfirmDialog';
 
 export interface UserCheckinDialogProps {
     open: boolean;
@@ -109,6 +110,7 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
     const userCheckin = useSelector(getUserCheckin);
     const [infoDialogVisible, setInfoDialogVisible] = useState(false);
     const [extendInterval, setExtendInterval] = useState(15);
+    const [confirmDeleteDialogVisible, setConfirmDeleteDialogVisible] = useState(false);
 
     const currentExpireDateDisplay = useMemo(() => {
         return userCheckin?.expireDate.formatTodayTomorrowTime();
@@ -139,11 +141,11 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
         onClose();
     }, [userCheckin, dispatch, extendInterval]);
 
-    const handleExpireCheckin = useCallback(() => {
+    const onConfirmDeleteRiderCheckin = useCallback(() => {
+        setConfirmDeleteDialogVisible(false);
         if (userCheckin) {
             dispatch(expireRiderCheckinRequestAction({ id: userCheckin.id }));
         }
-
         onClose();
     }, [userCheckin, dispatch]);
 
@@ -183,7 +185,13 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
                     <Typography className={classes.expiresText}>Will expire {expireDateDisplay}</Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant={'outlined'} className={classes.deleteButton} onClick={handleExpireCheckin}>
+                    <Button
+                        variant={'outlined'}
+                        className={classes.deleteButton}
+                        onClick={() => {
+                            setConfirmDeleteDialogVisible(true);
+                        }}
+                    >
                         Delete
                     </Button>
                     <Button variant={'outlined'} className={classes.updateButton} onClick={handleExtendCheckin}>
@@ -199,6 +207,17 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
                 titleText="Update Checkin"
                 infoText="If you're planning on hanging out a bit longer at your current spot, you can extend your
                     checkin time. If you're leaving, you can delete your checkin."
+            />
+            <ConfirmDialog
+                open={confirmDeleteDialogVisible}
+                onClose={() => {
+                    setConfirmDeleteDialogVisible(false);
+                }}
+                onConfirm={onConfirmDeleteRiderCheckin}
+                cancelText={'Cancel'}
+                confirmText={'Are you sure you want to delete your Checkin?'}
+                confirmButtonText={'Yes, delete'}
+                confirmIsDestructive={true}
             />
         </React.Fragment>
     );
