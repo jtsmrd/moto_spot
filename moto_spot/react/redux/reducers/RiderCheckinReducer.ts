@@ -103,9 +103,11 @@ export default function RiderCheckinReducer(
                     deleteCheckinLoading: false,
                 };
             }
+            const { expiredRiderCheckin } = action.payload as ActionTypes.IExpireRiderCheckinResponsePayload;
             return {
                 ...state,
                 userCheckin: null,
+                riderCheckins: removeExpiredCheckin(state.riderCheckins, expiredRiderCheckin),
                 deleteCheckinError: null,
                 deleteCheckinLoading: false,
             };
@@ -140,6 +142,7 @@ export default function RiderCheckinReducer(
             return {
                 ...state,
                 userCheckin: riderCheckin,
+                riderCheckins: updatedRiderCheckins(state.riderCheckins, riderCheckin),
                 extendCheckinLoading: false,
                 extendCheckinError: null,
             };
@@ -166,5 +169,18 @@ function getUserCheckin(checkins: Types.RiderCheckin[]) {
 function removeExpiredRiderCheckins(checkins: Types.RiderCheckin[]) {
     return checkins.filter((checkin) => {
         return !currentDateIsAfter(checkin.expireDate);
+    });
+}
+
+function updatedRiderCheckins(existingCheckins: Types.RiderCheckin[], updatedCheckin: Types.RiderCheckin) {
+    const checkins = existingCheckins.filter((checkin) => {
+        return checkin.id !== updatedCheckin.id;
+    });
+    return [...checkins, updatedCheckin];
+}
+
+function removeExpiredCheckin(existingCheckins: Types.RiderCheckin[], expiredRiderCheckin: Types.RiderCheckin) {
+    return existingCheckins.filter((checkin) => {
+        return checkin.id !== expiredRiderCheckin.id;
     });
 }

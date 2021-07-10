@@ -36,7 +36,7 @@ const RiderMeetupView: React.FC<{}> = (props) => {
         dispatch(setMapViewModeAction({ mapViewMode: MapViewMode.CreateRiderMeetup }));
     }, [dispatch]);
 
-    const onCloseRiderMeetupDialog = useCallback(() => {
+    const onCloseRiderMeetupInfoDialog = useCallback(() => {
         dispatch(setSelectedRiderMeetupAction({ riderMeetup: null }));
     }, [dispatch]);
 
@@ -50,20 +50,20 @@ const RiderMeetupView: React.FC<{}> = (props) => {
         setMeetupInfoDialogVisible(true);
     }, []);
 
-    const onRiderMeetupExpired = useCallback(() => {
+    const onRiderMeetupDeleted = useCallback(() => {
         setEditMeetupInfoDialogVisible(false);
         dispatch(setSelectedRiderMeetupAction({ riderMeetup: null }));
     }, [dispatch]);
 
     return (
-        <div>
+        <React.Fragment>
             <RiderCheckinMeetupSelector />
             <Fab color="secondary" aria-label="add" className={classes.meetupButton} onClick={createRiderMeetup}>
                 <AddIcon />
             </Fab>
             <RiderMeetupInfoDialog
                 open={meetupInfoDialogVisible}
-                onClose={onCloseRiderMeetupDialog}
+                onClose={onCloseRiderMeetupInfoDialog}
                 onEditRiderMeetup={onEditRiderMeetup}
                 riderMeetup={selectedRiderMeetup}
             />
@@ -71,11 +71,11 @@ const RiderMeetupView: React.FC<{}> = (props) => {
                 <EditRiderMeetupDialog
                     open={editMeetupInfoDialogVisible}
                     onClose={onCloseEditRiderMeetupDialog}
-                    onExpire={onRiderMeetupExpired}
+                    onDelete={onRiderMeetupDeleted}
                     riderMeetup={selectedRiderMeetup}
                 />
             )}
-        </div>
+        </React.Fragment>
     );
 };
 

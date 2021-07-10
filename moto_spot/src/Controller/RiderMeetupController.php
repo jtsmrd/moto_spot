@@ -256,34 +256,39 @@ class RiderMeetupController extends AbstractController
             return new JsonResponse(null, Response::HTTP_FORBIDDEN);
         }
 
-        $repository = $this->getDoctrine()->getRepository(RiderMeetup::class);
+        $repository = $this->getDoctrine()->getRepository(
+            RiderMeetup::class
+        );
 
-        /** @var RiderMeetup $meetupToExpire */
-        $meetupToExpire = $repository->findOneBy([
+        /** @var RiderMeetup $riderMeetup */
+        $riderMeetup = $repository->findOneBy([
             'userUUID' => $userUUID,
             'id' => $id
         ]);
-        if (!$meetupToExpire) {
+        if (!$riderMeetup) {
             return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
 
-        $expireDate = (new \DateTime('now', new \DateTimeZone('UTC')));
-        $meetupToExpire->setExpireDate($expireDate);
+        $expireDate = new \DateTime(
+            'now',
+            new \DateTimeZone('UTC')
+        );
+        $riderMeetup->setExpireDate($expireDate);
 
-        $this->entityManager->persist($meetupToExpire);
+        $this->entityManager->persist($riderMeetup);
         $this->entityManager->flush();
 
         return new JsonResponse([
-            'id' => $meetupToExpire->getId(),
-            'userUUID' => $meetupToExpire->getUserUUID(),
-            'createDate' => $meetupToExpire->getCreateDate()->format('Y-m-d H:i:s'),
-            'expireDate' => $meetupToExpire->getExpireDate()->format('Y-m-d H:i:s'),
-            'meetupDate' => $meetupToExpire->getMeetupDate()->format('Y-m-d H:i:s'),
-            'rideStartDate' => $meetupToExpire->getRideStartDate()->format('Y-m-d H:i:s'),
-            'title' => $meetupToExpire->getTitle(),
-            'description' => $meetupToExpire->getDescription(),
-            'lat' => $meetupToExpire->getLat(),
-            'lng' => $meetupToExpire->getLng()
+            'id' => $riderMeetup->getId(),
+            'userUUID' => $riderMeetup->getUserUUID(),
+            'createDate' => $riderMeetup->getCreateDate()->format('Y-m-d H:i:s'),
+            'expireDate' => $riderMeetup->getExpireDate()->format('Y-m-d H:i:s'),
+            'meetupDate' => $riderMeetup->getMeetupDate()->format('Y-m-d H:i:s'),
+            'rideStartDate' => $riderMeetup->getRideStartDate()->format('Y-m-d H:i:s'),
+            'title' => $riderMeetup->getTitle(),
+            'description' => $riderMeetup->getDescription(),
+            'lat' => $riderMeetup->getLat(),
+            'lng' => $riderMeetup->getLng()
         ], Response::HTTP_OK);
     }
 

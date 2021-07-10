@@ -13,10 +13,13 @@ import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import InfoDialog from './InfoDialog';
 import '../utilities/date.string.extensions';
 import ConfirmDialog from './ConfirmDialog';
+import * as Types from '../redux/Types';
 
-export interface UserCheckinDialogProps {
+export interface EditRiderCheckinDialogProps {
     open: boolean;
     onClose: () => void;
+    onDelete: () => void;
+    riderCheckin: Types.RiderCheckin;
 }
 
 interface DialogTitleProps extends WithStyles<typeof styles> {
@@ -108,22 +111,21 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
-    const { open, onClose } = props;
+const EditRiderCheckinDialog: React.FC<EditRiderCheckinDialogProps> = (props) => {
+    const { open, onClose, onDelete, riderCheckin } = props;
     const dispatch = useDispatch();
     const classes = useStyles();
-    const userCheckin = useSelector(getUserCheckin);
     const [infoDialogVisible, setInfoDialogVisible] = useState(false);
     const [extendInterval, setExtendInterval] = useState(15);
     const [confirmDeleteDialogVisible, setConfirmDeleteDialogVisible] = useState(false);
 
     const currentExpireDateDisplay = useMemo(() => {
-        return userCheckin?.expireDate.formatTodayTomorrowTime();
-    }, [userCheckin]);
+        return riderCheckin?.expireDate.formatTodayTomorrowTime();
+    }, [riderCheckin]);
 
     const expireDateDisplay = useMemo(() => {
-        return userCheckin?.expireDate.addMinutes(extendInterval).formatTodayTomorrowTime();
-    }, [extendInterval, userCheckin]);
+        return riderCheckin?.expireDate.addMinutes(extendInterval).formatTodayTomorrowTime();
+    }, [extendInterval, riderCheckin]);
 
     const handleExtendIntervalSelected = (event: React.MouseEvent<HTMLElement>, extendInterval: number | null) => {
         setExtendInterval(extendInterval);
@@ -134,40 +136,39 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
     };
 
     const handleExtendCheckin = useCallback(() => {
-        if (userCheckin) {
-            dispatch(
-                extendRiderCheckinRequestAction({
-                    id: userCheckin.id,
-                    extendInterval: extendInterval,
-                }),
-            );
-        }
-
+        dispatch(
+            extendRiderCheckinRequestAction({
+                id: riderCheckin.id,
+                extendInterval: extendInterval,
+            }),
+        );
         onClose();
-    }, [userCheckin, dispatch, extendInterval]);
+    }, [riderCheckin, dispatch, extendInterval]);
 
     const onConfirmDeleteRiderCheckin = useCallback(() => {
         setConfirmDeleteDialogVisible(false);
-        if (userCheckin) {
-            dispatch(expireRiderCheckinRequestAction({ id: userCheckin.id }));
-        }
-        onClose();
-    }, [userCheckin, dispatch]);
+        dispatch(expireRiderCheckinRequestAction({ id: riderCheckin.id }));
+        onDelete();
+    }, [riderCheckin, dispatch]);
 
     return (
         <React.Fragment>
-            <Dialog id="user-checkin-dialog" fullWidth open={open} onClose={onClose}>
-                <DialogTitle id="user-checkin-title" onClose={onClose} infoButtonSelected={infoButtonSelected}>
+            <Dialog id="edit-rider-checkin-dialog" fullWidth open={open} onClose={onClose}>
+                <DialogTitle
+                    id="edit-rider-checkin-dialog-title"
+                    onClose={onClose}
+                    infoButtonSelected={infoButtonSelected}
+                >
                     Update Checkin
                 </DialogTitle>
                 <DialogContent dividers>
                     <Typography className={classes.motorcycleMakeModelText}>
-                        {userCheckin?.motorcycleMakeModel}
+                        {riderCheckin?.motorcycleMakeModel}
                     </Typography>
                     <Typography className={classes.currentExpireTimeText}>
                         Your checkin will expire {currentExpireDateDisplay}.
                     </Typography>
-                    <Typography id="user-checkin-extend-question">Do you want to extend it?</Typography>
+                    <Typography id="rider-checkin-extend-question">Do you want to extend it?</Typography>
                     <Box display="flex">
                         <ToggleButtonGroup
                             id="extend-interval-button-group"
@@ -233,4 +234,4 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
     );
 };
 
-export default UserCheckinDialog;
+export default EditRiderCheckinDialog;

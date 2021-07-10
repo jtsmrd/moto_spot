@@ -6,7 +6,6 @@ import {
     getMapViewMode,
     getRiderCheckins,
     getRiderMeetups,
-    getRiderMeetupState,
     getUserCheckin,
 } from '../redux/Selectors';
 import {
@@ -15,7 +14,6 @@ import {
     removeExpiredRiderCheckins,
     setSelectedRiderCheckinAction,
     setSelectedRiderMeetupAction,
-    setSelectedUserCheckinAction,
     updateMapBoundsAction,
     updateMapCenterAction,
     updateMapZoomAction,
@@ -173,13 +171,8 @@ const MapContainer: React.FC<{}> = (props) => {
         }
     };
 
-    const onRiderMarkerClicked = ({ event, riderCheckin, marker }) => {
+    const onRiderMarkerClicked = (riderCheckin: Types.RiderCheckin) => {
         dispatch(setSelectedRiderCheckinAction({ riderCheckin: riderCheckin }));
-        console.log('Rider marker selected: ', riderCheckin);
-    };
-
-    const onUserMarkerClicked = (userCheckin: Types.RiderCheckin) => {
-        dispatch(setSelectedUserCheckinAction({ userCheckin: userCheckin }));
     };
 
     const onMeetupMarkerClicked = (riderMeetup: Types.RiderMeetup) => {
@@ -212,7 +205,6 @@ const MapContainer: React.FC<{}> = (props) => {
                 riderMeetups={riderMeetups}
                 userCheckin={userCheckin}
                 onRiderMarkerClicked={onRiderMarkerClicked}
-                onUserMarkerClicked={onUserMarkerClicked}
                 onMeetupMarkerClicked={onMeetupMarkerClicked}
                 isMobile={isMobile}
                 mapViewMode={mapViewMode}

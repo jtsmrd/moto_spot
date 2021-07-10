@@ -1,8 +1,9 @@
+// TODO: Change expireDate back to string after getting global string extensions to work
 export interface RiderCheckin {
     id: number;
     userUUID: string;
     createDate: string;
-    expireDate: string;
+    expireDate: any;
     motorcycleMakeModel?: string;
     lat: number;
     lng: number;

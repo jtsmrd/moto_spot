@@ -69,10 +69,6 @@ export const updateMapZoomAction: ActionCreator<ActionTypes.IUpdateMapZoomPayloa
     ActionTypes.UPDATE_MAP_ZOOM,
 );
 
-export const setSelectedUserCheckinAction: ActionCreator<ActionTypes.ISetSelectedUserCheckinPayload> = actionCreator<ActionTypes.ISetSelectedUserCheckinPayload>(
-    ActionTypes.SET_SELECTED_USER_CHECKIN,
-);
-
 export const setSelectedRiderCheckinAction: ActionCreator<ActionTypes.ISetSelectedRiderCheckinPayload> = actionCreator<ActionTypes.ISetSelectedRiderCheckinPayload>(
     ActionTypes.SET_SELECTED_RIDER_CHECKIN,
 );

@@ -79,15 +79,15 @@ function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinReque
 
 function* expireRiderCheckin(action: Action<ActionTypes.IExpireRiderCheckinRequestPayload>) {
     try {
-        yield call(httpRequest, {
-            url: Endpoints.EXPIRE_RIDER_CHECKIN,
+        const res = yield call(httpRequest, {
+            url: Endpoints.expireRiderCheckin(action.payload.id),
             method: 'PUT',
-            params: {
-                id: action.payload.id,
-            },
         });
-        const expireRiderCheckinPayload: ActionTypes.IExpireRiderCheckinResponsePayload = {};
-        yield put(Actions.expireRiderCheckinResponseAction(expireRiderCheckinPayload));
+        const riderCheckinPayload: ActionTypes.IExpireRiderCheckinResponsePayload = {
+            expiredRiderCheckin: res.data,
+        };
+        yield put(Actions.expireRiderCheckinResponseAction(riderCheckinPayload));
+        yield call(updateVisibleRiderCheckins);
     } catch (e) {
         yield put(Actions.expireRiderCheckinResponseAction(e));
     }
@@ -107,6 +107,7 @@ function* extendRiderCheckin(action: Action<ActionTypes.IExtendRiderCheckinReque
             riderCheckin: res.data,
         };
         yield put(Actions.extendRiderCheckinResponseAction(riderCheckinPayload));
+        yield put(Actions.setSelectedRiderCheckinAction({ riderCheckin: riderCheckinPayload.riderCheckin }));
     } catch (e) {
         yield put(Actions.extendRiderCheckinResponseAction(e));
     }

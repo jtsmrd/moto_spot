@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Fab } from '@material-ui/core';
-import { getSelectedUserCheckin } from '../redux/Selectors';
-import { setSelectedUserCheckinAction } from '../redux/Actions';
+import { getSelectedRiderCheckin } from '../redux/Selectors';
+import { setSelectedRiderCheckinAction } from '../redux/Actions';
 import CreateRiderCheckinDialog from './CreateRiderCheckinDialog';
-import UserCheckinDialog from './UserCheckinDialog';
+import EditRiderCheckinDialog from './EditRiderCheckinDialog';
 import RiderCheckinMeetupSelector from './RiderCheckinMeetupSelector';
 import AddIcon from '@material-ui/icons/Add';
+import RiderCheckinInfoDialog from './RiderCheckinInfoDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -22,20 +23,35 @@ const useStyles = makeStyles((theme: Theme) =>
 const RiderCheckinView: React.FC<{}> = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
-    const selectedUserCheckin = useSelector(getSelectedUserCheckin);
+    const selectedRiderCheckin = useSelector(getSelectedRiderCheckin);
     const [checkinDialogVisible, setCheckinDialogVisible] = useState(false);
-    const [userCheckinDialogVisible, setUserCheckinDialogVisible] = useState(false);
+    const [editRiderCheckinDialogVisible, setEditRiderCheckinDialogVisible] = useState(false);
+    const [riderCheckinInfoDialogVisible, setRiderCheckinInfoDialogVisible] = useState(false);
 
     useEffect(() => {
-        setUserCheckinDialogVisible(selectedUserCheckin !== null);
-    }, [selectedUserCheckin]);
+        setRiderCheckinInfoDialogVisible(selectedRiderCheckin !== null);
+    }, [selectedRiderCheckin]);
 
-    const onCloseUserCheckinDialog = useCallback(() => {
-        dispatch(setSelectedUserCheckinAction({ userCheckin: null }));
+    const onCloseRiderCheckinInfoDialog = useCallback(() => {
+        dispatch(setSelectedRiderCheckinAction({ riderCheckin: null }));
+    }, [dispatch]);
+
+    const onEditRiderCheckin = useCallback(() => {
+        setRiderCheckinInfoDialogVisible(false);
+        setEditRiderCheckinDialogVisible(true);
+    }, []);
+
+    const onCloseEditRiderCheckinDialog = useCallback(() => {
+        setEditRiderCheckinDialogVisible(false);
+        setRiderCheckinInfoDialogVisible(true);
+    }, []);
+
+    const onRiderCheckinDeleted = useCallback(() => {
+        dispatch(setSelectedRiderCheckinAction({ riderCheckin: null }));
     }, [dispatch]);
 
     return (
-        <div>
+        <React.Fragment>
             <RiderCheckinMeetupSelector />
             <Fab
                 color="primary"
@@ -53,8 +69,21 @@ const RiderCheckinView: React.FC<{}> = (props) => {
                     setCheckinDialogVisible(false);
                 }}
             />
-            <UserCheckinDialog open={userCheckinDialogVisible} onClose={onCloseUserCheckinDialog} />
-        </div>
+            <RiderCheckinInfoDialog
+                open={riderCheckinInfoDialogVisible}
+                onClose={onCloseRiderCheckinInfoDialog}
+                onEditRiderCheckin={onEditRiderCheckin}
+                riderCheckin={selectedRiderCheckin}
+            />
+            {selectedRiderCheckin && (
+                <EditRiderCheckinDialog
+                    open={editRiderCheckinDialogVisible}
+                    onClose={onCloseEditRiderCheckinDialog}
+                    onDelete={onRiderCheckinDeleted}
+                    riderCheckin={selectedRiderCheckin}
+                />
+            )}
+        </React.Fragment>
     );
 };
 

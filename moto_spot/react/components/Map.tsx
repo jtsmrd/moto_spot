@@ -12,12 +12,11 @@ export interface MapProps {
     riderCheckins: Types.RiderCheckin[];
     riderMeetups: Types.RiderMeetup[];
     userCheckin: Types.RiderCheckin;
-    onReady: any;
-    onDragEnd: any;
-    onZoomChanged: any;
-    onRiderMarkerClicked: any;
-    onUserMarkerClicked: any;
-    onMeetupMarkerClicked: any;
+    onReady: () => void;
+    onDragEnd: () => void;
+    onZoomChanged: () => void;
+    onRiderMarkerClicked: (riderCheckin: Types.RiderCheckin) => void;
+    onMeetupMarkerClicked: (riderMeetup: Types.RiderMeetup) => void;
     isMobile: boolean;
     mapViewMode: MapViewMode;
 }
@@ -33,7 +32,6 @@ const Map: React.FC<MapProps> = (props) => {
         userCheckin,
         onReady,
         onRiderMarkerClicked,
-        onUserMarkerClicked,
         onMeetupMarkerClicked,
         isMobile,
         mapViewMode,
@@ -71,12 +69,14 @@ const Map: React.FC<MapProps> = (props) => {
                             color={'blue'}
                             key={userCheckin.id}
                             onClick={() => {
-                                onUserMarkerClicked(userCheckin);
+                                onRiderMarkerClicked(userCheckin);
                             }}
                         />,
                     );
                 }
-                elements.push(<MarkerCluster key={1} riderCheckins={riderCheckins} click={onRiderMarkerClicked} />);
+                elements.push(
+                    <MarkerCluster key={1} riderCheckins={riderCheckins} onRiderMarkerClicked={onRiderMarkerClicked} />,
+                );
 
                 return elements;
 

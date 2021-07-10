@@ -18,7 +18,7 @@ import ConfirmDialog from './ConfirmDialog';
 export interface EditRiderMeetupDialogProps {
     open: boolean;
     onClose: () => void;
-    onExpire: () => void;
+    onDelete: () => void;
     riderMeetup: Types.RiderMeetup;
 }
 
@@ -100,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const EditRiderMeetupDialog: React.FC<EditRiderMeetupDialogProps> = (props) => {
-    const { open, onClose, onExpire, riderMeetup } = props;
+    const { open, onClose, onDelete, riderMeetup } = props;
     const dispatch = useDispatch();
     const classes = useStyles();
     const [title, setTitle] = useState(riderMeetup?.title);
@@ -143,7 +143,7 @@ const EditRiderMeetupDialog: React.FC<EditRiderMeetupDialogProps> = (props) => {
     const onConfirmDeleteRiderMeetup = useCallback(() => {
         setConfirmDeleteDialogVisible(false);
         dispatch(expireRiderMeetupRequestAction({ id: riderMeetup.id }));
-        onExpire();
+        onDelete();
     }, [dispatch, riderMeetup]);
 
     const updateRiderMeetup = useCallback(() => {

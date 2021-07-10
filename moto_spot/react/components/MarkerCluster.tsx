@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import MarkerClusterer from '@googlemaps/markerclustererplus';
 
-const eventNames = ['click', 'dblclick', 'dragend', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'recenter'];
+// const eventNames = ['click', 'dblclick', 'dragend', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'recenter'];
+const eventNames = ['click'];
 
 // ToDo: Figure out how to pass google and map child props from GoogleMap
 // export interface MarkerClusterProps {
@@ -13,18 +14,18 @@ const eventNames = ['click', 'dblclick', 'dragend', 'mousedown', 'mouseout', 'mo
 // }
 
 const MarkerCluster = (props) => {
-    const { map, google, riderCheckins } = props;
+    const { map, google, riderCheckins, onRiderMarkerClicked } = props;
 
-    const handleEvent = ({ event, riderCheckin, marker }) => {
-        if (props[event]) {
-            props[event]({
-                props: props,
-                event: event,
-                riderCheckin: riderCheckin,
-                marker: marker,
-            });
-        }
-    };
+    // const handleEvent = (riderCheckin: Types.RiderCheckin) => {
+    //     if (props[event]) {
+    //         props[event]({
+    //             props: props,
+    //             event: event,
+    //             riderCheckin: riderCheckin,
+    //             marker: marker,
+    //         });
+    //     }
+    // };
 
     useEffect(() => {
         if (map && riderCheckins) {
@@ -42,13 +43,9 @@ const MarkerCluster = (props) => {
                 });
 
                 eventNames.forEach((e) => {
-                    marker.addListener(e, () =>
-                        handleEvent({
-                            event: e,
-                            riderCheckin: riderCheckin,
-                            marker: marker,
-                        }),
-                    );
+                    marker.addListener(e, () => {
+                        onRiderMarkerClicked(riderCheckin);
+                    });
                 });
 
                 return marker;
@@ -76,7 +73,7 @@ MarkerCluster.propTypes = {
             expireDate: PropTypes.string.isRequired,
         }),
     ),
-    click: PropTypes.func,
+    onRiderMarkerClicked: PropTypes.func,
 };
 
 export default MarkerCluster;

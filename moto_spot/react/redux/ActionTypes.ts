@@ -44,7 +44,9 @@ export interface IExpireRiderCheckinRequestPayload {
 
 export const EXPIRE_RIDER_CHECKIN_RESPONSE = 'EXPIRE_RIDER_CHECKIN_RESPONSE';
 export type EXPIRE_RIDER_CHECKIN_RESPONSE = typeof EXPIRE_RIDER_CHECKIN_RESPONSE;
-export interface IExpireRiderCheckinResponsePayload {}
+export interface IExpireRiderCheckinResponsePayload {
+    expiredRiderCheckin: Types.RiderCheckin;
+}
 
 export const REMOVE_EXPIRED_RIDER_CHECKINS = 'REMOVE_EXPIRED_RIDER_CHECKINS';
 export type REMOVE_EXPIRED_RIDER_CHECKINS = typeof REMOVE_EXPIRED_RIDER_CHECKINS;
@@ -90,12 +92,6 @@ export const UPDATE_MAP_ZOOM = 'UPDATE_MAP_ZOOM';
 export type UPDATE_MAP_ZOOM = typeof UPDATE_MAP_ZOOM;
 export interface IUpdateMapZoomPayload {
     mapZoom: number;
-}
-
-export const SET_SELECTED_USER_CHECKIN = 'SET_SELECTED_USER_CHECKIN';
-export type SET_SELECTED_USER_CHECKIN = typeof SET_SELECTED_USER_CHECKIN;
-export interface ISetSelectedUserCheckinPayload {
-    userCheckin?: Types.RiderCheckin;
 }
 
 export const SET_SELECTED_RIDER_CHECKIN = 'SET_SELECTED_RIDER_CHECKIN';
@@ -201,7 +197,6 @@ export type IMapActionsPayload =
     | IUpdateMapBoundsPayload
     | IUpdateMapCenterPayload
     | IUpdateMapZoomPayload
-    | ISetSelectedUserCheckinPayload
     | ISetSelectedRiderCheckinPayload
     | ISetSelectedRiderMeetupPayload
     | ISetMapViewMode;

@@ -10,11 +10,11 @@ import '../utilities/date.string.extensions';
 import formatDistanceStrict from 'date-fns/formatDistanceStrict';
 import Cookie from 'js-cookie';
 
-export interface RiderMeetupInfoDialogProps {
+export interface RiderCheckinInfoDialogProps {
     open: boolean;
-    onClose: any;
-    onEditRiderMeetup: () => void;
-    riderMeetup: Types.RiderMeetup;
+    onClose: () => void;
+    onEditRiderCheckin: () => void;
+    riderCheckin: Types.RiderCheckin;
 }
 
 interface DialogTitleProps extends WithStyles<typeof styles> {
@@ -71,13 +71,20 @@ const DialogActions = withStyles((theme: Theme) => ({
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        descriptionText: {
-            marginBottom: '1rem',
+        motorcycleMakeModelText: {
+            textAlign: 'center',
+            marginBottom: '2rem',
+            fontWeight: 300,
         },
-        hangoutTimeText: {
-            marginTop: '1rem',
+        checkinTimeText: {
             fontSize: '0.8rem',
             fontWeight: 300,
+            marginBottom: '0.5rem',
+        },
+        expireTimeText: {
+            fontSize: '0.8rem',
+            fontWeight: 300,
+            marginBottom: '0.5rem',
         },
         editButton: {
             color: theme.palette.primary.main,
@@ -86,54 +93,51 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const RiderMeetupInfoDialog: React.FC<RiderMeetupInfoDialogProps> = (props) => {
-    const { open, onClose, onEditRiderMeetup, riderMeetup } = props;
+const RiderCheckinInfoDialog: React.FC<RiderCheckinInfoDialogProps> = (props) => {
+    const { open, onClose, onEditRiderCheckin, riderCheckin } = props;
     const userUUID = Cookie.get('user_uuid');
     const classes = useStyles();
 
     const isOwner = useMemo(() => {
-        return userUUID === riderMeetup?.userUUID;
-    }, [riderMeetup]);
+        return userUUID === riderCheckin?.userUUID;
+    }, [riderCheckin]);
+
+    const expireDateDisplay = useMemo(() => {
+        return riderCheckin?.expireDate.formatTodayTomorrowTime();
+    }, [riderCheckin]);
 
     // Displays the time interval in words between the meetup time and ride time
-    const hangoutTimeText = useMemo(() => {
-        return (
-            riderMeetup?.rideStartDate &&
-            riderMeetup?.meetupDate &&
-            formatDistanceStrict(new Date(riderMeetup.rideStartDate), new Date(riderMeetup.meetupDate))
-        );
-    }, [riderMeetup]);
+    const checkinTimeText = useMemo(() => {
+        return riderCheckin?.createDate && formatDistanceStrict(new Date(), new Date(riderCheckin.createDate));
+    }, [riderCheckin]);
 
     return (
-        <Dialog id="rider-meetup-info-dialog" fullWidth open={open} onClose={onClose}>
-            <DialogTitle id="meetup-title" onClose={onClose}>
-                {riderMeetup?.title}
+        <Dialog id="rider-checkin-info-dialog" fullWidth open={open} onClose={onClose}>
+            <DialogTitle id="rider-checkin-dialog-title" onClose={onClose}>
+                Rider Checkin
             </DialogTitle>
             <DialogContent dividers>
-                <Typography id="meetup-description" className={classes.descriptionText}>
-                    {riderMeetup?.description}
-                </Typography>
-                <Typography id="meetup-start-date">
-                    Meetup {riderMeetup?.meetupDate.formatTodayTomorrowTime()}
-                </Typography>
-                <Typography id="meetup-expire-date">
-                    Rideout {riderMeetup?.rideStartDate.formatTodayTomorrowTime()}
-                </Typography>
-                <Typography className={classes.hangoutTimeText}>Time before rideout: {hangoutTimeText}</Typography>
+                {riderCheckin?.motorcycleMakeModel && (
+                    <Typography className={classes.motorcycleMakeModelText}>
+                        {riderCheckin?.motorcycleMakeModel}
+                    </Typography>
+                )}
+                {isOwner ? (
+                    <Typography className={classes.checkinTimeText}>You checked in {checkinTimeText} ago</Typography>
+                ) : (
+                    <Typography className={classes.checkinTimeText}>Rider checked in {checkinTimeText} ago</Typography>
+                )}
+                <Typography className={classes.expireTimeText}>Expires {expireDateDisplay}</Typography>
             </DialogContent>
             {isOwner && (
                 <DialogActions>
-                    <Button variant={'outlined'} className={classes.editButton} onClick={onEditRiderMeetup}>
+                    <Button variant={'outlined'} className={classes.editButton} onClick={onEditRiderCheckin}>
                         Edit
                     </Button>
-                    {/*ToDo: Allow non-creator users to show interest*/}
-                    {/*<Button onClick={onClose} color="primary">*/}
-                    {/*    Interested*/}
-                    {/*</Button>*/}
                 </DialogActions>
             )}
         </Dialog>
     );
 };
 
-export default RiderMeetupInfoDialog;
+export default RiderCheckinInfoDialog;
