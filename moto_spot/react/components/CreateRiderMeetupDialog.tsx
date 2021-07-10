@@ -203,8 +203,8 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
 
     return (
         <React.Fragment>
-            <Dialog id="meetup-dialog" fullWidth open={open} onClose={onClose}>
-                <DialogTitle id="rider-meetup-title" onClose={onClose} infoButtonSelected={infoButtonSelected}>
+            <Dialog id="create-meetup-dialog" fullWidth open={open} onClose={onClose}>
+                <DialogTitle id="create-meetup-dialog-title" onClose={onClose} infoButtonSelected={infoButtonSelected}>
                     Create Meetup
                 </DialogTitle>
                 <DialogContent dividers>
@@ -235,7 +235,7 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                     )}
                     <Box display={'flex'} flexDirection={'column'}>
                         <TextField
-                            id="meetup-title"
+                            id="create-meetup-title"
                             label="Title"
                             variant="outlined"
                             className={classes.meetupTitleTextField}
@@ -243,7 +243,7 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                             onChange={onTitleChanged}
                         />
                         <TextField
-                            id="meetup-description"
+                            id="create-meetup-description"
                             label="Description"
                             variant="outlined"
                             className={classes.meetupDescriptionTextField}
@@ -255,6 +255,7 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                     <Box display={'flex'} flexDirection={'column'} className={classes.datePickersContainer}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <DateTimePicker
+                                id="create-meetup-meetup-date"
                                 label="Meetup time"
                                 className={classes.meetupDatePicker}
                                 inputVariant="outlined"
@@ -266,6 +267,7 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                                 onAccept={meetupDateSelected}
                             />
                             <DateTimePicker
+                                id="create-meetup-ride-start-date"
                                 label="Ride out time"
                                 inputVariant="outlined"
                                 disablePast

@@ -13,6 +13,7 @@ import add from 'date-fns/add';
 import formatDistanceStrict from 'date-fns/formatDistanceStrict';
 import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import * as Types from '../redux/Types';
+import ConfirmDialog from './ConfirmDialog';
 
 export interface EditRiderMeetupDialogProps {
     open: boolean;
@@ -107,6 +108,7 @@ const EditRiderMeetupDialog: React.FC<EditRiderMeetupDialogProps> = (props) => {
     const [meetupDate, setMeetupDate] = useState(formatToLocalDate(riderMeetup?.meetupDate));
     const [rideStartDate, setRideStartDate] = useState(formatToLocalDate(riderMeetup?.rideStartDate));
     const [confirmSelected, setConfirmSelected] = useState(false);
+    const [confirmDeleteDialogVisible, setConfirmDeleteDialogVisible] = useState(false);
 
     // Displays the time interval in words between the meetup time and ride time
     const hangoutTimeText = useMemo(() => {
@@ -138,7 +140,8 @@ const EditRiderMeetupDialog: React.FC<EditRiderMeetupDialogProps> = (props) => {
         setRideStartDate(date);
     };
 
-    const expireRiderMeetup = useCallback(() => {
+    const onConfirmDeleteRiderMeetup = useCallback(() => {
+        setConfirmDeleteDialogVisible(false);
         dispatch(expireRiderMeetupRequestAction({ id: riderMeetup.id }));
         onExpire();
     }, [dispatch, riderMeetup]);
@@ -161,67 +164,90 @@ const EditRiderMeetupDialog: React.FC<EditRiderMeetupDialogProps> = (props) => {
     }, [dispatch, riderMeetup, title, description, meetupDate, rideStartDate]);
 
     return (
-        <Dialog id="meetup-dialog" fullWidth open={open} onClose={onClose}>
-            <DialogTitle id="rider-meetup-title" onClose={onClose}>
-                Update Meetup
-            </DialogTitle>
-            <DialogContent dividers>
-                <Box display={'flex'} flexDirection={'column'}>
-                    <TextField
-                        id="meetup-title"
-                        label="Title"
-                        variant="outlined"
-                        className={classes.meetupTitleTextField}
-                        value={title}
-                        onChange={onTitleChanged}
-                    />
-                    <TextField
-                        id="meetup-description"
-                        label="Description"
-                        variant="outlined"
-                        className={classes.meetupDescriptionTextField}
-                        multiline
-                        rowsMax={2}
-                        value={description}
-                        onChange={onDescriptionChanged}
-                    />
-                </Box>
-                <Box display={'flex'} flexDirection={'column'} className={classes.datePickersContainer}>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <DateTimePicker
-                            label="Meetup time"
-                            className={classes.meetupDatePicker}
-                            inputVariant="outlined"
-                            disablePast
-                            value={meetupDate}
-                            error={confirmSelected && !meetupDate}
-                            helperText={confirmSelected && !meetupDate ? 'Select a meetup date to proceed' : ''}
-                            onChange={setMeetupDate}
-                            onAccept={meetupDateSelected}
+        <React.Fragment>
+            <Dialog id="edit-meetup-dialog" fullWidth open={open} onClose={onClose}>
+                <DialogTitle id="edit-meetup-dialog-title" onClose={onClose}>
+                    Update Meetup
+                </DialogTitle>
+                <DialogContent dividers>
+                    <Box display={'flex'} flexDirection={'column'}>
+                        <TextField
+                            id="edit-meetup-title"
+                            label="Title"
+                            variant="outlined"
+                            className={classes.meetupTitleTextField}
+                            value={title}
+                            onChange={onTitleChanged}
                         />
-                        <DateTimePicker
-                            label="Ride out time"
-                            inputVariant="outlined"
-                            disablePast
-                            value={rideStartDate}
-                            onChange={setRideStartDate}
-                            onAccept={rideStartDateSelected}
+                        <TextField
+                            id="edit-meetup-description"
+                            label="Description"
+                            variant="outlined"
+                            className={classes.meetupDescriptionTextField}
+                            multiline
+                            rowsMax={2}
+                            value={description}
+                            onChange={onDescriptionChanged}
                         />
-                    </MuiPickersUtilsProvider>
-                </Box>
-                {hangoutTimeText && (
-                    <Typography className={classes.hangoutTimeText}>Time before rideout: {hangoutTimeText}</Typography>
-                )}
-            </DialogContent>
-            <DialogActions>
-                <Button variant={'outlined'} className={classes.deleteButton} onClick={expireRiderMeetup}>
-                    Delete
-                </Button>
-                <Button variant={'outlined'} className={classes.confirmButton} onClick={updateRiderMeetup}>
-                    Update
-                </Button>
-            </DialogActions>
-        </Dialog>
+                    </Box>
+                    <Box display={'flex'} flexDirection={'column'} className={classes.datePickersContainer}>
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <DateTimePicker
+                                id="edit-meetup-meetup-date"
+                                label="Meetup time"
+                                className={classes.meetupDatePicker}
+                                inputVariant="outlined"
+                                disablePast
+                                value={meetupDate}
+                                error={confirmSelected && !meetupDate}
+                                helperText={confirmSelected && !meetupDate ? 'Select a meetup date to proceed' : ''}
+                                onChange={setMeetupDate}
+                                onAccept={meetupDateSelected}
+                            />
+                            <DateTimePicker
+                                id="edit-meetup-ride-start-date"
+                                label="Ride out time"
+                                inputVariant="outlined"
+                                disablePast
+                                value={rideStartDate}
+                                onChange={setRideStartDate}
+                                onAccept={rideStartDateSelected}
+                            />
+                        </MuiPickersUtilsProvider>
+                    </Box>
+                    {hangoutTimeText && (
+                        <Typography className={classes.hangoutTimeText}>
+                            Time before rideout: {hangoutTimeText}
+                        </Typography>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant={'outlined'}
+                        className={classes.deleteButton}
+                        onClick={() => {
+                            setConfirmDeleteDialogVisible(true);
+                        }}
+                    >
+                        Delete
+                    </Button>
+                    <Button variant={'outlined'} className={classes.confirmButton} onClick={updateRiderMeetup}>
+                        Update
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <ConfirmDialog
+                open={confirmDeleteDialogVisible}
+                onClose={() => {
+                    setConfirmDeleteDialogVisible(false);
+                }}
+                onConfirm={onConfirmDeleteRiderMeetup}
+                cancelText={'Cancel'}
+                confirmText={'Are you sure you want to delete this Meetup?'}
+                confirmButtonText={'Yes, delete'}
+                confirmIsDestructive={true}
+            />
+        </React.Fragment>
     );
 };
 
