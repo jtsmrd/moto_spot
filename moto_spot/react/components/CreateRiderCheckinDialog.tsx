@@ -96,7 +96,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
+const CreateRiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
     const { open, onClose } = props;
     const dispatch = useDispatch();
     const classes = useStyles();
@@ -182,12 +182,16 @@ const RiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
                     setInfoDialogVisible(false);
                 }}
                 titleText="Rider Checkin"
-                infoText="A checkin uses your current location and adds a marker to the map for other riders to see. Specify
-                    how long you plan on hanging out at your current spot. Once that time is up, your marker will be
-                    removed, unless you decide to extend your time."
+                infoText="A checkin uses your current location and adds a marker to
+                    the map for other riders to see.
+                    <br>
+                    Specify how long you plan on hanging out at your current spot.
+                    <br>
+                    Once that time is up, your marker will be removed, unless you
+                    decide to extend your time."
             />
         </React.Fragment>
     );
 };
 
-export default RiderCheckinDialog;
+export default CreateRiderCheckinDialog;

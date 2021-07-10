@@ -295,8 +295,9 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                     setInfoDialogVisible(false);
                 }}
                 titleText="Create Meetup"
-                infoText="Meetups allow riders to plan a ride by specifying where to meet, what time everyone should
-                    plan on being there, and what time everyone should be ready to ride out."
+                infoText="Meetups allow riders to plan a ride by specifying where to meet,
+                    what time everyone should plan on being there, and what time everyone
+                    should be ready to ride out."
             />
         </React.Fragment>
     );

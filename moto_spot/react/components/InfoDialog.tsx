@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Box, Dialog, IconButton, Typography } from '@material-ui/core';
-import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import CloseIcon from '@material-ui/icons/Close';
@@ -54,17 +54,34 @@ const DialogContent = withStyles((theme: Theme) => ({
     },
 }))(MuiDialogContent);
 
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        infoText: {
+            marginBottom: '1rem',
+        },
+    }),
+);
+
 const InfoDialog: React.FC<InfoDialogProps> = (props) => {
     const { open, onClose, titleText, infoText } = props;
+    const classes = useStyles();
+
+    const formatTitleText = useCallback(() => {
+        return infoText.split('<br>').map((text, index) => {
+            return (
+                <Typography key={index} className={classes.infoText}>
+                    {text}
+                </Typography>
+            );
+        });
+    }, [infoText]);
 
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle id="info-title" onClose={onClose}>
                 {titleText}
             </DialogTitle>
-            <DialogContent dividers>
-                <Typography id="info-text">{infoText}</Typography>
-            </DialogContent>
+            <DialogContent dividers>{formatTitleText()}</DialogContent>
         </Dialog>
     );
 };

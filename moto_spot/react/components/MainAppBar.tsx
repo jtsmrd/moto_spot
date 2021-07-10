@@ -1,20 +1,16 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoDialog from './InfoDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        root: {
-            // flexGrow: 1,
-        },
-        menuButton: {
-            marginRight: theme.spacing(2),
+        infoButton: {
+            color: '#FFFFFF',
         },
         title: {
             color: '#FFFFFF',
@@ -24,26 +20,45 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const MainAppBar: React.FC<{}> = (props) => {
     const classes = useStyles();
+    const [infoDialogVisible, setInfoDialogVisible] = useState(false);
 
     return (
-        <div className={classes.root}>
+        <div>
             <AppBar position={'static'}>
                 <Toolbar>
-                    {/*<IconButton edge={'start'} className={classes.menuButton} color={'inherit'} aria-label={'menu'}>*/}
-                    {/*    <MenuIcon />*/}
-                    {/*</IconButton>*/}
-                    <NavLink to={'/'} style={{ flexGrow: 1 }}>
-                        <Typography variant={'h6'} className={classes.title}>
-                            MotoSpots
-                        </Typography>
-                    </NavLink>
-                    {/*<NavLink to={'/profile'}>*/}
-                    {/*    <Typography variant={'h6'} className={classes.title}>*/}
-                    {/*        Profile*/}
-                    {/*    </Typography>*/}
-                    {/*</NavLink>*/}
+                    <Typography variant={'h6'} className={classes.title}>
+                        MotoSpots
+                    </Typography>
+                    <IconButton
+                        id="info-button"
+                        aria-label="info"
+                        className={classes.infoButton}
+                        onClick={() => {
+                            setInfoDialogVisible(true);
+                        }}
+                    >
+                        <InfoOutlinedIcon />
+                    </IconButton>
                 </Toolbar>
             </AppBar>
+            <InfoDialog
+                open={infoDialogVisible}
+                onClose={() => {
+                    setInfoDialogVisible(false);
+                }}
+                titleText="Welcome to MotoSpots!"
+                infoText='Have you been riding and wondered "Where&apos;s everyone
+                    at?" or "Where is everyone meeting up?"
+                    <br>
+                    If you have, you&apos;re in the right place!
+                    <br>
+                    MotoSpots is a simple web app that answers those questions. Using
+                    location, you can "Check in" to a spot to let other riders
+                    know where you&apos;re hanging out or you can create a "Meetup"
+                    to organize a group ride.
+                    <br>
+                    Enjoy!'
+            />
         </div>
     );
 };

@@ -205,8 +205,10 @@ const UserCheckinDialog: React.FC<UserCheckinDialogProps> = (props) => {
                     setInfoDialogVisible(false);
                 }}
                 titleText="Update Checkin"
-                infoText="If you're planning on hanging out a bit longer at your current spot, you can extend your
-                    checkin time. If you're leaving, you can delete your checkin."
+                infoText="If you plan on hanging out a bit longer at your current
+                    spot, you can extend your checkin time.
+                    <br>
+                    If you're leaving, you can delete your checkin before it expires."
             />
             <ConfirmDialog
                 open={confirmDeleteDialogVisible}

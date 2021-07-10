@@ -4,7 +4,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Fab } from '@material-ui/core';
 import { getSelectedUserCheckin } from '../redux/Selectors';
 import { setSelectedUserCheckinAction } from '../redux/Actions';
-import RiderCheckinDialog from './RiderCheckinDialog';
+import CreateRiderCheckinDialog from './CreateRiderCheckinDialog';
 import UserCheckinDialog from './UserCheckinDialog';
 import RiderCheckinMeetupSelector from './RiderCheckinMeetupSelector';
 import AddIcon from '@material-ui/icons/Add';
@@ -47,7 +47,7 @@ const RiderCheckinView: React.FC<{}> = (props) => {
             >
                 <AddIcon />
             </Fab>
-            <RiderCheckinDialog
+            <CreateRiderCheckinDialog
                 open={checkinDialogVisible}
                 onClose={() => {
                     setCheckinDialogVisible(false);
