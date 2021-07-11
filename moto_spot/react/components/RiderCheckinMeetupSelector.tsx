@@ -18,13 +18,18 @@ const useStyles = makeStyles((theme: Theme) =>
             minHeight: '35px',
             width: '140px',
             textTransform: 'capitalize',
+            opacity: 1,
+        },
+        indicator: {
+            backgroundColor: 'white',
         },
         checkinsTab: {
-            backgroundColor: 'cyan',
+            backgroundColor: theme.palette.primary.main,
+            color: 'white',
             borderTopLeftRadius: '5px',
         },
         meetupsTab: {
-            backgroundColor: 'orange',
+            backgroundColor: theme.palette.secondary.main,
             borderTopRightRadius: '5px',
         },
     }),
@@ -52,8 +57,8 @@ const RiderCheckinMeetupSelector: React.FC<{}> = (props) => {
         <Tabs
             value={selectedTabIndex}
             onChange={tabSelected}
-            indicatorColor={'primary'}
             className={classes.tabsContainer}
+            classes={{ indicator: classes.indicator }}
             centered
         >
             <Tab label={checkinsTabText} className={`${classes.tabBase} ${classes.checkinsTab}`} />

@@ -9,6 +9,9 @@ import InfoDialog from './InfoDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        appBar: {
+            backgroundColor: theme.palette.primary.dark,
+        },
         infoButton: {
             color: '#FFFFFF',
         },
@@ -24,7 +27,7 @@ const MainAppBar: React.FC<{}> = (props) => {
 
     return (
         <React.Fragment>
-            <AppBar position={'static'}>
+            <AppBar position={'static'} className={classes.appBar}>
                 <Toolbar>
                     <Typography variant={'h6'} className={classes.title}>
                         MotoSpots
