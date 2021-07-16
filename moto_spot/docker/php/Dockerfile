@@ -9,7 +9,7 @@ RUN apt-get install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip \
     && docker-php-ext-configure zip \
     && docker-php-ext-install zip
 
-WORKDIR /var/www/dev.motospots.com
+RUN apt-get install -y nodejs npm
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -18,6 +18,12 @@ RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
 RUN git config --global user.email "jtsmrdel@gmail.com" \
     && git config --global user.name "JT Smrdel"
 
+COPY . /var/www/dev.motospots.com
+WORKDIR /var/www/dev.motospots.com
+
 RUN PATH=$PATH:/var/www/dev.motospots.com/vendor/bin:bin
 
-#RUN composer install --no-scripts --prefer-dist --no-interaction
+#RUN composer install
+
+#RUN npm install &&\
+#    npm build
