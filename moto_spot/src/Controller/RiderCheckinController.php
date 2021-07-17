@@ -151,9 +151,7 @@ class RiderCheckinController extends AbstractController
                 RiderCheckin::class
             );
 
-            $existingCheckin = $repository->findOneBy([
-                'userUUID' => $userUUID
-            ], ['id' => 'DESC']);
+            $existingCheckin = $repository->getActiveRiderCheckin($userUUID);
 
             if ($existingCheckin) {
                 $expireDate = new \DateTime(
