@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     getMapBounds,
@@ -46,6 +46,7 @@ const MapContainer: React.FC<{}> = (props) => {
     const classes = useStyles();
     const mapRef = useRef();
     const theme = useTheme();
+    const [mapReady, setMapReady] = useState(false);
     const { geoLocationLat, geoLocationLng, geoLocationError } = useGeoLocation();
     const DEFAULT_ZOOM_LEVEL = 12;
     const mapBounds = useSelector(getMapBounds);
@@ -60,7 +61,7 @@ const MapContainer: React.FC<{}> = (props) => {
 
     // Set map center after getting users' geo location
     useEffect(() => {
-        if (geoLocationLat && geoLocationLng) {
+        if (mapReady && geoLocationLat && geoLocationLng) {
             // @ts-ignore
             mapRef.current.map.setCenter({
                 lat: geoLocationLat,
@@ -70,7 +71,7 @@ const MapContainer: React.FC<{}> = (props) => {
             fetchRiderCheckins();
             fetchRiderMeetups();
         }
-    }, [geoLocationLat, geoLocationLng]);
+    }, [mapReady, geoLocationLat, geoLocationLng]);
 
     useEffect(() => {
         if (geoLocationError) {
@@ -147,6 +148,7 @@ const MapContainer: React.FC<{}> = (props) => {
     }
 
     const onReady = (mapProps, map, event) => {
+        setMapReady(true);
         updateMapCenter(map.center.lat(), map.center.lng());
         updateMapZoom(map.zoom);
     };
