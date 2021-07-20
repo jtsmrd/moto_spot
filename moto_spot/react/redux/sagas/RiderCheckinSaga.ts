@@ -18,6 +18,27 @@ import {
     getCurrentTimestamp,
 } from '../../utilities/dateTimeUtils';
 
+function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinRequestPayload>) {
+    try {
+        const res = yield call(httpRequest, {
+            url: Endpoints.CREATE_RIDER_CHECKIN,
+            method: 'POST',
+            data: {
+                expire_date: action.payload.expire_date,
+                motorcycle_make_model: action.payload.motorcycle_make_model,
+                lat: action.payload.lat,
+                lng: action.payload.lng,
+            },
+        });
+        const riderCheckinPayload: ActionTypes.ICreateRiderCheckinResponsePayload = {
+            riderCheckin: res.data,
+        };
+        yield put(Actions.createRiderCheckinResponseAction(riderCheckinPayload));
+    } catch (e) {
+        yield put(Actions.createRiderCheckinResponseAction(e));
+    }
+}
+
 function* fetchRiderCheckins() {
     const mapZoom = yield select(getMapZoom);
     const mapCenter = yield select(getMapCenter);
@@ -56,43 +77,6 @@ function* fetchRiderCheckins() {
     }
 }
 
-function* createRiderCheckin(action: Action<ActionTypes.ICreateRiderCheckinRequestPayload>) {
-    try {
-        const res = yield call(httpRequest, {
-            url: Endpoints.CREATE_RIDER_CHECKIN,
-            method: 'POST',
-            data: {
-                expire_date: action.payload.expire_date,
-                motorcycle_make_model: action.payload.motorcycle_make_model,
-                lat: action.payload.lat,
-                lng: action.payload.lng,
-            },
-        });
-        const riderCheckinPayload: ActionTypes.ICreateRiderCheckinResponsePayload = {
-            riderCheckin: res.data,
-        };
-        yield put(Actions.createRiderCheckinResponseAction(riderCheckinPayload));
-    } catch (e) {
-        yield put(Actions.createRiderCheckinResponseAction(e));
-    }
-}
-
-function* expireRiderCheckin(action: Action<ActionTypes.IExpireRiderCheckinRequestPayload>) {
-    try {
-        const res = yield call(httpRequest, {
-            url: Endpoints.expireRiderCheckin(action.payload.id),
-            method: 'PUT',
-        });
-        const riderCheckinPayload: ActionTypes.IExpireRiderCheckinResponsePayload = {
-            expiredRiderCheckin: res.data,
-        };
-        yield put(Actions.expireRiderCheckinResponseAction(riderCheckinPayload));
-        yield call(updateVisibleRiderCheckins);
-    } catch (e) {
-        yield put(Actions.expireRiderCheckinResponseAction(e));
-    }
-}
-
 function* updateRiderCheckin(action: Action<ActionTypes.IUpdateRiderCheckinRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
@@ -110,6 +94,22 @@ function* updateRiderCheckin(action: Action<ActionTypes.IUpdateRiderCheckinReque
         yield put(Actions.setSelectedRiderCheckinAction({ riderCheckin: riderCheckinPayload.riderCheckin }));
     } catch (e) {
         yield put(Actions.updateRiderCheckinResponseAction(e));
+    }
+}
+
+function* expireRiderCheckin(action: Action<ActionTypes.IExpireRiderCheckinRequestPayload>) {
+    try {
+        const res = yield call(httpRequest, {
+            url: Endpoints.expireRiderCheckin(action.payload.id),
+            method: 'DELETE',
+        });
+        const riderCheckinPayload: ActionTypes.IExpireRiderCheckinResponsePayload = {
+            expiredRiderCheckin: res.data,
+        };
+        yield put(Actions.expireRiderCheckinResponseAction(riderCheckinPayload));
+        yield call(updateVisibleRiderCheckins);
+    } catch (e) {
+        yield put(Actions.expireRiderCheckinResponseAction(e));
     }
 }
 

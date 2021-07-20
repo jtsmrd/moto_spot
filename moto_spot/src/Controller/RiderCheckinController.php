@@ -6,6 +6,9 @@ namespace App\Controller;
 
 use App\Entity\RiderCheckin;
 use App\Exception\InvalidDataException;
+use DateInterval;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,85 +45,7 @@ class RiderCheckinController extends AbstractController
     }
 
     /**
-     * @Route("/api/get_rider_checkins", name="get_rider_checkins", methods={"get"})
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getRiderCheckins(Request $request): JsonResponse
-    {
-        $lat = floatval($request->query->get('lat'));
-        $lng = floatval($request->query->get('lng'));
-        $distance = floatval($request->query->get('distance'));
-
-        $repository = $this->getDoctrine()->getRepository(RiderCheckin::class);
-        $riderCheckins = $repository->getRiderCheckinsAroundLocation($lat, $lng, $distance);
-
-        $checkinsCollection = [];
-
-        /** @var RiderCheckin $checkin */
-        foreach ($riderCheckins as $riderCheckin) {
-            $checkinsCollection[] = [
-                'id' => $riderCheckin->getId(),
-                'userUUID' => $riderCheckin->getUserUUID(),
-                'createDate' => $riderCheckin->getCreateDate()->format('Y-m-d H:i:s'),
-                'expireDate' => $riderCheckin->getExpireDate()->format('Y-m-d H:i:s'),
-                'motorcycleMakeModel' => $riderCheckin->getMotorcycleMakeModel(),
-                'lat' => $riderCheckin->getLat(),
-                'lng' => $riderCheckin->getLng()
-            ];
-        }
-
-        return new JsonResponse($checkinsCollection, Response::HTTP_OK);
-    }
-
-    /**
-     * @Route("/api/expire_rider_checkin/{id}", name="expire_rider_checkin", methods={"PUT"})
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
-     * @throws \Exception
-     */
-    public function expireRiderCheckin(Request $request, int $id): JsonResponse
-    {
-        $userUUID = $request->cookies->get('user_uuid');
-        if (!$userUUID) {
-            return new JsonResponse(null, Response::HTTP_FORBIDDEN);
-        }
-
-        $repository = $this->getDoctrine()->getRepository(
-            RiderCheckin::class
-        );
-
-        $riderCheckin = $repository->findOneBy([
-            'userUUID' => $userUUID,
-            'id' => $id
-        ]);
-        if (!$riderCheckin) {
-            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
-        }
-
-        $expireDate = new \DateTime(
-            'now',
-            new \DateTimeZone('UTC')
-        );
-        $riderCheckin->setExpireDate($expireDate);
-
-        $this->entityManager->persist($riderCheckin);
-        $this->entityManager->flush();
-
-        return new JsonResponse([
-            'id' => $riderCheckin->getId(),
-            'userUUID' => $riderCheckin->getUserUUID(),
-            'createDate' => $riderCheckin->getCreateDate()->format('Y-m-d H:i:s'),
-            'expireDate' => $riderCheckin->getExpireDate()->format('Y-m-d H:i:s'),
-            'motorcycleMakeModel' => $riderCheckin->getMotorcycleMakeModel(),
-            'lat' => $riderCheckin->getLat(),
-            'lng' => $riderCheckin->getLng()
-        ], Response::HTTP_OK);
-    }
-
-    /**
-     * @Route("/api/create_rider_checkin", name="create_rider_checkin", methods={"POST"})
+     * @Route("/api/rider_checkin", name="create_rider_checkin", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
@@ -154,9 +79,9 @@ class RiderCheckinController extends AbstractController
             $existingCheckin = $repository->getActiveRiderCheckin($userUUID);
 
             if ($existingCheckin) {
-                $expireDate = new \DateTime(
+                $expireDate = new DateTime(
                     'now',
-                    new \DateTimeZone('UTC')
+                    new DateTimeZone('UTC')
                 );
                 $existingCheckin->setExpireDate($expireDate);
                 $this->entityManager->persist($existingCheckin);
@@ -184,13 +109,20 @@ class RiderCheckinController extends AbstractController
             $requestData,
             '[lng]'
         );
-
         if (!$expireDateString) {
             // Default expire date to + 1 hour if one isn't provided
-            $expireDate = new \DateTime('now', new \DateTimeZone('UTC'));
-            $expireDate = $expireDate->add(new \DateInterval('PT1H'));
+            $expireDate = new DateTime(
+                'now',
+                new DateTimeZone('UTC')
+            );
+            $expireDate = $expireDate->add(
+                new DateInterval('PT1H')
+            );
         } else {
-            $expireDate = new \DateTime($expireDateString, new \DateTimeZone('UTC'));
+            $expireDate = new DateTime(
+                $expireDateString,
+                new DateTimeZone('UTC')
+            );
         }
 
         $riderCheckin = new RiderCheckin();
@@ -228,6 +160,44 @@ class RiderCheckinController extends AbstractController
         }
 
         return $response;
+    }
+
+    /**
+     * @Route("/api/rider_checkins", name="get_rider_checkins", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getRiderCheckins(Request $request): JsonResponse
+    {
+        $lat = floatval($request->query->get('lat'));
+        $lng = floatval($request->query->get('lng'));
+        $distance = floatval($request->query->get('distance'));
+
+        $repository = $this->getDoctrine()->getRepository(
+            RiderCheckin::class
+        );
+        $riderCheckins = $repository->getRiderCheckinsAroundLocation(
+            $lat,
+            $lng,
+            $distance
+        );
+
+        $checkinsCollection = [];
+
+        /** @var RiderCheckin $checkin */
+        foreach ($riderCheckins as $riderCheckin) {
+            $checkinsCollection[] = [
+                'id' => $riderCheckin->getId(),
+                'userUUID' => $riderCheckin->getUserUUID(),
+                'createDate' => $riderCheckin->getCreateDate()->format('Y-m-d H:i:s'),
+                'expireDate' => $riderCheckin->getExpireDate()->format('Y-m-d H:i:s'),
+                'motorcycleMakeModel' => $riderCheckin->getMotorcycleMakeModel(),
+                'lat' => $riderCheckin->getLat(),
+                'lng' => $riderCheckin->getLng()
+            ];
+        }
+
+        return new JsonResponse($checkinsCollection, Response::HTTP_OK);
     }
 
     /**
@@ -286,9 +256,9 @@ class RiderCheckinController extends AbstractController
         }
 
         if ($expireDateString) {
-            $expireDate = new \DateTime(
+            $expireDate = new DateTime(
                 $expireDateString,
-                new \DateTimeZone('UTC')
+                new DateTimeZone('UTC')
             );
             $riderCheckin->setExpireDate($expireDate);
         }
@@ -296,6 +266,52 @@ class RiderCheckinController extends AbstractController
         if ($motorcycleMakeModel) {
             $riderCheckin->setMotorcycleMakeModel($motorcycleMakeModel);
         }
+
+        $this->entityManager->persist($riderCheckin);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'id' => $riderCheckin->getId(),
+            'userUUID' => $riderCheckin->getUserUUID(),
+            'createDate' => $riderCheckin->getCreateDate()->format('Y-m-d H:i:s'),
+            'expireDate' => $riderCheckin->getExpireDate()->format('Y-m-d H:i:s'),
+            'motorcycleMakeModel' => $riderCheckin->getMotorcycleMakeModel(),
+            'lat' => $riderCheckin->getLat(),
+            'lng' => $riderCheckin->getLng()
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/rider_checkin/{id}", name="expire_rider_checkin", methods={"DELETE"})
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function expireRiderCheckin(Request $request, int $id): JsonResponse
+    {
+        $userUUID = $request->cookies->get('user_uuid');
+        if (!$userUUID) {
+            return new JsonResponse(null, Response::HTTP_FORBIDDEN);
+        }
+
+        $repository = $this->getDoctrine()->getRepository(
+            RiderCheckin::class
+        );
+
+        $riderCheckin = $repository->findOneBy([
+            'userUUID' => $userUUID,
+            'id' => $id
+        ]);
+        if (!$riderCheckin) {
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        }
+
+        $expireDate = new DateTime(
+            'now',
+            new DateTimeZone('UTC')
+        );
+        $riderCheckin->setExpireDate($expireDate);
 
         $this->entityManager->persist($riderCheckin);
         $this->entityManager->flush();
