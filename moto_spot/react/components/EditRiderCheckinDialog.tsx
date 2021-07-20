@@ -1,9 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Box, Button, Dialog, IconButton, Typography } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import { Box, Button, Dialog, IconButton, TextField, Typography } from '@material-ui/core';
 import { createStyles, makeStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
-import { expireRiderCheckinRequestAction, extendRiderCheckinRequestAction } from '../redux/Actions';
-import { getUserCheckin } from '../redux/Selectors';
+import { expireRiderCheckinRequestAction, updateRiderCheckinRequestAction } from '../redux/Actions';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import CloseIcon from '@material-ui/icons/Close';
@@ -78,6 +77,11 @@ const DialogActions = withStyles((theme: Theme) => ({
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        motorcycleMakeModelTextField: {
+            display: 'flex',
+            flex: 1,
+            marginBottom: '1.5rem',
+        },
         extendButtonContainer: {
             margin: '1rem auto',
         },
@@ -85,7 +89,7 @@ const useStyles = makeStyles((theme: Theme) =>
             width: '50px',
         },
         extendIntervalButtonText: {
-            textTransform: 'lowercase',
+            textTransform: 'capitalize',
         },
         motorcycleMakeModelText: {
             textAlign: 'center',
@@ -105,7 +109,7 @@ const useStyles = makeStyles((theme: Theme) =>
             textTransform: 'capitalize',
         },
         deleteButton: {
-            color: theme.palette.secondary.main,
+            color: 'red',
             textTransform: 'capitalize',
         },
     }),
@@ -116,16 +120,29 @@ const EditRiderCheckinDialog: React.FC<EditRiderCheckinDialogProps> = (props) =>
     const dispatch = useDispatch();
     const classes = useStyles();
     const [infoDialogVisible, setInfoDialogVisible] = useState(false);
-    const [extendInterval, setExtendInterval] = useState(15);
+    const [motorcycleMakeModel, setMotorcycleMakeModel] = useState(riderCheckin?.motorcycleMakeModel ?? '');
+    const [extendInterval, setExtendInterval] = useState(0);
     const [confirmDeleteDialogVisible, setConfirmDeleteDialogVisible] = useState(false);
 
     const currentExpireDateDisplay = useMemo(() => {
         return riderCheckin?.expireDate.formatTodayTomorrowTime();
     }, [riderCheckin]);
 
-    const expireDateDisplay = useMemo(() => {
-        return riderCheckin?.expireDate.addMinutes(extendInterval).formatTodayTomorrowTime();
-    }, [extendInterval, riderCheckin]);
+    const newExpireDate = useMemo(() => {
+        return extendInterval > 0 ? riderCheckin?.expireDate.addMinutes(extendInterval) : null;
+    }, [riderCheckin, extendInterval]);
+
+    const newExpireDateDisplay = useMemo(() => {
+        return newExpireDate?.formatTodayTomorrowTime();
+    }, [newExpireDate]);
+
+    const updateDisabled = useMemo(() => {
+        return riderCheckin?.motorcycleMakeModel === motorcycleMakeModel && extendInterval === 0;
+    }, [motorcycleMakeModel, extendInterval]);
+
+    const onMotorcycleMakeModelChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setMotorcycleMakeModel(event.currentTarget.value);
+    };
 
     const handleExtendIntervalSelected = (event: React.MouseEvent<HTMLElement>, extendInterval: number | null) => {
         setExtendInterval(extendInterval);
@@ -135,15 +152,16 @@ const EditRiderCheckinDialog: React.FC<EditRiderCheckinDialogProps> = (props) =>
         setInfoDialogVisible(true);
     };
 
-    const handleExtendCheckin = useCallback(() => {
+    const handleUpdateCheckin = useCallback(() => {
         dispatch(
-            extendRiderCheckinRequestAction({
+            updateRiderCheckinRequestAction({
                 id: riderCheckin.id,
-                extendInterval: extendInterval,
+                motorcycle_make_model: motorcycleMakeModel,
+                expire_date: newExpireDate,
             }),
         );
         onClose();
-    }, [riderCheckin, dispatch, extendInterval]);
+    }, [dispatch, riderCheckin, newExpireDate, motorcycleMakeModel]);
 
     const onConfirmDeleteRiderCheckin = useCallback(() => {
         setConfirmDeleteDialogVisible(false);
@@ -162,9 +180,14 @@ const EditRiderCheckinDialog: React.FC<EditRiderCheckinDialogProps> = (props) =>
                     Update Checkin
                 </DialogTitle>
                 <DialogContent dividers>
-                    <Typography className={classes.motorcycleMakeModelText}>
-                        {riderCheckin?.motorcycleMakeModel}
-                    </Typography>
+                    <TextField
+                        id="edit-rider-checkin-motorcycle-make-model"
+                        label="Motorcycle make/model (optional)"
+                        variant="outlined"
+                        className={classes.motorcycleMakeModelTextField}
+                        value={motorcycleMakeModel}
+                        onChange={onMotorcycleMakeModelChanged}
+                    />
                     <Typography className={classes.currentExpireTimeText}>
                         Your checkin will expire {currentExpireDateDisplay}.
                     </Typography>
@@ -177,6 +200,9 @@ const EditRiderCheckinDialog: React.FC<EditRiderCheckinDialogProps> = (props) =>
                             exclusive
                             onChange={handleExtendIntervalSelected}
                         >
+                            <ToggleButton id="extend-interval-0" value={0} className={classes.extendIntervalButton}>
+                                <Typography className={classes.extendIntervalButtonText}>No</Typography>
+                            </ToggleButton>
                             <ToggleButton id="extend-interval-15" value={15} className={classes.extendIntervalButton}>
                                 <Typography className={classes.extendIntervalButtonText}>15m</Typography>
                             </ToggleButton>
@@ -191,7 +217,11 @@ const EditRiderCheckinDialog: React.FC<EditRiderCheckinDialogProps> = (props) =>
                             </ToggleButton>
                         </ToggleButtonGroup>
                     </Box>
-                    <Typography className={classes.expiresText}>Will be extended until {expireDateDisplay}</Typography>
+                    {extendInterval > 0 && (
+                        <Typography className={classes.expiresText}>
+                            Will be extended until {newExpireDateDisplay}
+                        </Typography>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -203,7 +233,12 @@ const EditRiderCheckinDialog: React.FC<EditRiderCheckinDialogProps> = (props) =>
                     >
                         Delete
                     </Button>
-                    <Button variant={'outlined'} className={classes.updateButton} onClick={handleExtendCheckin}>
+                    <Button
+                        variant={'outlined'}
+                        className={classes.updateButton}
+                        disabled={updateDisabled}
+                        onClick={handleUpdateCheckin}
+                    >
                         Update
                     </Button>
                 </DialogActions>

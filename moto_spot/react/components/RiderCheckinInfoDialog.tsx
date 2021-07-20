@@ -72,7 +72,6 @@ const DialogActions = withStyles((theme: Theme) => ({
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         motorcycleMakeModelText: {
-            textAlign: 'center',
             marginBottom: '2rem',
             fontWeight: 300,
         },
@@ -108,7 +107,10 @@ const RiderCheckinInfoDialog: React.FC<RiderCheckinInfoDialogProps> = (props) =>
 
     // Displays the time interval in words between the meetup time and ride time
     const checkinTimeText = useMemo(() => {
-        return riderCheckin?.createDate && formatDistanceStrict(new Date(), new Date(riderCheckin.createDate));
+        return (
+            riderCheckin?.createDate &&
+            formatDistanceStrict(new Date(), new Date(riderCheckin.createDate.formatToLocalDate()))
+        );
     }, [riderCheckin]);
 
     return (
@@ -119,7 +121,7 @@ const RiderCheckinInfoDialog: React.FC<RiderCheckinInfoDialogProps> = (props) =>
             <DialogContent dividers>
                 {riderCheckin?.motorcycleMakeModel && (
                     <Typography className={classes.motorcycleMakeModelText}>
-                        {riderCheckin?.motorcycleMakeModel}
+                        Motorcycle make/model: {riderCheckin?.motorcycleMakeModel}
                     </Typography>
                 )}
                 {isOwner ? (

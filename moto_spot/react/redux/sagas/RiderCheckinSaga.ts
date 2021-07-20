@@ -93,23 +93,23 @@ function* expireRiderCheckin(action: Action<ActionTypes.IExpireRiderCheckinReque
     }
 }
 
-function* extendRiderCheckin(action: Action<ActionTypes.IExtendRiderCheckinRequestPayload>) {
+function* updateRiderCheckin(action: Action<ActionTypes.IUpdateRiderCheckinRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
-            url: Endpoints.EXTEND_RIDER_CHECKIN,
+            url: Endpoints.updateRiderCheckin(action.payload.id),
             method: 'PUT',
             data: {
-                id: action.payload.id,
-                extend_interval: action.payload.extendInterval,
+                motorcycle_make_model: action.payload.motorcycle_make_model,
+                expire_date: action.payload.expire_date,
             },
         });
-        const riderCheckinPayload: ActionTypes.IExtendRiderCheckinResponsePayload = {
+        const riderCheckinPayload: ActionTypes.IUpdateRiderCheckinResponsePayload = {
             riderCheckin: res.data,
         };
-        yield put(Actions.extendRiderCheckinResponseAction(riderCheckinPayload));
+        yield put(Actions.updateRiderCheckinResponseAction(riderCheckinPayload));
         yield put(Actions.setSelectedRiderCheckinAction({ riderCheckin: riderCheckinPayload.riderCheckin }));
     } catch (e) {
-        yield put(Actions.extendRiderCheckinResponseAction(e));
+        yield put(Actions.updateRiderCheckinResponseAction(e));
     }
 }
 
@@ -226,6 +226,6 @@ export default function* watchRiderCheckinRequests() {
         takeLatest(ActionTypes.UPDATE_VISIBLE_RIDER_CHECKINS, updateVisibleRiderCheckins),
         takeLatest(ActionTypes.CREATE_RIDER_CHECKIN_REQUEST, createRiderCheckin),
         takeLatest(ActionTypes.EXPIRE_RIDER_CHECKIN_REQUEST, expireRiderCheckin),
-        takeLatest(ActionTypes.EXTEND_RIDER_CHECKIN_REQUEST, extendRiderCheckin),
+        takeLatest(ActionTypes.UPDATE_RIDER_CHECKIN_REQUEST, updateRiderCheckin),
     ]);
 }

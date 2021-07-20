@@ -19,3 +19,9 @@ Object.assign(String.prototype, {
         return moment.utc(this).add(minutes, 'minutes').format('yyyy-MM-DD kk:mm:ss');
     },
 });
+
+Object.assign(String.prototype, {
+    formatToLocalDate(): string {
+        return moment(moment.utc(this).toDate()).local().format('yyyy-MM-DD kk:mm:ss');
+    },
+});

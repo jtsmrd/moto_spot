@@ -15,8 +15,8 @@ export interface IRiderCheckinState {
     deleteCheckinLoading: boolean;
     deleteCheckinError: object;
     previousFetchInfo: Types.RiderCheckinFetchInfo;
-    extendCheckinLoading: boolean;
-    extendCheckinError: object;
+    updateCheckinLoading: boolean;
+    updateCheckinError: object;
 }
 
 export const initialState: IRiderCheckinState = {
@@ -30,8 +30,8 @@ export const initialState: IRiderCheckinState = {
     deleteCheckinLoading: false,
     deleteCheckinError: null,
     previousFetchInfo: null,
-    extendCheckinLoading: false,
-    extendCheckinError: null,
+    updateCheckinLoading: false,
+    updateCheckinError: null,
 };
 
 export const statePropName = 'riderCheckins';
@@ -123,28 +123,28 @@ export default function RiderCheckinReducer(
             const riderCheckinFetchInfo = action.payload as ActionTypes.IUpdateRiderCheckinFetchInfoPayload;
             return { ...state, previousFetchInfo: riderCheckinFetchInfo };
         }
-        case ActionTypes.EXTEND_RIDER_CHECKIN_REQUEST: {
+        case ActionTypes.UPDATE_RIDER_CHECKIN_REQUEST: {
             return {
                 ...state,
-                extendCheckinLoading: true,
-                extendCheckinError: null,
+                updateCheckinLoading: true,
+                updateCheckinError: null,
             };
         }
-        case ActionTypes.EXTEND_RIDER_CHECKIN_RESPONSE: {
+        case ActionTypes.UPDATE_RIDER_CHECKIN_RESPONSE: {
             if (action.error) {
                 return {
                     ...state,
-                    extendCheckinError: action.payload,
-                    extendCheckinLoading: false,
+                    updateCheckinError: action.payload,
+                    updateCheckinLoading: false,
                 };
             }
-            const { riderCheckin } = action.payload as ActionTypes.IExtendRiderCheckinResponsePayload;
+            const { riderCheckin } = action.payload as ActionTypes.IUpdateRiderCheckinResponsePayload;
             return {
                 ...state,
                 userCheckin: riderCheckin,
                 riderCheckins: updatedRiderCheckins(state.riderCheckins, riderCheckin),
-                extendCheckinLoading: false,
-                extendCheckinError: null,
+                updateCheckinLoading: false,
+                updateCheckinError: null,
             };
         }
     }

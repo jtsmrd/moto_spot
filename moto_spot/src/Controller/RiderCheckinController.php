@@ -231,11 +231,13 @@ class RiderCheckinController extends AbstractController
     }
 
     /**
-     * @Route("/api/extend_rider_checkin", name="extend_rider_checkin", methods={"PUT"})
+     * @Route("/api/rider_checkin/{id}", name="update_rider_checkin", methods={"PUT"})
      * @param Request $request
+     * @param int $id
      * @return JsonResponse
+     * @throws \Exception
      */
-    public function extendRiderCheckin(Request $request): JsonResponse
+    public function updateRiderCheckin(Request $request, int $id): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
         if (!is_array($requestData)) {
@@ -243,7 +245,7 @@ class RiderCheckinController extends AbstractController
         }
 
         try {
-            $this->extendRiderCheckinIsValid($requestData);
+            $this->updateRiderCheckinIsValid($requestData);
         } catch (InvalidDataException $e) {
             return new JsonResponse([
                 'message' => $e->getMessage(),
@@ -257,67 +259,46 @@ class RiderCheckinController extends AbstractController
             return new JsonResponse(null, Response::HTTP_FORBIDDEN);
         }
 
-        $accessor = PropertyAccess::createPropertyAccessor();
-
-        $riderCheckinId = intval($accessor->getValue($requestData, '[id]'));
-        $extendInterval = intval($accessor->getValue($requestData, '[extend_interval]'));
-
         $repository = $this->getDoctrine()->getRepository(
             RiderCheckin::class
         );
 
         $riderCheckin = $repository->findOneBy([
             'userUUID' => $userUUID,
-            'id' => $riderCheckinId
+            'id' => $id
         ]);
         if (!$riderCheckin) {
             return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
 
-        /** @var string|null $expireDuration */
-        $expireDuration = null;
+        $accessor = PropertyAccess::createPropertyAccessor();
 
-        switch($extendInterval) {
-            case 15:
-                $expireDuration = 'PT15M';
-                break;
-            case 30:
-                $expireDuration = 'PT30M';
-                break;
-            case 60:
-                $expireDuration = 'PT1H';
-                break;
-            case 120:
-                $expireDuration = 'PT2H';
-                break;
-            default:
-                break;
+        $expireDateString = $accessor->getValue(
+            $requestData,
+            '[expire_date]'
+        );
+        $motorcycleMakeModel = $accessor->getValue(
+            $requestData,
+            '[motorcycle_make_model]'
+        );
+        if (!isset($motorcycleMakeModel) || trim($motorcycleMakeModel) === '') {
+            $motorcycleMakeModel = null;
         }
 
-        if (!$expireDuration) {
-            return new JsonResponse([], Response::HTTP_BAD_REQUEST);
+        if ($expireDateString) {
+            $expireDate = new \DateTime(
+                $expireDateString,
+                new \DateTimeZone('UTC')
+            );
+            $riderCheckin->setExpireDate($expireDate);
         }
 
-        $this->logger->info('Extend checkin current expire date', [
-            'expire_date' => $riderCheckin->getExpireDate()->format('Y-m-d H:i:s')
-        ]);
-
-        // Extend the existing expire date with the given extend interval
-        $newExpireDate = clone $riderCheckin->getExpireDate();
-        $newExpireDate = $newExpireDate->add(new \DateInterval($expireDuration));
-
-        $this->logger->info('Extend checkin new expire date', [
-            'expire_date' => $newExpireDate->format('Y-m-d H:i:s')
-        ]);
-
-        $riderCheckin->setExpireDate($newExpireDate);
+        if ($motorcycleMakeModel) {
+            $riderCheckin->setMotorcycleMakeModel($motorcycleMakeModel);
+        }
 
         $this->entityManager->persist($riderCheckin);
         $this->entityManager->flush();
-
-        $this->logger->info('Extend checkin updated expire date', [
-            'expire_date' => $riderCheckin->getExpireDate()->format('Y-m-d H:i:s')
-        ]);
 
         return new JsonResponse([
             'id' => $riderCheckin->getId(),
@@ -357,15 +338,11 @@ class RiderCheckinController extends AbstractController
         }
     }
 
-    private function extendRiderCheckinIsValid(array $requestData): void
+    private function updateRiderCheckinIsValid(array $requestData): void
     {
         $constraints = new Assert\Collection([
-            'id' => new Assert\Required([
-                new Assert\NotBlank()
-            ]),
-            'extend_interval' => new Assert\Required([
-                new Assert\NotBlank()
-            ])
+            'motorcycle_make_model' => new Assert\Optional(),
+            'expire_date' => new Assert\Optional(),
         ]);
 
         $validator = Validation::createValidator();

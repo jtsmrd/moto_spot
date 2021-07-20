@@ -5,10 +5,14 @@ import { formatString } from '../utilities/stringUtils';
 export const GET_RIDER_CHECKINS = '/api/get_rider_checkins';
 export const CREATE_RIDER_CHECKIN = '/api/create_rider_checkin';
 const EXPIRE_RIDER_CHECKIN = '/api/expire_rider_checkin/%s1';
-export const EXTEND_RIDER_CHECKIN = '/api/extend_rider_checkin';
+const UPDATE_RIDER_CHECKIN = '/api/rider_checkin/%s1';
 
 export function expireRiderCheckin(id: number): string {
     return formatString(EXPIRE_RIDER_CHECKIN, id);
+}
+
+export function updateRiderCheckin(id: number): string {
+    return formatString(UPDATE_RIDER_CHECKIN, id);
 }
 
 //</editor-fold>
