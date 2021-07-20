@@ -248,7 +248,7 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                             variant="outlined"
                             className={classes.meetupDescriptionTextField}
                             multiline
-                            rowsMax={2}
+                            maxRows={2}
                             onChange={onDescriptionChanged}
                         />
                     </Box>

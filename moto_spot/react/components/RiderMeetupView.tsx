@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Fab } from '@material-ui/core';
-import { setMapViewModeAction, setSelectedRiderMeetupAction } from '../redux/Actions';
+import { getRiderMeetupsRequestAction, setMapViewModeAction, setSelectedRiderMeetupAction } from '../redux/Actions';
 import RiderCheckinMeetupSelector from './RiderCheckinMeetupSelector';
 import { MapViewMode } from '../redux/reducers/MapInfoReducer';
 import AddIcon from '@material-ui/icons/Add';
 import * as Types from '../redux/Types';
-import { getSelectedRiderMeetup } from '../redux/Selectors';
+import { getMapCenter, getMapZoom, getSelectedRiderMeetup } from '../redux/Selectors';
 import RiderMeetupInfoDialog from './RiderMeetupInfoDialog';
 import EditRiderMeetupDialog from './EditRiderMeetupDialog';
 
@@ -24,13 +24,28 @@ const useStyles = makeStyles((theme: Theme) =>
 const RiderMeetupView: React.FC<{}> = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
+    const mapCenter = useSelector(getMapCenter);
+    const mapZoom = useSelector(getMapZoom);
     const selectedRiderMeetup: Types.RiderMeetup = useSelector(getSelectedRiderMeetup);
     const [meetupInfoDialogVisible, setMeetupInfoDialogVisible] = useState(false);
     const [editMeetupInfoDialogVisible, setEditMeetupInfoDialogVisible] = useState(false);
 
     useEffect(() => {
+        fetchRiderMeetups();
+    }, [mapCenter]);
+
+    useEffect(() => {
+        fetchRiderMeetups();
+    }, [mapZoom]);
+
+    useEffect(() => {
         setMeetupInfoDialogVisible(selectedRiderMeetup !== null && !editMeetupInfoDialogVisible);
     }, [selectedRiderMeetup]);
+
+    const fetchRiderMeetups = useCallback(() => {
+        console.log('Fetch rider meetups');
+        dispatch(getRiderMeetupsRequestAction({}));
+    }, [dispatch]);
 
     const createRiderMeetup = useCallback(() => {
         dispatch(setMapViewModeAction({ mapViewMode: MapViewMode.CreateRiderMeetup }));
