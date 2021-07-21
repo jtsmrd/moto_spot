@@ -24,6 +24,9 @@ const styles = (theme: Theme) =>
             margin: 0,
             padding: theme.spacing(2),
         },
+        titleText: {
+            marginRight: '50px',
+        },
         closeButton: {
             position: 'absolute',
             right: theme.spacing(1),
@@ -36,9 +39,9 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
     const { children, classes, onClose, ...other } = props;
     return (
         <MuiDialogTitle disableTypography className={classes.root} {...other}>
-            <Box display="flex" alignItems="center">
-                <Typography variant="h6">{children}</Typography>
-            </Box>
+            <Typography className={classes.titleText} variant="h6">
+                {children}
+            </Typography>
             {onClose ? (
                 <IconButton id="close-button" aria-label="close" className={classes.closeButton} onClick={onClose}>
                     <CloseIcon />

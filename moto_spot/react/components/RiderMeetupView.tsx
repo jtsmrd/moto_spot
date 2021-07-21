@@ -17,6 +17,10 @@ const useStyles = makeStyles((theme: Theme) =>
             position: 'absolute',
             right: '1rem',
             bottom: '3rem',
+            [theme.breakpoints.up('sm')]: {
+                bottom: '150px',
+                right: '0.5rem',
+            },
         },
     }),
 );

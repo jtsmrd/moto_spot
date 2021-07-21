@@ -185,7 +185,7 @@ const EditRiderMeetupDialog: React.FC<EditRiderMeetupDialogProps> = (props) => {
                             variant="outlined"
                             className={classes.meetupDescriptionTextField}
                             multiline
-                            rowsMax={2}
+                            maxRows={2}
                             value={description}
                             onChange={onDescriptionChanged}
                         />
