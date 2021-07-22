@@ -1,12 +1,11 @@
 import moment from 'moment';
-import { format, utcToZonedTime } from 'date-fns-tz';
-
-export function currentTimeIsAfter(timeInterval: number): boolean {
-    return moment.utc().isAfter(moment.unix(timeInterval).utc());
-}
 
 export function currentDateIsAfter(date: string): boolean {
     return moment.utc().isAfter(moment.utc(date));
+}
+
+export function getCurrentTimestamp(): number {
+    return moment.utc().valueOf() / 1000;
 }
 
 export function currentTimeIsAfterTimePlusMinutes(timeInterval: number, minutesToAdd): boolean {
@@ -17,27 +16,11 @@ export function getUtcDate(): any {
     return moment.utc().format('yyyy-MM-DD kk:mm:ss');
 }
 
-export function formatLocalTodayTomorrowTime(utcDate: string): string {
-    const targetMoment = moment(moment.utc(utcDate).toDate()).local();
-    const formattedDate = targetMoment.format('h:mm a');
-    const isToday = targetMoment.isSame(new Date(), 'day');
-
-    if (isToday) {
-        return `today at ${formattedDate}`;
-    } else {
-        return `tomorrow at ${formattedDate}`;
-    }
-}
-
 export function formatToLocalDate(utcDate: string): Date {
     const targetMoment = moment(moment.utc(utcDate).toDate()).local();
     return targetMoment.toDate();
 }
 
-export function getCurrentTimestamp(): number {
-    return moment.utc().valueOf() / 1000;
+export function getDateAddingMinutes(minutes: number): Date {
+    return moment().add(minutes, 'minutes').toDate();
 }
-
-export const formatUtcString = (date) => {
-    return format(utcToZonedTime(date, 'UTC'), 'yyyy-MM-dd kk:mm:ss', { timeZone: 'UTC' });
-};
