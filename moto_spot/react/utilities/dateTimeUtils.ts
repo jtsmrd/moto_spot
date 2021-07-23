@@ -12,8 +12,16 @@ export function currentTimeIsAfterTimePlusMinutes(timeInterval: number, minutesT
     return moment.utc().isAfter(moment.unix(timeInterval).utc().add(minutesToAdd, 'minutes'));
 }
 
-export function getUtcDate(): any {
-    return moment.utc().format('yyyy-MM-DD kk:mm:ss');
+export function formatLocalTodayTomorrowTime(date: Date): string {
+    const targetMoment = moment(date).local();
+    const formattedDate = targetMoment.format('h:mm a');
+    const isToday = targetMoment.isSame(new Date(), 'day');
+
+    if (isToday) {
+        return `today at ${formattedDate}`;
+    } else {
+        return `tomorrow at ${formattedDate}`;
+    }
 }
 
 export function formatToLocalDate(utcDate: string): Date {
@@ -23,4 +31,8 @@ export function formatToLocalDate(utcDate: string): Date {
 
 export function getDateAddingMinutes(minutes: number): Date {
     return moment().add(minutes, 'minutes').toDate();
+}
+
+export function addMinutesToDate(date: Date, minutes: number): Date {
+    return moment(date).add(minutes, 'minutes').toDate();
 }

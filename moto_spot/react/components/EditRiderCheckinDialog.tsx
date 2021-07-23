@@ -13,6 +13,7 @@ import InfoDialog from './InfoDialog';
 import '../utilities/date.string.extensions';
 import ConfirmDialog from './ConfirmDialog';
 import * as Types from '../redux/Types';
+import { addMinutesToDate, formatLocalTodayTomorrowTime, formatToLocalDate } from '../utilities/dateTimeUtils';
 
 export interface EditRiderCheckinDialogProps {
     open: boolean;
@@ -129,11 +130,13 @@ const EditRiderCheckinDialog: React.FC<EditRiderCheckinDialogProps> = (props) =>
     }, [riderCheckin]);
 
     const newExpireDate = useMemo(() => {
-        return extendInterval > 0 ? riderCheckin?.expireDate.addMinutes(extendInterval) : null;
+        return extendInterval > 0
+            ? addMinutesToDate(formatToLocalDate(riderCheckin?.expireDate), extendInterval)
+            : null;
     }, [riderCheckin, extendInterval]);
 
     const newExpireDateDisplay = useMemo(() => {
-        return newExpireDate?.formatTodayTomorrowTime();
+        return newExpireDate ? formatLocalTodayTomorrowTime(newExpireDate) : null;
     }, [newExpireDate]);
 
     const updateDisabled = useMemo(() => {
@@ -157,7 +160,7 @@ const EditRiderCheckinDialog: React.FC<EditRiderCheckinDialogProps> = (props) =>
             updateRiderCheckinRequestAction({
                 id: riderCheckin.id,
                 motorcycle_make_model: motorcycleMakeModel,
-                expire_date: newExpireDate,
+                expire_date: newExpireDate.toISOString(),
             }),
         );
         onClose();
