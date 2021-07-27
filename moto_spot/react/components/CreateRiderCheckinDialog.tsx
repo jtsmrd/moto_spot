@@ -8,7 +8,7 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import { createRiderCheckinRequestAction } from '../redux/Actions';
-import { getUtcDate } from '../utilities/dateTimeUtils';
+import { formatLocalTodayTomorrowTime, getDateAddingMinutes } from '../utilities/dateTimeUtils';
 import { usePosition } from '../hooks/usePosition';
 import { createStyles, makeStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import InfoDialog from './InfoDialog';
@@ -111,7 +111,7 @@ const CreateRiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
     const [motorcycleMakeModel, setMotorcycleMakeModel] = useState('');
 
     const expireDateDisplay = useMemo(() => {
-        return getUtcDate().addMinutes(expireInterval).formatTodayTomorrowTime();
+        return formatLocalTodayTomorrowTime(getDateAddingMinutes(expireInterval));
     }, [expireInterval]);
 
     useEffect(() => {
@@ -136,17 +136,16 @@ const CreateRiderCheckinDialog: React.FC<RiderCheckinDialogProps> = (props) => {
         if (positionLat && positionLng) {
             dispatch(
                 createRiderCheckinRequestAction({
-                    expire_date: getUtcDate().addMinutes(expireInterval),
+                    expire_date: getDateAddingMinutes(expireInterval).toISOString(),
                     motorcycle_make_model: motorcycleMakeModel,
                     lat: positionLat,
                     lng: positionLng,
                 }),
             );
+            onClose();
         } else {
             alert('You must enable location to checkin');
         }
-
-        onClose();
     }, [positionLat, positionLng, dispatch, expireInterval, motorcycleMakeModel]);
 
     return (

@@ -1,16 +1,7 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { getMapBounds, getMapViewMode, getRiderCheckins, getRiderMeetups, getUserCheckin } from '../redux/Selectors';
 import {
-    getMapBounds,
-    getMapCenterLoaded,
-    getMapViewMode,
-    getRiderCheckins,
-    getRiderMeetups,
-    getUserCheckin,
-} from '../redux/Selectors';
-import {
-    getRiderCheckinsRequestAction,
-    getRiderMeetupsRequestAction,
     removeExpiredRiderCheckins,
     setSelectedRiderCheckinAction,
     setSelectedRiderMeetupAction,
@@ -46,13 +37,13 @@ const MapContainer: React.FC<{}> = (props) => {
     const classes = useStyles();
     const mapRef = useRef();
     const theme = useTheme();
+    const [mapReady, setMapReady] = useState(false);
     const { geoLocationLat, geoLocationLng, geoLocationError } = useGeoLocation();
     const DEFAULT_ZOOM_LEVEL = 12;
     const mapBounds = useSelector(getMapBounds);
     const riderCheckins = useSelector(getRiderCheckins);
     const userCheckin = useSelector(getUserCheckin);
     const riderMeetups = useSelector(getRiderMeetups);
-    const mapCenterLoaded = useSelector(getMapCenterLoaded);
     const mapViewMode = useSelector(getMapViewMode);
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'), {
         defaultMatches: true,
@@ -60,17 +51,15 @@ const MapContainer: React.FC<{}> = (props) => {
 
     // Set map center after getting users' geo location
     useEffect(() => {
-        if (geoLocationLat && geoLocationLng) {
+        if (mapReady && geoLocationLat && geoLocationLng) {
             // @ts-ignore
             mapRef.current.map.setCenter({
                 lat: geoLocationLat,
                 lng: geoLocationLng,
             });
             updateMapCenter(geoLocationLat, geoLocationLng);
-            fetchRiderCheckins();
-            fetchRiderMeetups();
         }
-    }, [geoLocationLat, geoLocationLng]);
+    }, [mapReady, geoLocationLat, geoLocationLng]);
 
     useEffect(() => {
         if (geoLocationError) {
@@ -79,28 +68,11 @@ const MapContainer: React.FC<{}> = (props) => {
     }, [geoLocationError]);
 
     useEffect(() => {
-        if (mapCenterLoaded) {
-            fetchRiderCheckins();
-            fetchRiderMeetups();
-        }
-    }, [mapCenterLoaded]);
-
-    useEffect(() => {
         const interval = setInterval(() => {
             dispatch(removeExpiredRiderCheckins({}));
         }, 300000); // 5 minutes
         return () => clearInterval(interval);
     }, []);
-
-    function fetchRiderCheckins() {
-        console.log('Fetch rider checkins');
-        dispatch(getRiderCheckinsRequestAction({}));
-    }
-
-    function fetchRiderMeetups() {
-        console.log('Fetch rider meetups');
-        dispatch(getRiderMeetupsRequestAction({}));
-    }
 
     // Update the map bounds when they change
     useEffect(() => {
@@ -147,28 +119,17 @@ const MapContainer: React.FC<{}> = (props) => {
     }
 
     const onReady = (mapProps, map, event) => {
+        setMapReady(true);
         updateMapCenter(map.center.lat(), map.center.lng());
         updateMapZoom(map.zoom);
     };
 
     const onDragEnd = (mapProps, map, event) => {
         updateMapCenter(map.center.lat(), map.center.lng());
-
-        if (mapViewMode === MapViewMode.RiderCheckins) {
-            fetchRiderCheckins();
-        } else if (mapViewMode === MapViewMode.RiderMeetups) {
-            fetchRiderMeetups();
-        }
     };
 
     const onZoomChanged = (mapProps, map, event) => {
         updateMapZoom(map.zoom);
-
-        if (mapViewMode === MapViewMode.RiderCheckins) {
-            fetchRiderCheckins();
-        } else if (mapViewMode === MapViewMode.RiderMeetups) {
-            fetchRiderMeetups();
-        }
     };
 
     const onRiderMarkerClicked = (riderCheckin: Types.RiderCheckin) => {

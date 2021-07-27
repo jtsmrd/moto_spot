@@ -9,6 +9,31 @@ import { getMapBounds, getMapCenter, getMapZoom, getRiderMeetups } from '../Sele
 import { currentDateIsAfter } from '../../utilities/dateTimeUtils';
 import { MapViewMode } from '../reducers/MapInfoReducer';
 
+function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequestPayload>) {
+    try {
+        const res = yield call(httpRequest, {
+            url: Endpoints.CREATE_RIDER_MEETUP,
+            method: 'POST',
+            data: {
+                lat: action.payload.lat,
+                lng: action.payload.lng,
+                title: action.payload.title,
+                description: action.payload.description,
+                meetup_date: action.payload.meetup_date,
+                ride_start_date: action.payload.ride_start_date,
+            },
+        });
+        const riderMeetupPayload: ActionTypes.ICreateRiderMeetupResponsePayload = {
+            riderMeetup: res.data,
+        };
+        yield put(Actions.createRiderMeetupResponseAction(riderMeetupPayload));
+        yield put(Actions.setMapViewModeAction({ mapViewMode: MapViewMode.RiderMeetups }));
+        yield call(updateVisibleRiderMeetups);
+    } catch (e) {
+        yield put(Actions.createRiderMeetupResponseAction(e));
+    }
+}
+
 function* fetchRiderMeetups() {
     const mapZoom = yield select(getMapZoom);
     const mapCenter = yield select(getMapCenter);
@@ -38,31 +63,6 @@ function* fetchRiderMeetups() {
     }
 }
 
-function* createRiderMeetup(action: Action<ActionTypes.ICreateRiderMeetupRequestPayload>) {
-    try {
-        const res = yield call(httpRequest, {
-            url: Endpoints.CREATE_RIDER_MEETUP,
-            method: 'POST',
-            data: {
-                lat: action.payload.lat,
-                lng: action.payload.lng,
-                title: action.payload.title,
-                description: action.payload.description,
-                meetup_date: action.payload.meetup_date,
-                ride_start_date: action.payload.ride_start_date,
-            },
-        });
-        const riderMeetupPayload: ActionTypes.ICreateRiderMeetupResponsePayload = {
-            riderMeetup: res.data,
-        };
-        yield put(Actions.createRiderMeetupResponseAction(riderMeetupPayload));
-        yield put(Actions.setMapViewModeAction({ mapViewMode: MapViewMode.RiderMeetups }));
-        yield call(updateVisibleRiderMeetups);
-    } catch (e) {
-        yield put(Actions.createRiderMeetupResponseAction(e));
-    }
-}
-
 function* updateRiderMeetup(action: Action<ActionTypes.IUpdateRiderMeetupRequestPayload>) {
     try {
         const res = yield call(httpRequest, {
@@ -89,7 +89,7 @@ function* expireRiderMeetup(action: Action<ActionTypes.IExpireRiderMeetupRequest
     try {
         const res = yield call(httpRequest, {
             url: Endpoints.expireRiderMeetup(action.payload.id),
-            method: 'PUT',
+            method: 'DELETE',
         });
         const riderMeetupPayload: ActionTypes.IExpireRiderMeetupResponsePayload = {
             expiredRiderMeetup: res.data,

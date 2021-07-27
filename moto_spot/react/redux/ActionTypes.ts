@@ -59,16 +59,17 @@ export interface IUpdateRiderCheckinFetchInfoPayload {
     bounds: Types.MapBounds;
 }
 
-export const EXTEND_RIDER_CHECKIN_REQUEST = 'EXTEND_RIDER_CHECKIN_REQUEST';
-export type EXTEND_RIDER_CHECKIN_REQUEST = typeof EXTEND_RIDER_CHECKIN_REQUEST;
-export interface IExtendRiderCheckinRequestPayload {
+export const UPDATE_RIDER_CHECKIN_REQUEST = 'UPDATE_RIDER_CHECKIN_REQUEST';
+export type UPDATE_RIDER_CHECKIN_REQUEST = typeof UPDATE_RIDER_CHECKIN_REQUEST;
+export interface IUpdateRiderCheckinRequestPayload {
     id: number;
-    extendInterval: number;
+    expire_date?: string;
+    motorcycle_make_model?: string;
 }
 
-export const EXTEND_RIDER_CHECKIN_RESPONSE = 'EXTEND_RIDER_CHECKIN_RESPONSE';
-export type EXTEND_RIDER_CHECKIN_RESPONSE = typeof EXTEND_RIDER_CHECKIN_RESPONSE;
-export interface IExtendRiderCheckinResponsePayload {
+export const UPDATE_RIDER_CHECKIN_RESPONSE = 'UPDATE_RIDER_CHECKIN_RESPONSE';
+export type UPDATE_RIDER_CHECKIN_RESPONSE = typeof UPDATE_RIDER_CHECKIN_RESPONSE;
+export interface IUpdateRiderCheckinResponsePayload {
     riderCheckin: Types.RiderCheckin;
 }
 
@@ -190,8 +191,8 @@ export type IRiderCheckinActionsPayload =
     | IExpireRiderCheckinResponsePayload
     | IRemoveExpiredRiderCheckinsPayload
     | IUpdateRiderCheckinFetchInfoPayload
-    | IExtendRiderCheckinRequestPayload
-    | IExtendRiderCheckinResponsePayload;
+    | IUpdateRiderCheckinRequestPayload
+    | IUpdateRiderCheckinResponsePayload;
 
 export type IMapActionsPayload =
     | IUpdateMapBoundsPayload

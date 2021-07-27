@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Box, Button, Typography } from '@material-ui/core';
+import { Box, Button } from '@material-ui/core';
 import { setMapViewModeAction } from '../redux/Actions';
 import GpsNotFixedIcon from '@material-ui/icons/GpsNotFixed';
 import { MapViewMode } from '../redux/reducers/MapInfoReducer';
@@ -17,18 +17,35 @@ const useStyles = makeStyles((theme: Theme) =>
             width: '100%',
             position: 'absolute',
             bottom: '2rem',
+            [theme.breakpoints.up('sm')]: {
+                justifyContent: 'space-evenly',
+            },
         },
         cancelButton: {
             backgroundColor: 'red',
             color: 'white',
             textTransform: 'capitalize',
             width: '40%',
+            [theme.breakpoints.up('sm')]: {
+                width: '200px',
+            },
+            '&:hover': {
+                backgroundColor: 'red',
+                opacity: 0.5,
+            },
         },
         confirmButton: {
             backgroundColor: theme.palette.primary.main,
             color: 'white',
             textTransform: 'capitalize',
             width: '40%',
+            [theme.breakpoints.up('sm')]: {
+                width: '200px',
+            },
+            '&:hover': {
+                backgroundColor: theme.palette.primary.main,
+                opacity: 0.5,
+            },
         },
         meetupReticleContainer: {
             position: 'absolute',

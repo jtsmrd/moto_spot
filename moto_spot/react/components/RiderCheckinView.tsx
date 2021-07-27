@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Fab } from '@material-ui/core';
-import { getSelectedRiderCheckin } from '../redux/Selectors';
-import { setSelectedRiderCheckinAction } from '../redux/Actions';
+import { getMapCenter, getMapZoom, getSelectedRiderCheckin } from '../redux/Selectors';
+import { getRiderCheckinsRequestAction, setSelectedRiderCheckinAction } from '../redux/Actions';
 import CreateRiderCheckinDialog from './CreateRiderCheckinDialog';
 import EditRiderCheckinDialog from './EditRiderCheckinDialog';
 import RiderCheckinMeetupSelector from './RiderCheckinMeetupSelector';
@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme: Theme) =>
             position: 'absolute',
             right: '1rem',
             bottom: '3rem',
+            [theme.breakpoints.up('sm')]: {
+                bottom: '150px',
+                right: '0.5rem',
+            },
         },
     }),
 );
@@ -23,14 +27,29 @@ const useStyles = makeStyles((theme: Theme) =>
 const RiderCheckinView: React.FC<{}> = (props) => {
     const dispatch = useDispatch();
     const classes = useStyles();
+    const mapCenter = useSelector(getMapCenter);
+    const mapZoom = useSelector(getMapZoom);
     const selectedRiderCheckin = useSelector(getSelectedRiderCheckin);
     const [checkinDialogVisible, setCheckinDialogVisible] = useState(false);
     const [editRiderCheckinDialogVisible, setEditRiderCheckinDialogVisible] = useState(false);
     const [riderCheckinInfoDialogVisible, setRiderCheckinInfoDialogVisible] = useState(false);
 
     useEffect(() => {
+        fetchRiderCheckins();
+    }, [mapCenter]);
+
+    useEffect(() => {
+        fetchRiderCheckins();
+    }, [mapZoom]);
+
+    useEffect(() => {
         setRiderCheckinInfoDialogVisible(selectedRiderCheckin !== null);
     }, [selectedRiderCheckin]);
+
+    const fetchRiderCheckins = useCallback(() => {
+        console.log('Fetch rider checkins');
+        dispatch(getRiderCheckinsRequestAction({}));
+    }, []);
 
     const onCloseRiderCheckinInfoDialog = useCallback(() => {
         dispatch(setSelectedRiderCheckinAction({ riderCheckin: null }));

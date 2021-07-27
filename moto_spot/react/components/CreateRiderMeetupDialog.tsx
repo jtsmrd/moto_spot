@@ -8,7 +8,6 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
-import { formatUtcString } from '../utilities/dateTimeUtils';
 import { createRiderMeetupRequestAction } from '../redux/Actions';
 import DateFnsUtils from '@date-io/date-fns';
 import add from 'date-fns/add';
@@ -191,8 +190,8 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                     lng: meetupLocation.lng,
                     title: title,
                     description: description,
-                    meetup_date: formatUtcString(meetupDate),
-                    ride_start_date: formatUtcString(rideStartDate),
+                    meetup_date: meetupDate.toISOString(),
+                    ride_start_date: rideStartDate.toISOString(),
                 }),
             );
             onClose();
@@ -248,7 +247,7 @@ const CreateRiderMeetupDialog: React.FC<CreateRiderMeetupDialogProps> = (props) 
                             variant="outlined"
                             className={classes.meetupDescriptionTextField}
                             multiline
-                            rowsMax={2}
+                            maxRows={2}
                             onChange={onDescriptionChanged}
                         />
                     </Box>

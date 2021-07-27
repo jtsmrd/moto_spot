@@ -22,7 +22,10 @@ class RiderCheckinRepository extends ServiceEntityRepository
 
     public function getRiderCheckinsAroundLocation(float $lat, float $lng, float $distance)
     {
-        $dateNow = (new \DateTime('now', new \DateTimeZone('UTC')));
+        $dateNow = new \DateTime(
+            'now',
+            new \DateTimeZone('UTC')
+        );
 
         return $this->createQueryBuilder('rc')
             ->andWhere(
@@ -39,6 +42,29 @@ class RiderCheckinRepository extends ServiceEntityRepository
             ->orderBy('rc.expireDate', 'DESC')
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+    /**
+     * @param string $uuid
+     * @return int|mixed|string|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getActiveRiderCheckin(string $userUUID)
+    {
+        $dateNow = new \DateTime(
+            'now',
+            new \DateTimeZone('UTC')
+        );
+
+        return $this->createQueryBuilder('rc')
+            ->andWhere('rc.userUUID = :userUUID')
+            ->setParameter('userUUID', $userUUID)
+            ->andWhere('rc.expireDate > :now')
+            ->setParameter('now', $dateNow)
+            ->orderBy('rc.id', 'DESC')
+            ->getQuery()
+            ->getOneOrNullResult()
         ;
     }
 
